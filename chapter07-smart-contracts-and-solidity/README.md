@@ -145,13 +145,142 @@ And various value literals as
 
 ### Predefined Global Variables and Functions
 
+- Variables as
+  - `block`
+  - `msg`
+  - `tx`
+- Functions exposed as EVM opcodes
+
+#### Transaction/message call context
+
+- The `msg` object is the transaction call (EOA originated) or message call (contract originated) that launched this contract execution
+- It contains a number of useful attributes
+
+| Attribute | Description                                                                                                                                                      |
+| --------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|  `sender` | It represents the `address` that initiated this contract call, not necessarily the originating EOA that sent the transaction (contract address is also possible) |
+|   `value` | The value of ether sent with this call (in `wei`)                                                                                                                |
+|     `gas` | The amount of gas left in the gas supply of this execution environment. This was deprecated in Solidity **v0.4.21** and replaced by the `gasleft` function       |
+|    `data` | The data payload of this call into our contract                                                                                                                  |
+|     `sig` | The first four bytes of the data payload, which is the function selector (??)                                                                                    |
+
+> Whenever a contract calls another contract, the values of all the attributes of `msg` change to reflect the new caller's information. The only exception to this is the `delegatecall` function
+
+#### Transaction context
+
+- Expressed as the `tx` object with information
+
+|  Attribute | Description                                                                   |
+| ---------: | :---------------------------------------------------------------------------- |
+| `gasprice` | The gas price in the calling transaction                                      |
+|   `origin` | The address of the originating EOA for this transaction. **WARNING: unsafe!** |
+
+#### Block context
+
+- Expressed as the `block` object containing information
+
+|                Attribute | Description                                                                                                                                               |
+| -----------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `blockhash(blockNumber)` | The block hash of the specified block number, up to 256 blocks in the past. **Deprecated and replaced with the `blockhash` function in Solidity v0.4.22** |
+|               `coinbase` | The **address** of the recipient of the current block's fees and block reward                                                                             |
+|             `difficulty` | The difficulty (proof of work) of the current block                                                                                                       |
+|               `gaslimit` | The maximum amount of gas that can be spent across all transactions included in the current block                                                         |
+|                 `number` | The current block number (blockchain height)                                                                                                              |
+|              `timestamp` | The timestamp placed in the current block by the miner (number of seconds since the Unix epoch)                                                           |
+
+#### `address` object
+
+|           Attribute | Description                                                                                                                                                                          |
+| ------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|           `balance` | The balance of the address, in `wei`. For example, the current contract balance is `address(this).balance`                                                                           |
+|  `transfer(amount)` | Transfers the amount (in `wei`) to this address, throwing an exception on any error                                                                                                  |
+|      `send(amount)` | Similar to `transfer`, only instead of throwing an exception, it returns `false` on error. **WARNING: always check the return value of send**                                        |
+|     `call(payload)` | Low-level `CALL` function -- can construct an arbitrary message call with a data payload. Returns `false` on error. **WARNING: unsafe**                                              |
+| `callcode(payload)` | Low-level `CALLCODE` function, like `address(this).call(...)` but with this contract's code replaced with that of address. Returns `false` on error. **WARNING: advanced use only!** |
+|    `delegatecall()` | Low-level `DELEGATECALL` function, like `callcode(...)` but with the full `msg` context seen by the current contract. Returns `false` on error. **WARNING: advanced use only!**      |
+
+#### Built-in functions
+
+|                                   Function | Description                                                                                       |
+| -----------------------------------------: | :------------------------------------------------------------------------------------------------ |
+|                          `addmod`,`mulmod` | For modulo addition and multiplication                                                            |
+| `keccak256`, `sha256`, `sha3`, `ripemd160` | Functions to calculate hashes with various standard hash algorithms                               |
+|                                `ecrecover` | Recovers the address used to sign a message from the signature                                    |
+|         `selfdestrunct(recipient_address)` | Deletes the current contract, sending any remaining ether in the account to the recipient address |
+|                                     `this` | The address of the currently executing contract account                                           |
+
 ### Contract Definition
+
+- Signaled by the `contract` keyword
+- 2 other similar objects are
+  - `interface` is structured exactly like a `contract`, except none of the functions are defined, they are only declared. This type of declaration is often called a `stub`
+  - `library` is meant to be deployed only once and used by other contracts, using the `delegatecall` method
 
 ### Functions
 
-### Contract Constructor and selfdestruct
+- Syntax of declaration goes as
 
-### Adding a Constructor and selfdestruct to Our Faucet Example
+  ```solidity
+  function FunctionName([parameters]) {public|private|internal|external} [pure|constant|view|payable] [modifiers] [returns (return types)]
+  ```
+
+  - `FunctionName`
+    - Defines the name of the function, which is used to call the function in a transaction (from an EOA), from another contract, or even from within the same contract.
+    - Especially, the so-called `fallback` function is defined without a name, which is called when no other function is called. The `fallback` function cannot have any arguments or return anything
+  - `parameters`
+    - The arguments that must be passed to the function, with their **names** and **types**
+  - `public`/`private`/`internal`/`external` specify the function's visibility
+    - `public` is the default; such functions can be called by other contracts or EOA transactions, or from within the contract
+    - `external` is like `public`, except the decorated functions cannot be called from within the contract unless explicitly prefixed with the keyword `this`
+    - `internal` make functions only accessible from within the contract -- they cannot be called by another contract or EOA transaction. They can be called by derived contracts (those that inherit this one)
+    - `private` is like `internal`, except the decorated functions cannot be called by derived contracts
+  - `pure`/`constant`/`view`/`payable` affects behaviors of the functions
+    - `constant`/`view` marks a function promising not to modify any state, where `constant` will be deprecated in a future release
+    - `pure` marks functions neither reading nor writing any variables in storage
+    - `payable` marks the only functions for accepting incoming payments. 2 exceptions are coinbase payments and `SELFDESTRUCT` inheritance will be paid even if the fallback function is not declared as `payable`
+
+### Contract Constructor and `selfdestruct`
+
+- When a contract is created, it also runs the `constructor` function if one exists, to initialize the state of the contract
+- The constructor function is optional
+- Constructors can be specified in two ways
+
+  - The constructor is a function whose name matches the name of the contract
+
+    ```
+    contract MEContract {
+      function MEContract() {
+        // This is the constructor
+      }
+    }
+    ```
+
+  - Solidity **v0.4.22** introduces a `constructor` keyword that operates like a constructor function but does not have a name
+
+    ```
+    pragma ^0.4.22
+
+    contract MEContract {
+      constructor () {
+        // This is the constructor
+      }
+    }
+    ```
+
+- To summarize, a contract's life cycle
+  - Starts with a creation transaction from an EOA or contract account
+  - If there is a constructor, it is executed as part of contract creation, to initialize the state of the contract as it is being created, and is then discarded.
+  - Finally, contract can be destructed
+- Contracts are destroyed by a special EVM opcode called `SELFDESTRUCT` exposed as a high-level built-in function as
+
+  ```
+  // recipient is the address to receive any remaining ether balance
+  selfdestruct(address recipient)
+  ```
+
+- Only the explicitly declared `selfdestruct` command can delete a contract
+
+### Adding a `Constructor` and `selfdestruct` to Our Faucet Example
 
 ### Function Modifiers
 
