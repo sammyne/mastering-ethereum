@@ -153,7 +153,7 @@
 ## A Simple Contract: A Test Ether Faucet
 
 - Solidity is the dominant choice for smart contract programming
-- Use case: A faucet
+- Use case: A faucet coded as [Faucet.sol](examples/Faucet.sol)
 
   - controlled by a contract
   - gives out ether to any address that asks
@@ -176,6 +176,10 @@
 ## Compiling the Faucet Contract
 
 - Tool: `solc` installed with `yarn global add solc`, which would produce an executable named `solcjs` accessible across the OS
+- Compiling command goes as
+  ```bash
+  solcjs --bin Faucet.sol
+  ```
 
 ## Creating the Contract on the Blockchain
 
