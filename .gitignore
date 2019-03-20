@@ -2,3 +2,6 @@
 # Solidity 
 *.bin
 *.abi
+
+# dummy
+tmp/
