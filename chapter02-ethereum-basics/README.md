@@ -175,7 +175,7 @@
 
 ## Compiling the Faucet Contract
 
-- Tool: `solc` installed with `yarn global add solc`, which would produce an executable named `solcjs` accessible across the OS
+- Tool: `solc` installed with `yarn global add solc@v0.5.6`, which would produce an executable named `solcjs` accessible across the OS
 - Compiling command goes as
   ```bash
   solcjs --bin Faucet.sol
@@ -184,13 +184,44 @@
 ## Creating the Contract on the Blockchain
 
 - Registering a contract on the blockchain involves creating a special transaction whose destination is the **zero address** `0x0000000000000000000000000000000000000000` (40 zeros)
+- Deploy with help of [Remix](https://remix.ethereum.org/#optimize=false&version=soljson-v0.5.6+commit.b259423e.js)
+  1. Navigate to the Remix IDE through MetaMask
+  2. Add a new tab by clicking on the circular plus sign in the top-left toolbar to create a new file named `Faucet.sol`
+  3. Copy and paste the code of local example `Faucet.sol` into the the new created `Faucet.sol`
+  4. Click the **Start to compile** button under the `compile` tab to compile the contract into bytecodes
+     ![The Remix compiler](images/remix-compiler.png)
+  5. Switch to `Run` tab and select `Injected Web3` in the Environment drop-down selection box, which will connect the Remix IDE to the MetaMask wallet, and through MetaMask to the Ropsten test network
+     ![Prepare for deployment](images/remix-runner.png)
+  6. Confirm the contract focused is `Faucet` and click `Deploy` button to trigger the deployment
+     ![Confirm the contract delpoyment](images/meta-mask-deployment-notification.png)
 
 ## Interacting with the Contract
 
 ### Viewing the Contract Address in a Block Explorer
 
+1. Copy the contract address
+   ![Copy address](images/remix-runner-deployed-contract.png)
+2. Parse the copied address into the Etherscan explorer and enter, you should see
+   ![Viewing the Contract Address in a Block Explorer](images/etherscan-deployed-contract-tx.png)
+
 ### Funding the Contract
 
+- **HOW**
+  1. Parse the contract address into the **Send ETH** panel of MetaMask
+  2. Fill in some ether you want
+  3. Confirm by clicking the **NEXT** button
+
 ### Withdrawing from Our Contract
+
+- **HOW**: In the `Run` tab of Remix IDE
+
+  1. Fill in amount to withdraw in the textfield to the right of the `withdraw` button
+  2. Click the `withdraw` button
+  3. Confirm the action in the popup MetaMask modal
+
+  > Due to a limitation in JavaScript, a number as large as 10<sup>17</sup> cannot be processed by Remix. Instead, we enclose it in double quotes, to allow Remix to receive it as a string and manipulate it as a `BigNumber`
+
+- The withdraw transfer originated from the contract code is an **internal transaction** (a.k.a., **message**)
+  ![Internal transaction triggered by withdraw](images/etherscan-internal-txns.png)
 
 ## Conclusions

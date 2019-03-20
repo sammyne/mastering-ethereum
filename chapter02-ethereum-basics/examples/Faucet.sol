@@ -1,3 +1,5 @@
+pragma solidity ^0.5.6;
+
 contract Faucet {
 
   // Give out ether to anyone who asks
