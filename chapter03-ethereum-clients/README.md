@@ -1,6 +1,8 @@
 # Chapter 03. Ethereum Clients
 
-- An Ethereum client is a **software application** that implements the Ethereum specification and communicates over the peer-to-peer network with other Ethereum clients
+- An Ethereum client is a **software application** that
+  - Implements the Ethereum specification
+  - Communicates over the peer-to-peer network with other Ethereum clients
 - Different Ethereum clients **interoperate** if they comply with the reference specification and the standardized communications protocols
 
 ## Ethereum Networks
@@ -64,7 +66,7 @@
 - You can't use "real" money on a testnet; it runs on test ether. Consequently, you can't test security against real adversaries, as there is nothing at stake.
 - There are some aspects of a public blockchain that you cannot test realistically on a testnet. Examples are
   - Transaction fees, although necessary to send transactions, are not a consideration on a testnet, since gas is free.
-  - Not so real network congestion occurring the public mainnet sometimes
+  - Not so real network congestion occurring in the public mainnet sometimes
 
 ### Local Blockchain Simulation Advantages and Disadvantages
 
@@ -73,7 +75,7 @@
 #### Advantages
 
 - No syncing and almost no data on disk; you mine the first block yourself
-- No need to obtain test ether; you “award” yourself mining rewards that you can use for testing
+- No need to obtain test ether; you "award" yourself mining rewards that you can use for testing
 - No other users, just you
 - No other contracts, just the ones you deploy after you launch it
 
@@ -145,6 +147,10 @@ git clone <Repository Link>
 cd go-ethereum
 make geth
 ```
+
+#### Docker container is another option
+
+- [`ethereum/client-go`](https://hub.docker.com/r/ethereum/client-go)
 
 ## The First Synchronization of Ethereum-Based Blockchains
 
