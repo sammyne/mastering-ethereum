@@ -2,7 +2,7 @@
 
 ## Ethereum Client
 
-- The Geth client in use is the official docker container ![ethereum/client-go](https://hub.docker.com/r/ethereum/client-go) tagged at `alltools-v1.8.23`
+- The Geth client in use is the official docker container [ethereum/client-go](https://hub.docker.com/r/ethereum/client-go) tagged at `alltools-v1.8.23`
 - The installation goes as
 
 ```bash

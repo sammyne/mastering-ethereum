@@ -151,6 +151,11 @@ make geth
 #### Docker container is another option
 
 - [`ethereum/client-go`](https://hub.docker.com/r/ethereum/client-go)
+- Once installed (the detailed instruction goes as the **Ethereum Client** secion in the root [README](../README.md)), check the correctness by touching the version of `geth`
+
+```bash
+docker run --rm ethereum/client-go:alltools-v1.8.23 geth version
+```
 
 ## The First Synchronization of Ethereum-Based Blockchains
 
