@@ -23,4 +23,5 @@ docker pull ethereum/client-go:alltools-v1.8.23
 - [x] Chapter 02. Ethereum Basics
 - [ ] Chapter 03. Ethereum Clients
 - [ ] Chapter 04. Cryptography
+- [ ] Chapter 05. Wallets
 - [ ] Chapter 07. Smart Contracts and Solidity
