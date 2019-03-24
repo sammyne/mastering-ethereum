@@ -171,10 +171,10 @@ SHA3("") = a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a
 
 ### Hex Encoding with Checksum in Capitalization (EIP-55)
 
-- [EIP-55](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-55.md) offers a backward-compatible checksum for Ethereum addresses by modifying the capitalization of the hexadecimal address
+- [EIP-55](https://github.com/ethereum/EIPs/blob/master/EIPS/eip-55.md) offers a backward-compatible checksum for Ethereum addresses by modifying the capitalization of the **hexadecimal address**
   - Wallets that do not support EIP-55 checksums simply ignore the fact that the address contains mixed capitalization
   - Those supporting it can validate it and detect errors with a 99.986% accuracy
-- **HOW** (TODO: code)
+- **HOW** (demo as [EIP-55](examples/eip55_test.go))
   1. Keccak-256 hash the lowercase address, without the `0x` prefix
   2. Capitalize each alphabetic address character if the corresponding hex digit of the hash is greater than or equal to `0x8`
   - Only the first 20 bytes (40 hex characters) of the hash is employed as a checksum due the address length
