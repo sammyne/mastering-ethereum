@@ -5,9 +5,9 @@
 - The Geth client in use is the official docker container [ethereum/client-go](https://hub.docker.com/r/ethereum/client-go) tagged at `alltools-v1.8.23`
 - The installation goes as
 
-```bash
-docker pull ethereum/client-go:alltools-v1.8.23
-```
+  ```bash
+  docker pull ethereum/client-go:alltools-v1.8.23
+  ```
 
 - Basic usage
 
@@ -21,7 +21,7 @@ docker pull ethereum/client-go:alltools-v1.8.23
 
 - [x] Chapter 01. What Is Ethereum?
 - [x] Chapter 02. Ethereum Basics
-- [ ] Chapter 03. Ethereum Clients
+- [x] Chapter 03. Ethereum Clients
 - [ ] Chapter 04. Cryptography
 - [ ] Chapter 05. Wallets
 - [ ] Chapter 06. Transactions
