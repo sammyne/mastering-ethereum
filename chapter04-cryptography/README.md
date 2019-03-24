@@ -130,7 +130,7 @@ SHA3("") = a7ffc6f8bf1ed76651c14756a061d662f580ff4de43b49fa82d80a4b80f8434a
 
 - Ethereum addresses are hexadecimal numbers, identifiers derived from **the last 20 bytes of the Keccak-256 hash** of the public key or contract
 
-  - TODO: an example deriving an address from public key
+  - [An example deriving an address from public key](examples/address_test.go)
 
 - Ethereum addresses are presented as raw hexadecimal **without any checksum**
   - **WHY**
