@@ -23,6 +23,7 @@
 - [x] Chapter 02. Ethereum Basics
 - [x] Chapter 03. Ethereum Clients
 - [ ] Chapter 04. Cryptography
+  - Missing the ICAP demo
 - [ ] Chapter 05. Wallets
 - [ ] Chapter 06. Transactions
 - [ ] Chapter 07. Smart Contracts and Solidity
