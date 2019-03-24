@@ -46,7 +46,7 @@
 
 > Ethereum uses the exact same elliptic curve, called `secp256k1`, as Bitcoin
 
-- TODO: Example 4-1
+- [Example 4-1: Using Go to confim that a point is on the elliptic curve](examples/1_test.go)
 
 ### Elliptic Curve Arithmetic Operations
 
