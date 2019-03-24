@@ -109,7 +109,7 @@
   - Make it difficult to build a lookup table enabling a brute-force attack
   - Allow the introduction of a passphrase that serves as an additional security factor protecting the seed
 
-- TODO: example 5-{2,3,4}
+- [Examples](examples/mnemonic_to_seed_test.go)
 
 #### Optional passphrase in BIP-39
 
