@@ -1,3 +1,5 @@
+// +build ignore
+
 package main
 
 import (
@@ -11,12 +13,11 @@ func main() {
 	if nil != err {
 		panic(err)
 	}
-	defer c.Close()
 
-	var version string
-	if err := c.Call(&version, "web3_clientVersion"); nil != err {
+	var quantity string
+	if err := c.Call(&quantity, "eth_gasPrice"); nil != err {
 		panic(err)
 	}
 
-	fmt.Println(version)
+	fmt.Println(quantity)
 }
