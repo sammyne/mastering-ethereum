@@ -42,7 +42,7 @@
 
 ### Hierarchical Deterministic Wallets (BIP-32/BIP-44)
 
-![HD wallet: a tree of keys generated from a single seed](images/hd_wallets.png)
+![HD wallet: a tree of keys generated from a single seed](images/hd_wallet.png)
 
 - Advantages
   - The tree structure can be used to express additional organizational meaning
