@@ -172,6 +172,7 @@ docker run --rm ethereum/client-go:alltools-v1.8.23 geth version
 
 - The JSON-RPC API is an interface that allows us to write programs that use an Ethereum client as a gateway to an Ethereum network and blockchain.
 - Usually, the RPC interface is offered as an HTTP service on port 8545
+  - An example querying the version of `geth` goes as [web3_clientVersion.go](examples/web3_clientVersion.go)
 - For security reasons it is restricted, by default, to only accept connections from localhost
 - Each request contains four elements
 
