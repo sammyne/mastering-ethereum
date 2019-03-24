@@ -67,6 +67,7 @@
   | 0x03   | Compressed point with odd y  | 33     |
 
   > As seen, **Ethereum only uses uncompressed public keys**
+- An example goes as [Generating a Public Key](examples/generate_pubkey_test.go)
 
 ### Elliptic Curve Libraries
 
