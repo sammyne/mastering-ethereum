@@ -157,7 +157,7 @@
     withdraw(uint)
     ```
 
-- TODO: code example for data payload
+- An example for calculating data payload goes as [data_payload_test.go](examples/data_payload_test.go)
 
 ## Special Transaction: Contract Creation
 
