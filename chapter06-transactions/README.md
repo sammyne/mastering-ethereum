@@ -94,7 +94,7 @@
 - The higher the `gasPrice`, the faster the transaction is likely to be confirmed
 - `gasPrice=0` means a fee-free transaction
 
-- TODO: demo of `eth.getGasPrice`
+- A query of gas price goes as [eth_gasPrice.go](examples/eth_gasPrice.go)
 
 - If your transaction's destination address is a contract, then the amount of gas needed can be estimated but cannot be determined with accuracy. That's because a contract can evaluate different conditions that lead to different execution paths, with different total gas costs
 
