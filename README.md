@@ -25,5 +25,6 @@
 - [ ] Chapter 04. Cryptography
   - Missing the ICAP demo
 - [x] Chapter 05. Wallets
-- [ ] Chapter 06. Transactions
+- [x] Chapter 06. Transactions
+  - Maybe js version for demo later
 - [ ] Chapter 07. Smart Contracts and Solidity

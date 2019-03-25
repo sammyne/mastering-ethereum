@@ -300,7 +300,7 @@ Do
 
 ### Raw Transaction Creation and Signing
 
-- TODO: demo code
+- Demo as [tx_raw.go](examples/raw_tx.go)
 
 ### Raw Transaction Creation with EIP-155
 
