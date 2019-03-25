@@ -169,10 +169,31 @@
 - A contract creation transaction need only contain a data payload that contains the **compiled bytecode** which will create the contract
   - Optional ether amount in the `value` field will set the new contract up with a starting balance
 - It is good practice to always specify a to parameter, even in the case of zero-address contract creation, because the cost of accidentally sending your ether to `0x0` and losing it forever is too great
-- TODO: a manual contract creation tx
-  - construction
-  - decomposing
-  - funding
+- A manual contract creation tx goes as
+
+  1. Create a new account and tap some ether from the [B9lab](http://ipfs.b9lab.com:8080/ipfs/QmVAwVKys271P5EQyEfVSxm7BJDKWt42A2gHvNmxLjZMps/) faucet, by running the [new_account.go](examples/contract-creation/new_account.go) script
+  2. Compile the contract source file and get the bytecodes
+
+     ```bash
+     ./solc.sh --bin --optimze Faucet.sol
+     ```
+
+     where [solc.sh](../solc.sh) is a script invoking the docker-based solidity compiler. If ok, we should get similar output as (whre the hex string under `Binary:` is the bytecodes)
+
+     ```bash
+     ======= Faucet.sol:Faucet =======
+     Binary:
+     608060405234801561001057600080fd5b5060b08061001f6000396000f3fe608060405260043610601c5760003560e01c80632e1a7d4d14601e575b005b348015602957600080fd5b50601c60048036036020811015603e57600080fd5b503567016345785d8a0000811115605457600080fd5b604051339082156108fc029083906000818181858888f193505050501580156080573d6000803e3d6000fd5b505056fea165627a7a72305820d77165d5b972de3b3604c31e2dfd8cf2dd0c901b623521d1444453fbb12d52160029
+     ```
+
+  3. Deploy the contract by running the [create.go](examples/contract-creation/create.go)
+  4. Fetch the tx hash from [Etherscan](https://ropsten.etherscan.io/tx/0x0d546865e2ca26e4442491b854dd75d61f2fa6ce0a9c4db94027b007ff78f838), which is in my case
+     ```bash
+     0x0d546865e2ca26e4442491b854dd75d61f2fa6ce0a9c4db94027b007ff78f838
+     ```
+  5. Check the contract by its receipt (indexed by tx hash) on the mined block by running the [tx_receipt.go](examples/contract-creation/tx_receipt.go)
+  6. Fund the contract with 0.1 ether by running script [funding.go](examples/contract-creation/funding.go)
+  7. Withdraw 0.01 ether from the contract by running script [withdraw.go](examples/contract-creation/withdraw.go)
 
 ## Digital Signatures
 
@@ -184,7 +205,7 @@
   - Non-repudiation: the proof of authorization is undeniable
   - Data integrity: the signed transaction data has not been and cannot be modified by anyone
 
-  > [Wikipedia's De nition of a Digital Signature](https://en.wikipedia.org/wiki/Digital_signature)
+  > [Wikipedia's Definition of a Digital Signature](https://en.wikipedia.org/wiki/Digital_signature)
 
 ### How Digital Signatures Work
 
