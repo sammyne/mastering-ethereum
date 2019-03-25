@@ -113,7 +113,13 @@
   - **Payment**: A transaction with only value
   - **Invocation**: A transaction with only data
   - Both a **payment** and an **invocation**: A transaction with both value and data
-- TODO: 4 demos
+- 4 examples go as
+  1. Run the [new_account.go](examples/tx-value-and-data/new_account.go) script to make a new account
+  2. Request 0.5 ether from [B9lab](http://ipfs.b9lab.com:8080/ipfs/QmVAwVKys271P5EQyEfVSxm7BJDKWt42A2gHvNmxLjZMps/)
+     ```bash
+     curl -X POST -H "Content-Type: application/json" -d '{"toWhom":"{the-newly-created-address-above}"}' https://ropsten.faucet.b9lab.com/tap
+     ```
+     where `{the-newly-created-address-above}` should be replaced accordingly
 
 ### Transmitting Value to EOAs and Contracts
 
