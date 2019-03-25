@@ -42,10 +42,22 @@
 - When you create a new transaction, you assign the next nonce in the sequence. But until it is confirmed, it will not count toward the `getTransactionCount` total
 
 - DEMO of `getTransactionCount`
-    1. Sign up in [INFURA](https://infura.io/) to get a developer account 
-    2. Login and create a project named "mastering-ethereum", copy and provided `ENDPOINT`
-    ![Get a endpoint for developing](images/infura.png)
-    3. Subsequent steps go as 
+
+  1.  Sign up in [INFURA](https://infura.io/) to get a developer account
+  2.  Login and create a project named "mastering-ethereum", copy and provided `ENDPOINT`
+      ![Get a endpoint for developing](images/infura.png)
+  3.  Create an account as [new_account.go](examples/keep-track-of-nonces/new_account.go), which produces an address as `0x9CbE8d7e7690674CD29E83Bc21fd457397cb85ee` in our case
+  4.  With the address, request some ethers from one of the following faucets
+
+      - [Ropsten Ethereum Faucet](https://faucet.ropsten.be/)
+      - [Throttled Testnet Faucet](https://ipfs.io/ipfs/QmVAwVKys271P5EQyEfVSxm7BJDKWt42A2gHvNmxLjZMps/)
+      - [B9lab](http://ipfs.b9lab.com:8080/ipfs/QmVAwVKys271P5EQyEfVSxm7BJDKWt42A2gHvNmxLjZMps/)
+        ```bash
+        curl -X POST -H "Content-Type: application/json" -d '{"toWhom":"0x9CbE8d7e7690674CD29E83Bc21fd457397cb85ee"}' https://ropsten.faucet.b9lab.com/tap
+        ```
+
+  5.  Check the balance in [Etherscan](https://ropsten.etherscan.io/address/0x9CbE8d7e7690674CD29E83Bc21fd457397cb85ee)
+  6.  Play with `sendRawTransaction` as [transfer.go](examples/keep-track-of-nonces/transfer.go)
 
 - Only when the pending and confirmed counts are equal (all outstanding transactions are confirmed) can you trust the output of `getTransactionCount` to start your nonce counter
 - Parity's JSON RPC interface offers the `parity_nextNonce` function, which returns the next nonce that should be used in a transaction
