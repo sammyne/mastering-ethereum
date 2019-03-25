@@ -41,7 +41,11 @@
 - The nonce is an up-to-date zero-based count of the number of **confirmed** (i.e., on-chain) transactions that have originated from an account
 - When you create a new transaction, you assign the next nonce in the sequence. But until it is confirmed, it will not count toward the `getTransactionCount` total
 
-- TODO: example demonstrating the `getTransactionCount`
+- DEMO of `getTransactionCount`
+    1. Sign up in [INFURA](https://infura.io/) to get a developer account 
+    2. Login and create a project named "mastering-ethereum", copy and provided `ENDPOINT`
+    ![Get a endpoint for developing](images/infura.png)
+    3. Subsequent steps go as 
 
 - Only when the pending and confirmed counts are equal (all outstanding transactions are confirmed) can you trust the output of `getTransactionCount` to start your nonce counter
 - Parity's JSON RPC interface offers the `parity_nextNonce` function, which returns the next nonce that should be used in a transaction
