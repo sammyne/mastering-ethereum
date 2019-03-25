@@ -106,3 +106,5 @@ typings/
 
 # keystore 
 keystore/
+
+# the solc soft links
