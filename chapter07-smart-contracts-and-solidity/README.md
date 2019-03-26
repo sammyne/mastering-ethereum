@@ -76,11 +76,15 @@
   - The "minor" number is incremented as backward-compatible features are added in between major releases
   - The "patch" number is incremented for backward-compatible bug fixes
 
+  > In practice, Solidity treats the "minor" number as if it were the major version and the "patch" number as if it were the minor version.
+
 - Solidity programs can contain a pragma directive that specifies the minimum and maximum versions of Solidity that it is compatible with, and can be used to compile your contract
 
 ### Download and Install
 
 - Detailed in [the Solidity documentation](https://solidity.readthedocs.io/en/v0.5.6/installing-solidity.html)
+- In my case, I would use the docker-based version encapsulated as the [solc.sh](../solc.sh) script
+  - Contracts to compile MUST be placed in the `contracts` directory
 
 ### Development Environment
 
@@ -100,17 +104,22 @@
 ### Compiling with the Solidity Compiler (solc)
 
 - Use the `--bin` and `--optimize` arguments of solc to produce an optimized binary of our example contract
+- TODO: add the sample output
 
 ## The Ethereum Contract ABI
 
 - In computer software, an **application binary interface** is an interface between two program modules; often, between the **operating system** and **user programs**
 - An ABI defines how data structures and functions are accessed in **machine code**
-- In Ethereum, the ABI is used to encode contract calls for the EVM and to read data out of transactions. The purpose of an ABI is to define the functions in the contract that can be invoked and describe how each function will accept arguments and return its result
+- In Ethereum, the ABI is used to encode contract calls for the EVM and to read data out of transactions
+- The purpose of an ABI is to
+  - Define the functions in the contract that can be invoked
+  - Describe how each function will accept arguments and return its result
 - A contract's ABI is specified as a JSON array of
   - Function descriptions as `(type, name, inputs, outputs, constant, payable)`
   - Events as `(type, name, inputs, anonymous)`
 - ABI produced by `solc` with `--abi` option
-- All that is needed for an application to interact with a contract is
+  - TODO: sample output for our `Faucet` contract goes as
+- Interaction with a contract requires only
   - An ABI
   - The address where the contract has been deployed
 
@@ -118,8 +127,10 @@
 
 - **Problem**: A contract written in a specific version of Solidity is given to different version of Solidity compilers
 - **Solution**: Solidity offers a `compiler directive` known as a `version pragma` that instructs the compiler that the program expects a specific compiler (and lan‐ guage) version
-- Pragma directives are not compiled into EVM bytecode. They are only used by the compiler to check compatibility. If missing, a warning will be reported
-  - Tested with [Faucet.sol](examples/Faucet.sol) commenting out the `pragma` directive
+- **Pragma directives are not compiled into EVM bytecode**
+  - They are only used by the compiler to check compatibility
+  - If missing, a warning will be reported
+    - TODO: Tested with [Faucet.sol](examples/Faucet.sol) commenting out the `pragma` directive
   - Adding a version pragma is a best practice, as it avoids problems with mismatched compiler and language versions
 
 ## Programming with Solidity
@@ -134,7 +145,7 @@
 |            Address (`address`) | A 20-byte Ethereum address with many helpful member functions, the main ones being `balance` (returns the account balance) and `transfer`                                     |
 |           Byte array (_fixed_) | Fixed-size arrays of bytes, declared with `bytes1` up to `bytes32`                                                                                                            |
 |         Byte array (_dynamic_) | Variable-sized arrays of bytes, declared with `bytes` or `string`                                                                                                             |
-|                           Enum | User-defined type for enumerating discrete values: `enum NAME {LABEL1, LABEL 2, ...}`                                                                                         |
+|                           Enum | User-defined type for enumerating discrete values: `enum NAME {LABEL1, LABEL2, ...}`                                                                                          |
 |                         Arrays | An array of any type, either fixed or dynamic: `uint32[][5]` is a fixed-size array of five dynamic arrays of unsigned integers                                                |
 |                         Struct | User-defined data containers for grouping variables: `struct NAME {TYPE1 VARIABLE1; TYPE2 VARIABLE2; ...}`                                                                    |
 |                        Mapping | Hash lookup tables for `key => value` pairs: `mapping(KEY_TYPE => VALUE_TYPE) NAME`                                                                                           |
@@ -144,7 +155,7 @@ And various value literals as
 |     Literal | Description                                                                                                                     |
 | ----------: | :------------------------------------------------------------------------------------------------------------------------------ |
 |  Time units | The units `seconds`, `minutes`, `hours`, and `days` can be used as suffixes, converting to multiples of the base unit `seconds` |
-| Ether units | The units `wei`, `finney`, `szabo`, and `ether` can be used as suffixes, converting to multiples of the base unit `wei`         |
+| Ether units | The units `wei`, `szabo`, `finney`, and `ether` can be used as suffixes, converting to multiples of the base unit `wei`         |
 
 > Improve our code by using the unit multiplier ether, to express the value in `ether` instead of `wei`
 
@@ -167,9 +178,10 @@ And various value literals as
 |   `value` | The value of ether sent with this call (in `wei`)                                                                                                                |
 |     `gas` | The amount of gas left in the gas supply of this execution environment. This was deprecated in Solidity **v0.4.21** and replaced by the `gasleft` function       |
 |    `data` | The data payload of this call into our contract                                                                                                                  |
-|     `sig` | The first four bytes of the data payload, which is the function selector (??)                                                                                    |
+|     `sig` | The first four bytes of the data payload, which is the function selector                                                                                         |
 
-> Whenever a contract calls another contract, the values of all the attributes of `msg` change to reflect the new caller's information. The only exception to this is the `delegatecall` function
+> Whenever a contract calls another contract, the values of all the attributes of `msg` change to reflect the new caller's information.
+> The only exception to this is the `delegatecall` function
 
 #### Transaction context
 
@@ -184,25 +196,27 @@ And various value literals as
 
 - Expressed as the `block` object containing information
 
-|                Attribute | Description                                                                                                                                               |
-| -----------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `blockhash(blockNumber)` | The block hash of the specified block number, up to 256 blocks in the past. **Deprecated and replaced with the `blockhash` function in Solidity v0.4.22** |
-|               `coinbase` | The **address** of the recipient of the current block's fees and block reward                                                                             |
-|             `difficulty` | The difficulty (proof of work) of the current block                                                                                                       |
-|               `gaslimit` | The maximum amount of gas that can be spent across all transactions included in the current block                                                         |
-|                 `number` | The current block number (blockchain height)                                                                                                              |
-|              `timestamp` | The timestamp placed in the current block by the miner (number of seconds since the Unix epoch)                                                           |
+|    Attribute | Description                                                                                       |
+| -----------: | :------------------------------------------------------------------------------------------------ |
+|   `coinbase` | The **address** of the recipient of the current block's fees and block reward                     |
+| `difficulty` | The difficulty (proof of work) of the current block                                               |
+|   `gaslimit` | The maximum amount of gas that can be spent across all transactions included in the current block |
+|     `number` | The current block number (blockchain height)                                                      |
+|  `timestamp` | The timestamp placed in the current block by the miner (number of seconds since the Unix epoch)   |
+
+> The block hash of the specified block number, up to 256 blocks in the past can be queried by the global `blockhash(blockNumber)`
 
 #### `address` object
 
-|           Attribute | Description                                                                                                                                                                          |
-| ------------------: | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|           `balance` | The balance of the address, in `wei`. For example, the current contract balance is `address(this).balance`                                                                           |
-|  `transfer(amount)` | Transfers the amount (in `wei`) to this address, throwing an exception on any error                                                                                                  |
-|      `send(amount)` | Similar to `transfer`, only instead of throwing an exception, it returns `false` on error. **WARNING: always check the return value of send**                                        |
-|     `call(payload)` | Low-level `CALL` function -- can construct an arbitrary message call with a data payload. Returns `false` on error. **WARNING: unsafe**                                              |
-| `callcode(payload)` | Low-level `CALLCODE` function, like `address(this).call(...)` but with this contract's code replaced with that of address. Returns `false` on error. **WARNING: advanced use only!** |
-|    `delegatecall()` | Low-level `DELEGATECALL` function, like `callcode(...)` but with the full `msg` context seen by the current contract. Returns `false` on error. **WARNING: advanced use only!**      |
+|          Attribute | Description                                                                                                                                                                     |
+| -----------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+|          `balance` | The balance of the address, in `wei`. For example, the current contract balance is `address(this).balance`                                                                      |
+| `transfer(amount)` | Transfers the amount (in `wei`) to this address, throwing an exception on any error                                                                                             |
+|     `send(amount)` | Similar to `transfer`, only instead of throwing an exception, it returns `false` on error. **WARNING: always check the return value of send**                                   |
+|    `call(payload)` | Low-level `CALL` function -- can construct an arbitrary message call with a data payload. Returns `false` on error. **WARNING: unsafe**                                         |
+|   `delegatecall()` | Low-level `DELEGATECALL` function, like `callcode(...)` but with the full `msg` context seen by the current contract. Returns `false` on error. **WARNING: advanced use only!** |
+
+> As of v0.5.0, function `callcode` is now disallowed (in favor of delegatecall). It is still possible to use it via inline assembly.
 
 #### Built-in functions
 
@@ -218,7 +232,8 @@ And various value literals as
 
 - Signaled by the `contract` keyword
 - 2 other similar objects are
-  - `interface` is structured exactly like a `contract`, except none of the functions are defined, they are only declared. This type of declaration is often called a `stub`
+  - `interface` is structured exactly like a `contract`, except none of the functions are defined, they are only declared
+    > This type of declaration is often called a `stub`
   - `library` is meant to be deployed only once and used by other contracts, using the `delegatecall` method
 
 ### Functions
@@ -226,7 +241,7 @@ And various value literals as
 - Syntax of declaration goes as
 
   ```solidity
-  function FunctionName([parameters]) {public|private|internal|external} [pure|constant|view|payable] [modifiers] [returns (return types)]
+  function FunctionName([parameters]) {public|private|internal|external} [pure|view|payable] [modifiers] [returns (return types)]
   ```
 
   - `FunctionName`
@@ -239,38 +254,29 @@ And various value literals as
     - `external` is like `public`, except the decorated functions cannot be called from within the contract unless explicitly prefixed with the keyword `this`
     - `internal` make functions only accessible from within the contract -- they cannot be called by another contract or EOA transaction. They can be called by derived contracts (those that inherit this one)
     - `private` is like `internal`, except the decorated functions cannot be called by derived contracts
-  - `pure`/`constant`/`view`/`payable` affects behaviors of the functions
-    - `constant`/`view` marks a function promising not to modify any state, where `constant` will be deprecated in a future release
+  - `pure`/`view`/`payable` affects behaviors of the functions
+    - `view` marks a function promising not to modify any state
     - `pure` marks functions neither reading nor writing any variables in storage
-    - `payable` marks the only functions for accepting incoming payments. 2 exceptions are coinbase payments and `SELFDESTRUCT` inheritance will be paid even if the fallback function is not declared as `payable`
+    - `payable` marks the only functions for accepting incoming payments
+      > (TODO: EXPLAIN WHY) 2 exceptions are coinbase payments and `SELFDESTRUCT` inheritance will be paid even if the fallback function is not declared as `payable`
+
+> As of v0.5.0, `constant` aliasing `view` is disallowed
 
 ### Contract Constructor and `selfdestruct`
 
 - When a contract is created, it also runs the `constructor` function if one exists, to initialize the state of the contract
 - The constructor function is optional
-- Constructors can be specified in two ways
+- Constructors must be defined using the `constructor` keyword as
 
-  - The constructor is a function whose name matches the name of the contract
+  ```
+  pragma ^0.4.22
 
-    ```
-    contract MEContract {
-      function MEContract() {
-        // This is the constructor
-      }
+  contract MEContract {
+    constructor () {
+      // This is the constructor
     }
-    ```
-
-  - Solidity **v0.4.22** introduces a `constructor` keyword that operates like a constructor function but does not have a name
-
-    ```
-    pragma ^0.4.22
-
-    contract MEContract {
-      constructor () {
-        // This is the constructor
-      }
-    }
-    ```
+  }
+  ```
 
 - To summarize, a contract's life cycle
   - Starts with a creation transaction from an EOA or contract account
@@ -287,22 +293,168 @@ And various value literals as
 
 ### Adding a `Constructor` and `selfdestruct` to Our Faucet Example
 
+- Use case: Record the EOA as the creator of contract as `owner` in constructor, and enforce that only `owner` can invoke `selfdestruct`
+- TODO: demo code
+  > The run-once-only constructor renders the `owner` field constant once set
+
 ### Function Modifiers
+
+- Modifiers are most often used to create conditions that apply to many functions within a contract
+- An access control pattern goes as (requiring the `msg.sender` to be `owner`)
+
+  ```
+  modifier onlyOwner {
+    require(msg.sender == owner);
+    _;
+  }
+  ```
+
+- The modifier is "wrapped around" the modified function, placing its code in the location identified by the underscore `_` placeholder
+- More than one modifier can be applied to a function; they are applied in the sequence they are declared, as a comma-separated list
+- They are most often used for access control, but they are quite versatile and can be used for a variety of other purposes
+- Inside a modifier, you can access all the values (variables and arguments) visible to the modified function, but not vice verse
+- TODO: demo code
 
 ### Contract Inheritance
 
+- **WHAT**: A mechanism for extending a base contract with additional functionality
+- **HOW**: Specify a parent contract with the keyword `is`
+
+  ```solidity
+  contract Child is Parent {
+    ...
+  }
+  ```
+
+- The `Child` contract inherits all the methods, functionality, and variables of Parent
+- Multiple inheritance is specified by comma-separated contract names after the keyword `is`
+
+  ```solidity
+  contract Child is Parent1, Parent2 {
+    ...
+  }
+  ```
+
+- **WHY**: Write our contracts to achieve modularity, extensibility, and reuse
+- TODO: demo code
+  - A `owned` contract with the constructor and destructor, together with access control for an owner, assigned on construction
+  - `Faucet` contract rebased on `mortal` which is inherited from `owned`
+
 ### Error Handling (assert, require, revert)
+
+- **Atomicity** of contract execution: When a contract terminates with an error, all the state changes (changes to variables, balances, etc.) are reverted, all the way up the chain of contract calls if more than one contract was called
+- 3 keywords (as of v0.5.6)
+
+|                 Keyword | Description                                                                                                           |
+| ----------------------: | :-------------------------------------------------------------------------------------------------------------------- |
+|          `assert(bool)` | Should only be used to test for internal errors, and to check invariants                                              |
+| `require(bool [, msg])` | Used to test inputs (such as function arguments or transaction fields), setting our expectations for those conditions |
+|           `revert(msg)` | Used to flag an error and revert the current call                                                                     |
+
+- Certain conditions in a contract will generate errors regardless of explicit check
+- It might be better to check explicitly and provide a clear error message on the system-generated errors
+
+- TODO: demo
 
 ### Events
 
-### Calling Other Contracts (send, call, callcode, delegatecall)
+- The tx receipt contains _log_ entries providing information about the actions that occurred during the execution of the transaction
+- Events are the Solidity high-level objects that are used to construct these logs
+- Events are especially useful for light clients and DApp services, which can "watch" for specific events and report them to the user interface, or make a change in the state of the application to reflect an event in an underlying contract.
+- Event objects take arguments that are serialized and recorded in the transaction logs, in the blockchain
+- Supplying the keyword `indexed` before an argument of type `event` makes the value part of an indexed table (hash table) that can be searched or filtered by an application
+- Event are triggered with the `emit` keyword
+
+#### Catching events
+
+- Events are a very useful mechanism, not only for intra-contract communication, but also for debugging during development
+- TODO: code
+
+### Calling Other Contracts (`send`, `call`, `callcode`, `delegatecall`)
+
+- Calling other contracts from within your contract is a very useful but potentially dangerous operation
+- The risks arise from the fact that you may not know much about a contract you are calling into or that is calling into your contract
+
+#### Creating a new instance
+
+- The safest way to call another contract is if you create that other contract yourself
+- Contract instance can be created with initial ether by means of `value(amount)` function
+  - TODO: code
+
+#### Addressing an existing instance
+
+- **HOW**: Cast the address of an existing instance of the contract
+
+  ```solidity
+  import "Faucet.sol";
+
+  contract Token is mortal {
+    Faucet _faucet;
+
+    constructor(address _f) {
+      _faucet = Faucet(_f);
+      _faucet.withdraw(0.1 ether)
+    }
+  }
+  ```
+
+- **Caveat**: Using addresses passed as input and casting them into specific objects is therefore much more dangerous than creating the contract yourself
+
+#### Raw `call`, `delegatecall`
+
+- These API allow us to construct a contract-to-contract call manually
+- They represent the most flexible and the most dangerous mechanisms for calling other contracts
+
+  ```solidity
+  contract Token is mortal {
+    constructor(address _faucet) {
+      _faucet.call("withdraw", 0.1 ether);
+    }
+  }
+  ```
+
+- The `call` function will return `false` if there is a problem, so you can evaluate the return value for error handling
+
+  ```solidity
+  contract Token is mortal {
+    constructor(address _faucet) {
+      if !(_faucet.call("withdraw", 0.1 ether)) {
+        revert("Withdrawal from faucet failed");
+      }
+    }
+  }
+  ```
+
+- `delegatecall` runs the code of another contract inside the context of the execution of the current contract
+
+  - It is most often used to invoke code from a library
+  - The effects of `delegatecall` to non-library contract isn't promised
+
+- TODO: demo code
+- Library calling takes form of `delegatecall`
 
 ## Gas Considerations
 
+- Gas is a resource constraining the maximum amount of computation that Ethereum will allow a transaction to consume
+- In case of exceeded gas limit
+  - An "out of gas" exception is thrown
+  - The state of the contract prior to execution is restored (reverted)
+  - All ether used to pay for the gas is taken as a transaction fee; it is not refunded
+- Users originating txs are discouraged from calling functions that have a high gas cost
+- It is in the programmer's best interest to minimize the gas cost of a contract's functions
+- Some practices are introduced as follow
+
 ### Avoid Dynamically Sized Arrays
+
+- **WHY**: Loop for seaching a target risks too much gas
 
 ### Avoid Calls to Other Contracts
 
 ### Estimating Gas Cost
+
+- TODO: demo of estimating gas
+- TODO: demo of querying gas price
+
+- Recommendation: Evaluate the gas cost of functions as part of your development workflow, to avoid any surprises when deploying contracts to the mainnet
 
 ## Conclusions
