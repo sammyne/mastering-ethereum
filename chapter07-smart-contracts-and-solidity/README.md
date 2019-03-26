@@ -5,7 +5,7 @@
 
 ## What Is a Smart Contract?
 
-- **DEFINITION**: Immutable computer programs that run deterministically in the context of an Ethereum Virtual Machine as part of the Ethereum network protocol -- i.e., on the decentralized Ethereum world computer
+- **WHAT**: Immutable computer programs that run deterministically in the context of an Ethereum Virtual Machine as part of the Ethereum network protocol -- i.e., on the decentralized Ethereum world computer
   - **Computer programs**: Smart contracts are simply computer program
   - **Immutable**: Once deployed, the code of a smart contract cannot change
   - **Deterministic**: Always the same output given the same tx and blockchain state
@@ -18,12 +18,15 @@
   - Written in a high-level language, such as Solidity
   - Compiled to the low-level bytecode that runs in the EVM
   - Deployed on the Ethereum platform using a special contract creation transaction
+- Each contract is identified by an Ethereum address, which is derived from the contract creation transaction as a function of the originating account and nonce
+- A contract address as a recipient is for receiving funds or calling one of the contract's functions
 - **Contracts only run if they are called by a transaction**
-- Transactions are **atomic**, regardless of how many contracts they call or what those contracts do when called. Transactions execute in their entirety, with any changes in the global state (contracts, accounts, etc.) recorded only if all execution terminates successfully
+- Transactions are **atomic**
+  - On success, any changes in the global state (contracts, accounts, etc.) is recorded only
+  - On failure, all effects are "rolled back"/reverted
 - Contract deletion
-  - A contract's code cannot be changed but can be "**deleted**", removing the code and its internal state (storage) from its address, leaving a blank account
+  - A contract can be deleted with the EVM opcode called `SELFDESTRUCT`
   - Any txs sent to the deleted contract account address will result in no code execution
-  - **HOW**: execute the EVM opcode called `SELFDESTRUCT`
   - `SELFDESTRUCT` costs "negative gas," a gas refund, thereby incentivizing the release of network client resources from the deletion of stored state
   - The `SELFDESTRUCT` capability will only be available if the contract author programmed the smart contract to have that functionality
 
@@ -33,7 +36,7 @@
 - **WHY NOT BYTECODE**
   - EVM bytecodes is rather unwieldy and very difficult for programmers to read and understand
   - Programs writting in a high-level language can be compiled down to bytecodes
-- Programming languages can be classified into two broad programming paradigms
+- Two broad programming paradigms
 
   - Declarative (a.k.a, functional), including Haskell and SQL
     - Makes it easier to understand how a program will behave: since it has no side effects, any part of a program can be understood in isolation
@@ -45,23 +48,25 @@
 
     > The hybrid ones include Lisp, JavaScript and Python
 
-- In smart contracts, bugs literally cost money, so declarative languages is preferred
+- In smart contracts, bugs literally cost money
+  - Declarative languages are recommended
+  - But imperative ones are favored by programmers
 - Supported high-level languages are
 
-| Language | Description                                                                                                                                                                                                             |
-| -------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|      LLL | A functional (declarative) programming language, with Lisp-like syntax                                                                                                                                                  |
-|  Serpent | A procedural (imperative) programming language with a syntax similar to Python. Can also be used to write functional (declarative) code, though it is not entirely free of side effects                                 |
-| Solidity | A procedural (imperative) programming language with a syntax similar to JavaScript, C++, or Java. **The most popular and frequently used language for Ethereum smart contracts**                                        |
-|    Vyper | A more recently developed language, similar to Serpent and again with Python-like syntax. Intended to get closer to a pure-functional Python-like language than Serpent, but not to replace Serpent                     |
-|   Bamboo | A newly developed language, influenced by Erlang, with explicit state transitions and without iterative flows (loops). Intended to reduce side effects and increase auditability. Very new and yet to be widely adopted |
+| Language | Style       | Description                                                                                                                                                                                 |
+| -------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| LLL      | Declarative | Lisp-like syntax                                                                                                                                                                            |
+| Serpent  | Imperative  | Python-like syntax. Can also be used to write functional (declarative) code, though it is not entirely free of side effects                                                                 |
+| Solidity | Imperative  | JS/C++/Java-like syntax. **The most popular and frequently used language for Ethereum smart contracts**                                                                                     |
+| Vyper    | Declarative | Similar to Serpent and again with Python-like syntax. Intended to get closer to a pure-functional Python-like language than Serpent, but not to replace Serpent                             |
+| Bamboo   | N/A         | Influenced by Erlang, with explicit state transitions and without iterative flows (loops). Intended to reduce side effects and increase auditability. Very new and yet to be widely adopted |
 
 ## Building a Smart Contract with Solidity
 
-- Solidity is now developed and maintained as an independent project on [GitHub](https://github.com/ethereum/solidity)
+- Solidity is now developed and maintained as an independent project ([ethereum/solidity](https://github.com/ethereum/solidity)) on Github
 - The main "product" of the Solidity project is the Solidity compiler, `solc`, which converts programs written in the Solidity language to EVM bytecode
-- The project also manages the important application binary interface (ABI) standard for Ethereum smart contracts
-- Each version of the Solidity compiler corresponds to and compiles a specific version of the Solidity language.
+- The project also manages the important **application binary interface** (ABI) standard for Ethereum smart contracts
+- Each version of the Solidity compiler corresponds to and compiles a specific version of the Solidity language
 
 ### Selecting a Version of Solidity
 
