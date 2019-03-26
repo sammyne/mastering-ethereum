@@ -7,10 +7,8 @@ contract Faucet {
 
   // Give out ether to anyone who asks
   function withdraw(uint amount) public {
-    // improve our code by using the unit multiplier ether, 
-    // to express the value in ether instead of wei
-    //require(amount <= 100000000000000000000);
-    require(amount <= 0.1 ether);
+    // Limit withdrawal amount
+    require(amount <= 100000000000000000000);
 
     // Send the amount to the address that requested it
     msg.sender.transfer(amount);

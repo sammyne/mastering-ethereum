@@ -99,7 +99,7 @@
 
 ### Writing a Simple Solidity Program
 
-- As [Faucet.sol](examples/Faucet.sol)
+- As [Faucet01.sol](examples/contracts/Faucet01.sol)
 
 ### Compiling with the Solidity Compiler (solc)
 
