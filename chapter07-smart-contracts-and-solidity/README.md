@@ -123,7 +123,14 @@
   - Function descriptions as `(type, name, inputs, outputs, constant, payable)`
   - Events as `(type, name, inputs, anonymous)`
 - ABI produced by `solc` with `--abi` option
-  - TODO: sample output for our `Faucet` contract goes as
+
+  - Sample output for our `Faucet` contract goes as
+    ```bash
+    ======= Faucet01.sol:Faucet =======
+    Contract JSON ABI
+    [{"constant":false,"inputs":[{"name":"amount","type":"uint256"}],"name":"withdraw","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"payable":true,"stateMutability":"payable","type":"fallback"}]
+    ```
+
 - Interaction with a contract requires only
   - An ABI
   - The address where the contract has been deployed
