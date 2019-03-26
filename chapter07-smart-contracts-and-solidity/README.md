@@ -140,10 +140,19 @@
 - **Problem**: A contract written in a specific version of Solidity is given to different version of Solidity compilers
 - **Solution**: Solidity offers a `compiler directive` known as a `version pragma` that instructs the compiler that the program expects a specific compiler (and lan‐ guage) version
 - **Pragma directives are not compiled into EVM bytecode**
+
   - They are only used by the compiler to check compatibility
   - If missing, a warning will be reported
-    - TODO: Tested with [Faucet.sol](examples/Faucet.sol) commenting out the `pragma` directive
-  - Adding a version pragma is a best practice, as it avoids problems with mismatched compiler and language versions
+
+    - Tested with [Faucet2.sol](examples/contracts/Faucet2.sol) commenting out the `pragma` directive
+
+      ```bash
+      Faucet2.sol:6:1: Warning: Source file does not specify required compiler version! Consider adding "pragma solidity ^0.5.6;"
+      contract Faucet {
+      ^ (Relevant source part starts here and spans across multiple lines).
+      ```
+
+- Adding a version pragma is a best practice, as it avoids problems with mismatched compiler and language versions
 
 ## Programming with Solidity
 
