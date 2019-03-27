@@ -7,8 +7,6 @@
 package cmd
 
 import (
-	"fmt"
-	"os"
 	"path/filepath"
 
 	"github.com/sammyne/mastering-ethereum/playground/eth"
@@ -16,7 +14,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var keyStoreDir string
+var (
+	keyStoreDir string
+	passphrase  string
+)
 
 // accountCmd represents the account command
 var accountCmd = &cobra.Command{
@@ -28,10 +29,6 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("account called")
-		fmt.Println(os.LookupEnv("HOME"))
-	},
 }
 
 func init() {
@@ -50,4 +47,6 @@ func init() {
 	accountCmd.PersistentFlags().StringVar(&keyStoreDir, "keystore",
 		filepath.Join(eth.DefaultDataDir(), "keystore"),
 		"Directory for the keystore")
+	accountCmd.PersistentFlags().StringVar(&passphrase, "passphrase", "hello",
+		"passphrase to decrypt/encrypt accounts")
 }

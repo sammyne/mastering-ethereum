@@ -10,35 +10,39 @@ import (
 	"fmt"
 
 	"github.com/sammyne/mastering-ethereum/playground/eth"
+
 	"github.com/spf13/cobra"
 )
 
-// accountNewCmd represents the accountNew command
-var accountNewCmd = &cobra.Command{
-	Use:   "new",
-	Short: "Create a new account",
-	Long:  `Creates a new account and prints the address`,
+// accountListCmd represents the accountList command
+var accountListCmd = &cobra.Command{
+	Use:   "list",
+	Short: "Print summary of existing accounts",
+	Long:  `Print a short summary of all accounts`,
 	Run: func(cmd *cobra.Command, args []string) {
-		_, account, err := eth.NewAccount(keyStoreDir, passphrase)
+		_, accounts, err := eth.ListAndUnlockAccounts(keyStoreDir, passphrase)
 
 		if nil != err {
 			fmt.Println(err)
 			return
 		}
-		fmt.Println(account.Address.Hex())
+
+		for i, a := range accounts {
+			fmt.Printf("[%d]: %s\n", i, a.Address.Hex())
+		}
 	},
 }
 
 func init() {
-	accountCmd.AddCommand(accountNewCmd)
+	accountCmd.AddCommand(accountListCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// accountNewCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// accountListCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// accountNewCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// accountListCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
