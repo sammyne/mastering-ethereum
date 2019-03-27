@@ -325,9 +325,14 @@ And various value literals as
      ./solc.sh --bin --optimize Faucet3.sol
      ```
 
-  4. Copy and paste the output bytecodes in the value field of `faucetCode` of [deploy.go](examples/construct-selfdestruct/deploy.go)
+  4. Copy and paste the output bytecodes in the value field of `faucetCode` of [deploy.go](examples/construct-selfdestruct/deploy.go), and trigger the deployment as
+     ```bash
+     go run deploy.go
+     ```
+     Wait until the tx has been confirmed
+  5.
 
-     > The run-once-only constructor renders the `owner` field constant once set
+  > The run-once-only constructor renders the `owner` field constant once set
 
 ### Function Modifiers
 
