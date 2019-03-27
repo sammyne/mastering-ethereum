@@ -9,7 +9,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
-	ethereum "github.com/sammyne/2018-mastering-ethereum"
+	ethereum "github.com/sammyne/mastering-ethereum"
 )
 
 func main() {

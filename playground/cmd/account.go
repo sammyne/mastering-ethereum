@@ -11,7 +11,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/sammyne/2018-mastering-ethereum/playground/eth"
+	"github.com/sammyne/mastering-ethereum/playground/eth"
 
 	"github.com/spf13/cobra"
 )

@@ -13,7 +13,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
-	ethereum "github.com/sammyne/2018-mastering-ethereum"
+	ethereum "github.com/sammyne/mastering-ethereum"
 )
 
 func loadKeyStore() (*keystore.KeyStore, accounts.Account) {
