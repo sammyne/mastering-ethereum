@@ -5,7 +5,7 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/keystore"
 )
 
-func ListAndUnlockAccounts(keydir, passphrase string) (*keystore.KeyStore,
+func UnlockAccounts(keydir, passphrase string) (*keystore.KeyStore,
 	[]accounts.Account, error) {
 	store := keystore.NewKeyStore(keydir, keystore.StandardScryptN,
 		keystore.StandardScryptP)

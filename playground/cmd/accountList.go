@@ -20,7 +20,7 @@ var accountListCmd = &cobra.Command{
 	Short: "Print summary of existing accounts",
 	Long:  `Print a short summary of all accounts`,
 	Run: func(cmd *cobra.Command, args []string) {
-		_, accounts, err := eth.ListAndUnlockAccounts(keyStoreDir, passphrase)
+		_, accounts, err := eth.UnlockAccounts(keyStoreDir, passphrase)
 
 		if nil != err {
 			fmt.Println(err)
