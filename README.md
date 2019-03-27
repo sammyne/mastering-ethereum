@@ -21,7 +21,8 @@
 
 The playground implements a simple commander handling jobs such as
 
-- Generate account
+- Generate accounts
+- List/Unlock accounts
 
 All the utility API is implemented in the `playground/eth` package
 
