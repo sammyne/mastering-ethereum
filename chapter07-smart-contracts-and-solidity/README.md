@@ -316,7 +316,18 @@ And various value literals as
 
 - Use case: Record the EOA as the creator of contract as `owner` in constructor, and enforce that only `owner` can invoke `selfdestruct`
 - TODO: demo code
-  > The run-once-only constructor renders the `owner` field constant once set
+
+  1. Create a account (`account new` command of the daemon in the `playground` package)
+  2. Tap some ethers from some faucet (`faucet tap` command of the daemon implemented in the `playground` package)
+  3. Compile [Faucet3.sol](examples/contracts/Faucet3.sol)
+
+     ```bash
+     ./solc.sh --bin --optimize Faucet3.sol
+     ```
+
+  4. Copy and paste the output bytecodes in the value field of `faucetCode` of [deploy.go](examples/construct-selfdestruct/deploy.go)
+
+     > The run-once-only constructor renders the `owner` field constant once set
 
 ### Function Modifiers
 

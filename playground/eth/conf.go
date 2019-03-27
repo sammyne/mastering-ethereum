@@ -20,3 +20,8 @@ func init() {
 func DefaultDataDir() string {
 	return defaultDataDir
 }
+
+// DefaultKeyDir returns the default keystore directory
+func DefaultKeyDir() string {
+	return filepath.Join(defaultDataDir, "keystore")
+}
