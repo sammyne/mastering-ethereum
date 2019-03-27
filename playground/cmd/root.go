@@ -10,12 +10,17 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/sammyne/2018-mastering-ethereum/playground/eth"
+
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
-var cfgFile string
+var (
+	cfgFile string
+	dataDir string
+)
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -52,6 +57,9 @@ func init() {
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.
 	rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
+	rootCmd.Flags().StringVar(&dataDir, "datadir", eth.DefaultDataDir(),
+		"Data directory for the app")
 }
 
 // initConfig reads in config file and ENV variables if set.
