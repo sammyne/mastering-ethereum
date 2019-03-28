@@ -69,7 +69,17 @@
   - [Token.sol](examples/overflow-underflow/Token.sol)
     - **HOW**: Bypass the Line 13 with `_value>balances[msg.sender]` to trigger underflow thus stealing free tokens
 
+### Preventative Techniques
+
+- Use or build mathematical libraries that replace the standard math operators addition, subtraction, and multiplication (division is excluded as it does not cause over/underflows and the EVM reverts on division by 0)
+- Recommendation: OpenZeppelin (TODO: link)
+  - The SafeMath (TODO: link) to tackle over/underflows as [OverflowFreeTimeLock.sol](examples/overflow-underflow/OverflowFreeTimeLock.sol)
+
 ### Real-World Examples: PoWHC and Batch Transfer Overflow (CVE-2018–10299)
+
+- Proof of Weak Hands Coin (PoWHC), originally devised as a joke of sorts, was a Ponzi scheme written by an internet collective
+- PoWHC suffers from underflow as explained by Eric Banisadr (TODO: link)
+- PeckShield's account (TODO: link) suffers from overflow
 
 ## Unexpected Ether
 
