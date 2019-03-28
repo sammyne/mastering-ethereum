@@ -28,4 +28,5 @@
 - [x] Chapter 06. Transactions
   - Maybe js version for demo later
 - [ ] Chapter 07. Smart Contracts and Solidity
+- [ ] Chapter 09. Smart Contract Security
 - [ ] Chapter 10. Tokens
