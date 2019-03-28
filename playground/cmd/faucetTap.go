@@ -7,6 +7,10 @@
 package cmd
 
 import (
+	"fmt"
+
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/sammyne/mastering-ethereum/playground/eth"
 	"github.com/spf13/cobra"
 )
 
@@ -17,7 +21,14 @@ var faucetTapCmd = &cobra.Command{
 	Use:   "tap",
 	Short: "Tap some ethers into a given address",
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO: fill in the implementation
+		txHash, err := eth.Fund(common.HexToAddress(address))
+
+		if nil != err {
+			fmt.Println(err)
+			return
+		}
+
+		fmt.Println("refers to", txHash)
 	},
 }
 
