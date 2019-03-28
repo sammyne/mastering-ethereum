@@ -66,6 +66,8 @@
   - [TimeLock.sol](examples/overflow-underflow/TimeLock.sol)
     - TODO: Fire an issue reporting the missing balance
     - **HOW**: Call the `increaseLockTime(2^256 - userLockTime)` to reset `lockTime[msg.sender]` as `0`, and then withdraw all reward
+  - [Token.sol](examples/overflow-underflow/Token.sol)
+    - **HOW**: Bypass the Line 13 with `_value>balances[msg.sender]` to trigger underflow thus stealing free tokens
 
 ### Real-World Examples: PoWHC and Batch Transfer Overflow (CVE-2018–10299)
 
