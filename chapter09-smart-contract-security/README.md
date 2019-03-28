@@ -106,7 +106,14 @@
       - Fund the contract by `selfdestruct()` to make the `this.balance` be non-multiple of 0.5 ether
       - Lock all ethers by forcibly funding 10 ethers due to missing milestones
 
+### Preventative Techniques
+
+- Contract logic, when possible, should avoid being dependent on exact values of the balance of the contract, because it can be artificially manipulated
+- Make a self-defined variable incremented in payable functions, to safely track the deposited ether as [EtherGameOK.sol](examples/unexpected-ethers/EtherGameOK.sol)
+
 ### Further Examples
+
+- Underhanded Solidity Coding Contest (TODO: link)
 
 ## DELEGATECALL
 
