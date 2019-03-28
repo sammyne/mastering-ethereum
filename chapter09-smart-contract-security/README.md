@@ -83,6 +83,29 @@
 
 ## Unexpected Ether
 
+- Contracts that rely on code execution for all ether sent to them can be vulnerable to attacks where ether is forcibly sent
+- Related links (TODO: link)
+  - How to Secure Your Smart Contracts
+  - Solidity Security Patterns - Forcing Ether to a Contract
+
+### The Vulnerability
+
+- A common defensive programming technique that is useful in enforcing correct state transitions or validating operations is **invariant checking**. This technique involves defining a set of invariants (metrics or parameters that should not change) and checking that they remain unchanged after a single (or many) operation(s)
+- **WHY**: Misconception that a contract can only accept or obtain ether via payable functions
+  - Example is the use of `this.balance`
+- Contracts can receive ethers without payable functions or executing any code
+  - As receipent of `selfdestruct()` forced by attackers demo as (TODO: link)
+  - As receipent of pre-sent ether before deployment due to the determinstic contract address as
+    ```js
+    address = sha3(rlp.encode([account_address, transaction_nonce]))
+    ```
+- Examples
+  - [EtherGame](examples/unexpected-ethers/EtherGame.sol)
+    - **CAUSE**: Line 14 and 32
+    - **HOW**
+      - Fund the contract by `selfdestruct()` to make the `this.balance` be non-multiple of 0.5 ether
+      - Lock all ethers by forcibly funding 10 ethers due to missing milestones
+
 ### Further Examples
 
 ## DELEGATECALL
