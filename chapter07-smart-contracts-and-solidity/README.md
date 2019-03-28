@@ -332,6 +332,10 @@ And various value literals as
      Wait until the tx has been confirmed
   5. Check the status of the deployed contract with [ping_code_test.go](examples/construct-selfdestruct/ping_code_test.go)
   6. Create one more account and fund it with some ether
+  7. Delete the contract by calling `destroy()` of the contract
+
+     - By owner is fine
+     - By nonowner would trigger error
 
   > The run-once-only constructor renders the `owner` field constant once set
 
