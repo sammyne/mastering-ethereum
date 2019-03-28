@@ -315,7 +315,7 @@ And various value literals as
 ### Adding a `Constructor` and `selfdestruct` to Our Faucet Example
 
 - Use case: Record the EOA as the creator of contract as `owner` in constructor, and enforce that only `owner` can invoke `selfdestruct`
-- TODO: demo code
+- Demo goes as follows
 
   1. Create a account (`account new` command of the daemon in the `playground` package)
   2. Tap some ethers from some faucet (`faucet tap` command of the daemon implemented in the `playground` package)
@@ -355,7 +355,7 @@ And various value literals as
 - More than one modifier can be applied to a function; they are applied in the sequence they are declared, as a comma-separated list
 - They are most often used for access control, but they are quite versatile and can be used for a variety of other purposes
 - Inside a modifier, you can access all the values (variables and arguments) visible to the modified function, but not vice verse
-- TODO: demo code
+- The code sample goes as [Faucet4.sol](examples/contracts/Faucet4.sol)
 
 ### Contract Inheritance
 
