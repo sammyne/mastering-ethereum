@@ -337,6 +337,8 @@ And various value literals as
      - By owner is fine
      - By nonowner would trigger error
 
+  8. After successful deletion, run the [ping_code_test.go](examples/construct-selfdestruct/ping_code_test.go) should failed
+
   > The run-once-only constructor renders the `owner` field constant once set
 
 ### Function Modifiers
@@ -378,7 +380,7 @@ And various value literals as
   ```
 
 - **WHY**: Write our contracts to achieve modularity, extensibility, and reuse
-- TODO: demo code
+- Sample code goes as [Faucet5.sol](examples/contracts/Faucet5.sol)
   - A `owned` contract with the constructor and destructor, together with access control for an owner, assigned on construction
   - `Faucet` contract rebased on `mortal` which is inherited from `owned`
 
