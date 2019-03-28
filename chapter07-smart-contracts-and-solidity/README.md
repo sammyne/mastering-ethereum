@@ -398,7 +398,7 @@ And various value literals as
 - Certain conditions in a contract will generate errors regardless of explicit check
 - It might be better to check explicitly and provide a clear error message on the system-generated errors
 
-- TODO: demo
+- Code sample goes as [Faucet6.sol](examples/contracts/Faucet6.sol)
 
 ### Events
 
