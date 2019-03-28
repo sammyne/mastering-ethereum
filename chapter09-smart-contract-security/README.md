@@ -62,6 +62,10 @@
 ### The Vulnerability
 
 - An over/underflow occurs when an operation is performed that requires a fixed-size variable to store a number (or piece of data) that is outside the range of the variable's data type
+- Examples
+  - [TimeLock.sol](examples/overflow-underflow/TimeLock.sol)
+    - TODO: Fire an issue reporting the missing balance
+    - **HOW**: Call the `increaseLockTime(2^256 - userLockTime)` to reset `lockTime[msg.sender]` as `0`, and then withdraw all reward
 
 ### Real-World Examples: PoWHC and Batch Transfer Overflow (CVE-2018–10299)
 
