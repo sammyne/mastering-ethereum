@@ -171,7 +171,31 @@
 
 ## Entropy Illusion
 
+- Every transaction modifies the global state of the Ethereum ecosystem in a calculable way, with no uncertainty
+- This has the fundamental implication that there is no source of entropy or randomness in Ethereum
+- Achieving decentralized entropy (randomness) is a well-known problem for which many solutions have been proposed, including RANDAO (TODO: link), or using a chain of hashes, as described by Vitalik Buterin in the blog post "Validator Ordering and Randomness in PoS" (TODO: link)
+
+### The Vulnerability
+
+- Gambling requires uncertainty (something to bet on), which makes building a gambling system on the blockchain (a deterministic system) rather difficult
+- The uncertainty must come from a source external to the blockchain
+- Option 1: future block variables
+  - **Demerit**: Controlled by miners
+- Option 2: past or present variables
+  - Analysis as Martin Swende (TODO: link)
+- Using solely block variables means that the pseudorandom number will be the same for all transactions in a block, so an attacker can multiply their wins by doing many transactions within a block (should there be a maximum bet)
+
+### Preventative Techniques
+
+- The source of entropy (randomness) must be external to the blockchain
+- Options (TODO: links)
+  - Commit–reveal
+  - Changing the trust model to a group of participants (as in RandDAO)
+  - A centralized entity that acts as a randomness oracle
+
 ### Real-World Example: PRNG Contracts
+
+- Analyzed by Arseny Reutov in Feb. 2018 (TODO: link)
 
 ## External Contract Referencing
 
