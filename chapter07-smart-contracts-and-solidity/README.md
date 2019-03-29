@@ -545,8 +545,16 @@ And various value literals as
 
 ### Estimating Gas Cost
 
-- TODO: demo of estimating gas
-- TODO: demo of querying gas price
+1. Compile the [Faucet01.sol](examples/contracts/Faucet01.sol)
+
+```bash
+./solc --bin --optimize Faucet01.sol
+```
+
+2. Populate the `code` field in [deploy.go](examples/gas-estimation/deploy.go)
+3. Deploy the contract by running the deploy.go script
+4. After the tx is settled, populate the `txHash` field in [estimate_withdrawal.go](examples/gas-estimation/estimate_withdrawal.go) with the above deployment tx
+5. Run the estimate_withdrawal.go script should produce us some tips about gas
 
 - Recommendation: Evaluate the gas cost of functions as part of your development workflow, to avoid any surprises when deploying contracts to the mainnet
 
