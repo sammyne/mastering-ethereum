@@ -311,7 +311,41 @@
 
 ## Race Conditions/Front Running
 
+- Related links (TODO: links)
+  - Ethereum Wiki
+  - \#7 on the DASP Top10 of 2018
+  - The Ethereum Smart Contract Best Practices
+
+### The Vulnerability
+
+- **HOW**: An attacker can watch the transaction pool for transactions that may contain solutions to problems, and modify or revoke the solver's permissions or change state in a contract detrimentally to the solver
+- Example contract as [FindThisHash.sol](examples/race-condition-front-running/FindThisHash.sol)
+  - For a solved solution submit as tx, anyone knowing the tx can make a higher-`gasPrice` tx to be favored for mining
+
+### Preventative Techniques
+
+- Two kinds of actors
+  - Users modifying the `gasPrice` (This is worse than below)
+  - Miners filtering tx
+- To guard only against malicious users
+  - Place an upper bound on the `gasPrice` to disable tx ordering by `gasPrice`
+- Another option against both actors: a commit–reveal scheme (TODO: link)
+  - **HOW**
+    - Users send transactions with hidden information (typically a hash)
+    - After the transaction has been included in a block, the user sends a transaction revealing the data that was sent (the reveal phase)
+  - **Cons**: Cannot conceal the transaction value
+- Related links (TODO: links)
+  - ENS contracts
+  - submarine sends
+
 ### Real-World Examples: ERC20 and Bancor
+
+- The ERC20 standard is quite well-known for building tokens on Ethereum. This standard has a potential front-running vulnerability that comes about due to the `approve` function as explained by Mikhail Vladimirov and Dmitry Khovratovich (TODO: link)
+  - A approves B 100 tokens
+  - B takes them
+  - Then A want to reset tokens for B as 50
+  - B can take another 50 more tokens
+- Analysis for Bancor is given by Ivan Bogatyy (TODO: links)
 
 ## Denial of Service (DoS)
 
