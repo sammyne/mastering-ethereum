@@ -440,7 +440,25 @@ And various value literals as
 
 - The safest way to call another contract is if you create that other contract yourself
 - Contract instance can be created with initial ether by means of `value(amount)` function
-  - TODO: code
+
+- Demo
+
+  ```solidity
+  // import "Faucet.sol" // import the contract if it resides in other files
+
+  contract Token is mortal {
+    Faucet _faucet;
+
+    constructor() {
+      //_faucet = new Faucet();
+
+      // specify an optional initial ether if you want
+      _faucet = (new Faucet).value(0.5 ether)();
+    }
+
+    // call any API of Faucet as you want
+  }
+  ```
 
 #### Addressing an existing instance
 
