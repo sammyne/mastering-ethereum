@@ -251,9 +251,63 @@
 
 - All input parameters in external applications should be validated before sending them to the blockchain
 
-## Unchecked CALL Return Values
+## Unchecked `CALL` Return Values
+
+- The `call` and `send` functions return a Boolean indicating whether the call succeeded or failed, but not reverting the calling in case of failure
+- A common error is that the developer expects a revert to occur if the external call fails, and does not check the return value
+- Related links (TODO: links)
+  - DASP Top 10 of 2018
+  - Scanning Live Ether‐ eum Contracts for the ‘Unchecked-Send' Bug
+
+### The Vulnerability
+
+- Example: [Lotto.sol](examples/unchecked-call-returned-value/Lotto.sol)
+  - The missing failure check of line 13
+    - `sendToWinner` would set on `payout` regardless of `winner.send(winAmount)`
+    - Anyone after the `sendToWinner` can take all the leftover
+
+### Preventative Techniques
+
+- Prefer `transfer` than `send`
+- If `send`, always check the returned value
+- Recommendation: the withdrawal pattern
+  - Each user must call an isolated withdraw function that handles the sending of ether out of the contract and deals with the consequences of failed send transactions. The idea is to logically isolate the external send functionality from the rest of the codebase, and place the burden of a potentially failed transaction on the end user calling the withdraw function.
 
 ### Real-World Example: Etherpot and King of the Ether
+
+- **WHY**: incorrect use of block hashes as explained by Aakil Fernandes (TODO: link)
+- Sample code
+
+  ```solidity
+  ...
+  function cash(uint roundIndex, uint subpotIndex){
+
+      var subpotsCount = getSubpotsCount(roundIndex);
+
+      if(subpotIndex>=subpotsCount)
+          return;
+
+      var decisionBlockNumber = getDecisionBlockNumber(roundIndex,subpotIndex);
+
+      if(decisionBlockNumber>block.number)
+          return;
+
+      if(rounds[roundIndex].isCashed[subpotIndex])
+          return;
+      //Subpots can only be cashed once. This is to prevent double payouts
+
+      var winner = calculateWinner(roundIndex,subpotIndex);
+      var subpot = getSubpot(roundIndex);
+
+      winner.send(subpot);
+
+      rounds[roundIndex].isCashed[subpotIndex] = true;
+      //Mark the round as cashed
+  }
+  ...
+  ```
+
+  - **HOW**: `winner.send(subpot)` isn't checked, which may produce a state where the winner does not receive their ether, but the state of the contract can indicate that the winner has already been paid
 
 ## Race Conditions/Front Running
 
