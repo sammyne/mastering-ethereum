@@ -504,13 +504,27 @@ And various value literals as
   }
   ```
 
-- `delegatecall` runs the code of another contract inside the context of the execution of the current contract
+- `delegatecall` runs the code of another contract **inside the context of the execution of the current contract**
 
   - It is most often used to invoke code from a library
   - The effects of `delegatecall` to non-library contract isn't promised
 
-- TODO: demo code
-- Library calling takes form of `delegatecall`
+- A demo goes follows
+  1. Deploy the dependent contract by [deploy_called_contract.go](examples/call-delegatecall/deploy_called_contract.go)
+  2. Deploy the dependent library by [deploy_called_library.go](examples/call-delegatecall/deploy_called_library.go)
+  3. Find out the address (let's say it's `Lib`) of the deployed `calledLibrary` above
+  4. Link the deployed library to the `caller` contract
+     ```bash
+     ./solc.sh --libraries calledLibrary:<Lib> --bin --optimize CallExamples.sol
+     ```
+     Replace `<Lib>` with your actual address of `calledLibrary`
+     (TODO: more funny details later)
+     > The `__$xxxxxx$__` in the `caller` part should disappear now
+  5. Wait until all 3 contracts have been deployed on-chain successfully
+  6. Call `makeCalls` by an tx with [make_calls.go](examples/call-delegatecall/make_calls.go)
+     > NOTE: The address must be padded to 32 bytes as the ABI specification
+  7. After the tx above settled, checking the logging as [logging_test](examples/call-delegatecall/logging_test.go)
+- Library calling always takes form of `delegatecall`
 
 ## Gas Considerations
 
