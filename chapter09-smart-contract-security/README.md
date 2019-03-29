@@ -117,7 +117,37 @@
 
 ## DELEGATECALL
 
+- Standard external message calls to contracts are handled by the `CALL` opcode, whereby code is run in the context of the external contract/function
+- The `DELEGATECALL` opcode is almost identical, except that the code executed at the targeted address is run in the context of the calling contract, and `msg.sender` and `msg.value` remain unchanged
+- Related links (TODO: links)
+  - Loi.Luu's Ethereum Stack Exchange question on this topic
+  - The Solidity docs
+
+### The Vulnerability
+
+- The code in libraries themselves can be secure and vulnerability-free
+- The context-preserving nature of `DELEGATECALL` introduce new vulnerabilities
+- Demo as [FibonacciBalance.sol](examples/delegatecall/FibonacciBalance.sol) against [FibonacciLib.sol](examples/delegatecall/FibonacciLib.sol)
+  - The fallback function in the `FibonacciBalance` contract allows all calls to be passed to the library contract
+  - The storage layout of state variables in contract make it possible to modify the states the `FibonacciBalance` contract due to context preserving of `delegatecall`
+    - `setStart()` allows modify the `slot[0]` of `FibonacciBalance`, thus enabling changing the address of `fibLibrary` (e.g. as [`Attack` contract](examples/delegatecall/Attack.sol))
+- When we say that delegatecall is state-preserving, we are not talking about the variable names of the contract, but rather the actual storage slots to which those names point
+
+### Preventative Techniques
+
+- Employ `library` keyword for implementing library contracts
+  - Forcing libraries to be stateless mitigates the complexities of storage context
+  - Stateless libraries also prevent attacks wherein attackers modify the state of the library directly in order to affect the contracts that depend on the library's code
+- As a general rule of thumb, when using `DELEGATECALL` pay careful attention to the possible calling context of both the library contract and the calling contract, and whenever possible build stateless libraries.
+
 ### Real-World Example: Parity Multisig Wallet (Second Hack)
+
+- Examples (TODO: links)
+  - Parity Multisig Hacked. Again
+  - An In-Depth Look at the Parity Multisig Bug
+- Example: [WalletLibrary.sol](examples/delegatecall/WalletLibrary.sol) and [Wallet.sol](examples/delegatecall/Wallet.sol)
+  - The `WalletLibrary` contract is itself a **contract** and maintains its own state
+  - The owner of `WalletLibrary` contract can destruct the `WalletLibrary`, rendering any later payment to the `Wallet` referencing the deleted `WalletLibrary` lost forever
 
 ## Default Visibilities
 
