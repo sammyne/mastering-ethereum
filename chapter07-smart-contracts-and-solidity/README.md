@@ -412,7 +412,24 @@ And various value literals as
 #### Catching events
 
 - Events are a very useful mechanism, not only for intra-contract communication, but also for debugging during development
-- TODO: code
+- Demo goes as follows
+
+  1. Compile the [Faucet8.sol](examples/contracts/Faucet8.sol)
+
+     ```bash
+     ./solc.sh --bin --optimize Faucet8.sol
+     ```
+
+  2. Copy and paste the output bytecodes in the value field of `faucetCode` of [deploy.go](examples/events/deploy.go), and trigger the deployment as
+     ```bash
+     go run deploy.go
+     ```
+     Wait until the tx has been confirmed through [Ethersan.io](https://ropsten.etherscan.io)
+  3. Check the status of the deployed contract with [ping_code_test.go](examples/construct-selfdestruct/ping_code_test.go)
+  4. Deposit some amount into the contract to trigger the event in the fallback functions by [deposit.go](examples/events/deposit.go)
+  5. Check the `Deposit` event as [deposit_logging_test.go](examples/events/deposit_logging_test.go)
+  6. Withdraw some amount out of the contract to trigger the `Withdrawal` event in the `withdraw()` as [withdraw.go](examples/events/withdraw.go)
+  7. Check the `Withdrawal` event as [withdrawal_logging_test](examples/events/withdrawal_logging_test.go)
 
 ### Calling Other Contracts (`send`, `call`, `callcode`, `delegatecall`)
 
