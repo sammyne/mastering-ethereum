@@ -199,7 +199,27 @@
 
 ## External Contract Referencing
 
+### The Vulnerability
+
+- In Solidity, any address can be cast to a contract, regardless of whether the code at the address represents the contract type being cast
+- Example: [EncryptionContract.sol](examples/external-contracts-referencing/EncryptionContract.sol) to deploy with [Rot13Encryption.sol](examples/external-contracts-referencing/Rot13Encryption.sol)
+  - **HOW**
+    - Replace the provided `_encryptionLibrary` to `EncryptionContract` with `Rot26Encryption` or `Print` contract
+    - Or with `Blank` contract by putting malicious codes in the fallback to be called due to no matching functions
+
+### Preventative Techniques
+
+- Use the `new` keyword to create contracts internally to render the referenced contract immutable
+- Hardcode external contract addresses
+- The address of the referenced external contracts should be public for auditing
+- If a user can change a contract address that is used to call external functions, it can be important (in a decentralized system context) to implement a time-lock and/or voting mechanism to allow users to see what code is being changed, or to give participants a chance to opt in/out with the new contract address
+
 ### Real-World Example: Reentrancy Honey Pot
+
+- **Honey Pot**: Contracts try to outsmart Ethereum hackers who try to exploit the contracts, but who in turn end up losing ether to the contract they expect to exploit
+- Example: [Log.sol](examples/external-contracts-referencing/Log.sol)
+  - Reentrance by exploiting line 29 would trigger OOG thus reverting any tx
+  - Detail as (TODO: link)
 
 ## Short Address/Parameter Attack
 
