@@ -223,6 +223,34 @@
 
 ## Short Address/Parameter Attack
 
+- Related links (TODO: links)
+  - The ERC20 Short Address Attack Explained
+  - ICO Smart Contract Vulnerability: Short Address Attack
+  - This Reddit post
+
+### The Vulnerability
+
+- It is possible to send encoded parameters that are shorter than the expected parameter length according to the ABI specification
+- **WHEN**: Third-party applications do not validate inputs
+  - Example: The ERC20 Short Address Attack Explained
+    - Given `transfer` function as
+      ```solidity
+      function transfer(address to, uint tokens) public returns (bool success);
+      ```
+    - To withdraw 100 tokens to address `0xdeaddeaddeaddeaddeaddeaddeaddeaddeaddead`, the correct ABI-encoded data should be (where `-` is added to ease readibility only, which doesn't actually exist)
+      ```
+      a9059cbb-000000000000000000000000deaddeaddeaddeaddeaddeaddeaddeaddeaddead-0000000000000 000000000000000000000000000000000056bc75e2d63100000
+      ```
+    - A well-crafted data payload is
+      ```
+      a9059cbb-000000000000000000000000deaddeaddeaddeaddeaddeaddeaddeaddeadde00-00000000000000000000000000000000000000000000056bc75e2d6310000000
+      ```
+      by leaving out the last byte of the recipient address, thus rendering the tokens stealing possible if not watched carefully
+
+### Preventative Techniques
+
+- All input parameters in external applications should be validated before sending them to the blockchain
+
 ## Unchecked CALL Return Values
 
 ### Real-World Example: Etherpot and King of the Ether
