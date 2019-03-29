@@ -151,7 +151,23 @@
 
 ## Default Visibilities
 
+### The Vulnerability
+
+- The intended `private` API is missed out, and default to `public`
+- Example: [HashForEther.sol](examples/default-visibility/HashForEther.sol)
+  - The unintended public `_sendWinnings` function allows any address to steal the bounty
+
+### Preventative Techniques
+
+- Always specify the visibility of all functions in a contract, even if they are intentionally `public`
+
 ### Real-World Example: Parity Multisig Wallet (First Hack)
+
+- Analysis as Haseeb Qureshi (TODO: link)
+- Example: [WalletLibrary.sol](examples/default-visibility/WalletLibrary.sol)
+  - The unintended public `initMultiowned` enables an attacker to
+    - Call these functions on deployed contracts, resetting the ownership to the attacker's address
+    - Then drain the wallets of all their ether
 
 ## Entropy Illusion
 
