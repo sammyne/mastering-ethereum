@@ -503,6 +503,27 @@
 
 ## Tx.Origin Authentication
 
+- `tx.origin` traverses the entire call stack and contains the address of the account that originally sent the call (or transaction)
+- Related links (TODO: link)
+  - "Tx.Origin and Ethereum Oh My!" by Peter Vessenes
+  - "Solidity: Tx Origin Attacks" by Chris Coverdale
+
+### The Vulnerability
+
+- Contracts that authorize users using the `tx.origin` variable are typically vulnerable to phishing attacks that can trick users into performing authenticated actions on the vulnerable contract
+- Example: [Phishable.sol](examples/tx-origin-authentication/Phishable.sol) is vulnerable to [AttackContract.sol](examples/tx-origin-authentication/AttackContract.sol)
+  - The source code of public contracts is not available by default
+  - **HOW**
+    - If the victim sends a transaction with enough gas to the `AttackContract` address
+    - The fallback function of `AttackContract` is invoked
+    - The `withdrawAll` function of the `Phishable` contract with the parameter `attacker` is called
+    - All funds from the `Phishable` contract are withdrawn to the attacker address due to the valid `tx.origin` check
+
+### Preventative Techniques
+
+- Never use `tx.origin` for authorization in smart contracts.
+- To deny external contracts from calling the current contract, one could implement a require of the form `require(tx.origin == msg.sender)`
+
 ## Contract Libraries
 
 ## Conclusions
