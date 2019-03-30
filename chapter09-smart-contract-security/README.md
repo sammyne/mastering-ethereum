@@ -472,7 +472,34 @@
 
 ## Floating Point and Precision
 
+- As of this writing (v0.4.24), Solidity does not support fixed-point and floating-point numbers. This means that floating-point representations must be constructed with integer types in Solidity
+- Related links (TODO: link)
+  - Ethereum Contract Security Techni‐ ques and Tips wiki
+
+### The Vulnerability
+
+- Example contract as [FunWithNumbers.sol](examples/floating-point-and-precision/FunWithNumbers.sol)
+  - Ignore over/underflow issues
+  - **WHY**: The precision is only to the nearest ether
+    - For `buyTokens`, if the `value` isn't a multiple of `weiPerEth`, the buyer would get less than expectation
+    - For `sellTokens`, if `tokens` isn't a multiple of `tokensPerEth`, the seller would get fewer ether than expected
+
+### Preventative Techniques
+
+- Ensure that any ratios or rates you are using allow for large numerators in fractions
+- Be mindful of order of operations to achieve greater precision
+  - `a*b/c` would be more precise than `a/c*b`
+- When defining arbitrary precision for numbers
+  1. Convert values to higher precision
+  2. Perform all mathematical operations
+  3. Convert back down to the precision required for output
+
 ### Real-World Example: Ethstick
+
+- Source of Ethstick (TODO: link)
+- Have issues of rounding at the wei level of precision
+- Also suffers from the entropy illusion (TODO: link)
+- More see "Ethereum Contracts Are Going to Be Candy for Hackers" (TODO: link)
 
 ## Tx.Origin Authentication
 
