@@ -526,4 +526,20 @@
 
 ## Contract Libraries
 
+- Advantages of using well-established existing on-platform libraries
+
+  - Being able to benefit from the latest upgrades
+  - Saves you money and benefits the Ethereum ecosystem by reducing the total number of live contracts in Ethereum
+
+- Reliable sources
+  - The most widely used resource is the OpenZeppelin suite (TODO: link)
+    - The contracts in this repository have been extensively tested and in some cases even function as de facto standard implementations
+  - Zeppelin is ZeppelinOS (TODO: link)
+    - An open source platform of services and tools to develop and manage smart contract applications securely
+- `ethpm` is a package management tool for libraries
+  - Website: https://www.ethpm.com/
+  - Repository link: https://www.ethpm.com/registry
+  - GitHub link: https://github.com/ethpm
+  - Documentation: https://www.ethpm.com/docs/integration-guide
+
 ## Conclusions
