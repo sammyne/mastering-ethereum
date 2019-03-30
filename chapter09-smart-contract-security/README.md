@@ -349,7 +349,49 @@
 
 ## Denial of Service (DoS)
 
+### The Vulnerability
+
+- Looping through externally manipulated mappings or arrays as [DistributeTokens.sol](examples/dos/DistributeTokens.sol)
+  - An attacker can create many user accounts, making the investor array large. In principle this can be done such that the gas required to execute the for loop exceeds the block gas limit
+- Owner operations
+
+  ```solidity
+  bool public isFinalized = false;
+  address public owner; // gets set somewhere
+
+  function finalize() public {
+      require(msg.sender == owner);
+      isFinalized == true;
+  }
+
+  // ... extra ICO functionality
+
+  // overloaded transfer function
+  function transfer(address _to, uint _value) returns (bool) {
+      require(isFinalized);
+      super.transfer(_to,_value)
+  }
+
+  ...
+  ```
+
+  - Owners have specific privileges in contracts and must perform some task in order for the contract to proceed to the next state
+  - If the privileged user loses their private keys or becomes inactive, the entire token contract becomes inoperable
+
+- Progressing state based on external calls
+  - The external call fails or is prevented for external reasons
+
+### Preventative Techniques
+
+- For [DistributeTokens.sol](examples/dos/DistributeTokens.sol), a withdrawal pattern is recommended, whereby each of the investors call a withdraw function to claim tokens independently.
+- For owner operations, a failsafe can be used in the event that the owner becomes incapacitated. Two solutions
+  - Make the owner a multisig contract
+  - Use a time-lock
+- For external calls, account for their possible failure and potentially add a time-based state progression in the event that the desired call never comes
+
 ### Real-World Examples: GovernMental
+
+- **HOW**: A Reddit post (TODO: link) by etherik describes how the contract required the deletion of a large mapping in order to withdraw the ether.
 
 ## Block Timestamp Manipulation
 
