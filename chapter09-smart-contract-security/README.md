@@ -445,7 +445,30 @@
 
 ## Uninitialized Storage Pointers
 
+- Related links in solidity doc (TODO: links)
+
+  - Data location, layout of state variables in storage
+  - Layout in memory
+
+### The Vulnerability
+
+- Local variables within functions default to storage or memory depending on their type
+- Uninitialized local storage variables may contain the value of other storage variables in the contract; this fact can cause unintentional vulnerabilities, or be exploited deliberately
+- Example contract as [NameRegistrar.sol](examples/uninitialized-storage-pointers/NameRegistrar.sol)
+  - State variables are stored sequentially in slots (32 bytes each) as they appear in the contract
+  - Solidity by default puts complex data types, such as structs, in storage when initializing them as local variables
+  - The uninitialized `newRecord` (line 20) defaults to storage, and `newRecord.name` is mapped to storage slot[0], which currently contains a pointer to `unlocked`
+    - If the last byte of `_name` argument is non-zero, `unlocked` is modified directly
+
+### Preventative Techniques
+
+- The Solidity compiler shows a warning for unintialized storage variables; developers should pay careful attention to these warnings when building smart contracts
+- Explicitly use the `memory` or `storage` specifiers when dealing with complex types, to ensure they behave as expected
+
 ### Real-World Examples: OpenAddressLottery and CryptoRoulette Honey Pots
+
+- OpenAddressLottery (TODO: link): A honey pot was deployed that used this uninitialized storage variable quirk to collect ether from some would-be hackers as analyzed by the Reddit thread (TODO: link)
+- CryptoRoulette: A honey pot utilizes this trick to try and collect some ether (see "An Analysis of a Couple Ethereum Honeypot Contracts" (TODO: link))
 
 ## Floating Point and Precision
 
