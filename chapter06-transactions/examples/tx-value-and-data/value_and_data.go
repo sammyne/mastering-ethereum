@@ -11,7 +11,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/ethereum/go-ethereum/rpc"
-	ethereum "github.com/sammyne/2018-mastering-ethereum"
+	ethereum "github.com/sammyne/mastering-ethereum"
 )
 
 const (

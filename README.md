@@ -17,6 +17,15 @@
 
   - where the avaiable `executable` is listed as the official [Executables](https://github.com/ethereum/go-ethereum#executables) section
 
+## Playground
+
+The playground implements a simple commander handling jobs such as
+
+- Generate accounts
+- List/Unlock accounts
+
+All the utility API is implemented in the `playground/eth` package
+
 ## Work in Progress
 
 - [x] Chapter 01. What Is Ethereum?

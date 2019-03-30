@@ -9,36 +9,44 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/sammyne/mastering-ethereum/playground/eth"
 	"github.com/spf13/cobra"
 )
 
-// accountNewCmd represents the accountNew command
-var accountNewCmd = &cobra.Command{
-	Use:   "new",
-	Short: "Create a new account",
-	Long:  `Creates a new account and prints the address`,
+var address string
+
+// faucetTapCmd represents the faucetTap command
+var faucetTapCmd = &cobra.Command{
+	Use:   "tap",
+	Short: "Tap some ethers into a given address",
 	Run: func(cmd *cobra.Command, args []string) {
-		_, account, err := eth.NewAccount(keyStoreDir, passphrase)
+		txHash, err := eth.Fund(common.HexToAddress(address))
 
 		if nil != err {
 			fmt.Println(err)
 			return
 		}
-		fmt.Println(account.Address.Hex())
+
+		fmt.Println("refers to", txHash)
 	},
 }
 
 func init() {
-	accountCmd.AddCommand(accountNewCmd)
+	faucetCmd.AddCommand(faucetTapCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// accountNewCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// faucetTapCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// accountNewCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// faucetTapCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+
+	faucetTapCmd.Flags().StringVar(&address, "address", "",
+		"address to received the tapped ethers")
+
+	faucetTapCmd.MarkFlagRequired("address")
 }

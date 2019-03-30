@@ -315,7 +315,30 @@ And various value literals as
 ### Adding a `Constructor` and `selfdestruct` to Our Faucet Example
 
 - Use case: Record the EOA as the creator of contract as `owner` in constructor, and enforce that only `owner` can invoke `selfdestruct`
-- TODO: demo code
+- Demo goes as follows
+
+  1. Create a account (`account new` command of the daemon in the `playground` package)
+  2. Tap some ethers from some faucet (`faucet tap` command of the daemon implemented in the `playground` package)
+  3. Compile [Faucet3.sol](examples/contracts/Faucet3.sol)
+
+     ```bash
+     ./solc.sh --bin --optimize Faucet3.sol
+     ```
+
+  4. Copy and paste the output bytecodes in the value field of `faucetCode` of [deploy.go](examples/construct-selfdestruct/deploy.go), and trigger the deployment as
+     ```bash
+     go run deploy.go
+     ```
+     Wait until the tx has been confirmed
+  5. Check the status of the deployed contract with [ping_code_test.go](examples/construct-selfdestruct/ping_code_test.go)
+  6. Create one more account and fund it with some ether
+  7. Delete the contract by calling `destroy()` of the contract
+
+     - By owner is fine
+     - By nonowner would trigger error
+
+  8. After successful deletion, run the [ping_code_test.go](examples/construct-selfdestruct/ping_code_test.go) should failed
+
   > The run-once-only constructor renders the `owner` field constant once set
 
 ### Function Modifiers
@@ -334,7 +357,7 @@ And various value literals as
 - More than one modifier can be applied to a function; they are applied in the sequence they are declared, as a comma-separated list
 - They are most often used for access control, but they are quite versatile and can be used for a variety of other purposes
 - Inside a modifier, you can access all the values (variables and arguments) visible to the modified function, but not vice verse
-- TODO: demo code
+- The code sample goes as [Faucet4.sol](examples/contracts/Faucet4.sol)
 
 ### Contract Inheritance
 
@@ -357,7 +380,7 @@ And various value literals as
   ```
 
 - **WHY**: Write our contracts to achieve modularity, extensibility, and reuse
-- TODO: demo code
+- Sample code goes as [Faucet5.sol](examples/contracts/Faucet5.sol)
   - A `owned` contract with the constructor and destructor, together with access control for an owner, assigned on construction
   - `Faucet` contract rebased on `mortal` which is inherited from `owned`
 
@@ -375,7 +398,7 @@ And various value literals as
 - Certain conditions in a contract will generate errors regardless of explicit check
 - It might be better to check explicitly and provide a clear error message on the system-generated errors
 
-- TODO: demo
+- Code sample goes as [Faucet6.sol](examples/contracts/Faucet6.sol)
 
 ### Events
 
@@ -389,7 +412,24 @@ And various value literals as
 #### Catching events
 
 - Events are a very useful mechanism, not only for intra-contract communication, but also for debugging during development
-- TODO: code
+- Demo goes as follows
+
+  1. Compile the [Faucet8.sol](examples/contracts/Faucet8.sol)
+
+     ```bash
+     ./solc.sh --bin --optimize Faucet8.sol
+     ```
+
+  2. Copy and paste the output bytecodes in the value field of `faucetCode` of [deploy.go](examples/events/deploy.go), and trigger the deployment as
+     ```bash
+     go run deploy.go
+     ```
+     Wait until the tx has been confirmed through [Ethersan.io](https://ropsten.etherscan.io)
+  3. Check the status of the deployed contract with [ping_code_test.go](examples/construct-selfdestruct/ping_code_test.go)
+  4. Deposit some amount into the contract to trigger the event in the fallback functions by [deposit.go](examples/events/deposit.go)
+  5. Check the `Deposit` event as [deposit_logging_test.go](examples/events/deposit_logging_test.go)
+  6. Withdraw some amount out of the contract to trigger the `Withdrawal` event in the `withdraw()` as [withdraw.go](examples/events/withdraw.go)
+  7. Check the `Withdrawal` event as [withdrawal_logging_test](examples/events/withdrawal_logging_test.go)
 
 ### Calling Other Contracts (`send`, `call`, `callcode`, `delegatecall`)
 
@@ -400,7 +440,25 @@ And various value literals as
 
 - The safest way to call another contract is if you create that other contract yourself
 - Contract instance can be created with initial ether by means of `value(amount)` function
-  - TODO: code
+
+- Demo
+
+  ```solidity
+  // import "Faucet.sol" // import the contract if it resides in other files
+
+  contract Token is mortal {
+    Faucet _faucet;
+
+    constructor() {
+      //_faucet = new Faucet();
+
+      // specify an optional initial ether if you want
+      _faucet = (new Faucet).value(0.5 ether)();
+    }
+
+    // call any API of Faucet as you want
+  }
+  ```
 
 #### Addressing an existing instance
 
@@ -446,13 +504,27 @@ And various value literals as
   }
   ```
 
-- `delegatecall` runs the code of another contract inside the context of the execution of the current contract
+- `delegatecall` runs the code of another contract **inside the context of the execution of the current contract**
 
   - It is most often used to invoke code from a library
   - The effects of `delegatecall` to non-library contract isn't promised
 
-- TODO: demo code
-- Library calling takes form of `delegatecall`
+- A demo goes follows
+  1. Deploy the dependent contract by [deploy_called_contract.go](examples/call-delegatecall/deploy_called_contract.go)
+  2. Deploy the dependent library by [deploy_called_library.go](examples/call-delegatecall/deploy_called_library.go)
+  3. Find out the address (let's say it's `Lib`) of the deployed `calledLibrary` above
+  4. Link the deployed library to the `caller` contract
+     ```bash
+     ./solc.sh --libraries calledLibrary:<Lib> --bin --optimize CallExamples.sol
+     ```
+     Replace `<Lib>` with your actual address of `calledLibrary`
+     (TODO: more funny details later)
+     > The `__$xxxxxx$__` in the `caller` part should disappear now
+  5. Wait until all 3 contracts have been deployed on-chain successfully
+  6. Call `makeCalls` by an tx with [make_calls.go](examples/call-delegatecall/make_calls.go)
+     > NOTE: The address must be padded to 32 bytes as the ABI specification
+  7. After the tx above settled, checking the logging as [logging_test](examples/call-delegatecall/logging_test.go)
+- Library calling always takes form of `delegatecall`
 
 ## Gas Considerations
 
@@ -473,8 +545,16 @@ And various value literals as
 
 ### Estimating Gas Cost
 
-- TODO: demo of estimating gas
-- TODO: demo of querying gas price
+1. Compile the [Faucet01.sol](examples/contracts/Faucet01.sol)
+
+```bash
+./solc --bin --optimize Faucet01.sol
+```
+
+2. Populate the `code` field in [deploy.go](examples/gas-estimation/deploy.go)
+3. Deploy the contract by running the deploy.go script
+4. After the tx is settled, populate the `txHash` field in [estimate_withdrawal.go](examples/gas-estimation/estimate_withdrawal.go) with the above deployment tx
+5. Run the estimate_withdrawal.go script should produce us some tips about gas
 
 - Recommendation: Evaluate the gas cost of functions as part of your development workflow, to avoid any surprises when deploying contracts to the mainnet
 

@@ -6,7 +6,7 @@
 
 package main
 
-import "github.com/sammyne/2018-mastering-ethereum/playground/cmd"
+import "github.com/sammyne/mastering-ethereum/playground/cmd"
 
 func main() {
 	cmd.Execute()

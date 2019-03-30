@@ -73,6 +73,8 @@ github.com/rjeczalik/notify v0.9.2 h1:MiTWrPj55mNDHEiIX5YUSKefw/+lCQVoAFmD6oQm5w
 github.com/rjeczalik/notify v0.9.2/go.mod h1:aErll2f0sUX9PXZnVNyeiObbmTlk5jnMoCa4QEjJeqM=
 github.com/rs/cors v1.6.0 h1:G9tHG9lebljV9mfp9SNPDL36nCDxmo3zTlAf1YgvzmI=
 github.com/rs/cors v1.6.0/go.mod h1:gFx+x8UowdsKA9AchylcLynDq+nNFfI8FkUZdN/jGCU=
+github.com/sammyne/2018-mastering-ethereum v0.0.0-20190327050106-569d074803e9 h1:AEvCmu/t6KR5e85fq5h+JmchvTxUOHOFXnWKOok/VvM=
+github.com/sammyne/2018-mastering-ethereum v0.0.0-20190327050106-569d074803e9/go.mod h1:OgBYwtxsgYzTkGBJPBWaN0DJMzmM++eZeWlEeM3q4vw=
 github.com/sammyne/bip39 v0.0.0-20190304102345-47509114a7d7 h1:NyWDuQUWdq9ncbcBqjccmTuSAExrO2jLPboL4UEVICk=
 github.com/sammyne/bip39 v0.0.0-20190304102345-47509114a7d7/go.mod h1:I1xjmVwWYuGPs1wVZ/T81GpFyCtucO1LMsPwHLeyi08=
 github.com/spf13/afero v1.1.2 h1:m8/z1t7/fwjysjQRYbP0RD+bUIF/8tJwPdEZsI83ACI=

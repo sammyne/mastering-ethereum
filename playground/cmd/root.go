@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/sammyne/2018-mastering-ethereum/playground/eth"
+	"github.com/sammyne/mastering-ethereum/playground/eth"
 
 	homedir "github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
