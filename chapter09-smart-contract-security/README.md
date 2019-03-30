@@ -429,7 +429,19 @@
 
 ## Constructors with Care
 
+### The Vulnerability
+
+- **WHY**: If the contract name is modified, or there is a typo in the constructor's name such that it does not match the name of the contract, the constructor will behave like a normal function
+- Example contract as [OwnerWallet.sol](examples/constructor-with-care/OwnerWallet.sol)
+
+### Preventative Techniques
+
+- Use the `constructor` keyword as of v0.4.22
+
 ### Real-World Example: Rubixi
+
+- With renaming from `DynamicPyramid` to `Rubixi` without changing the constructor name, allows any user to become the creator
+- Explanation goes as (TODO: link)
 
 ## Uninitialized Storage Pointers
 
