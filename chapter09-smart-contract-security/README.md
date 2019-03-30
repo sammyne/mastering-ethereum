@@ -395,7 +395,37 @@
 
 ## Block Timestamp Manipulation
 
+- Applications of timestamp
+  - Entropy for random numbers
+  - Locking funds for periods of time
+  - Various state-changing conditional statements
+- Related links (TODO: links)
+  - The Solidity docs
+  - Joris Bontje's Ethereum Stack Exchange question
+
+### The Vulnerability
+
+- Example contract as [Roulette.sol](examples/block-timestamp-manipulation/Roulette.sol)
+  - If enough ether pools in the contract, a miner who solves a block is incentivized to choose a timestamp such that `block.timestamp` or now modulo 15 is 0
+  - As there is only one person allowed to bet per block, this is also vulnerable to front-running attacks
+- In practice, block timestamps are required to be
+  - Monotonically increasing
+  - Not too far in the future
+
+### Preventative Techniques
+
+- Block timestamps should not be used for entropy or generating random numbers
+  - They should not be the deciding factor (either directly or through some derivation) for winning a game or changing an important state
+- Time-sensitive applications
+  - For unlocking contracts (time- locking), completing an ICO after a few weeks, or enforcing expiry dates
+  - Are recommended to use `block.number` and an average block time to estimate times
+
 ### Real-World Example: GovernMental
+
+- TODO: link
+- **HOW**
+  - The contract paid out to the player who was the last player to join (for at least one minute) in a round
+  - A miner who was a player could adjust the timestamp (to a future time, to make it look like a minute had elapsed) to make it appear that they were the last player to join for over a minute (even though this was not true in reality)
 
 ## Constructors with Care
 
