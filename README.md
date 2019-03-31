@@ -38,4 +38,4 @@ All the utility API is implemented in the `playground/eth` package
   - Maybe js version for demo later
 - [ ] Chapter 07. Smart Contracts and Solidity
 - [ ] Chapter 09. Smart Contract Security
-- [ ] Chapter 10. Tokens
+- [x] Chapter 10. Tokens
