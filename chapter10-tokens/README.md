@@ -203,7 +203,19 @@ contract ERC20 {
 
 #### Demonstrating the "approve & transferFrom" workflow
 
-- TODO: demo code
+1. Install dependencies
+
+   ```bash
+   yarn add openzeppelin-solidity@2.2.0
+   ```
+
+2. Compile the [METFaucet.sol](examples/METokenFaucet/contracts/METFaucet.sol) with [compile.sh](examples/METokenFaucet/compile.sh)
+3. Deploy the contract with script [deploy.go](examples/METokenFaucet/deploy.go)
+4. Once the contract is settled on the blockchain, check its storage with [deploy_test.go](examples/METokenFaucet/deploy_test.go)
+5. Approve 1000 tokens to the deployed `METFaucet` contract from the owner of `METoken` by [approve.go](examples/METokenFaucet/approve.go)
+6. Once the approval is settled on chain, check it by [approve_test.go](examples/METokenFaucet/approve_test.go)
+7. Withdraw some tokens to another account through `METFaucet` by [withdraw.go](examples/METokenFaucet/withdraw.go)
+8. Once the withdrawal is settled, validate the withdrawal with [withdraw_test.go](examples/METokenFaucet/withdraw_test.go)
 
 ### Issues with ERC20 Tokens
 

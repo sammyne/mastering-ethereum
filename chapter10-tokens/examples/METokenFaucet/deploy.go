@@ -7,12 +7,13 @@ import (
 	"io/ioutil"
 	"math/big"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/sammyne/mastering-ethereum/playground/eth"
 )
 
 func readInMETokenBytecodes() ([]byte, error) {
-	const src = "contracts/build/METoken.bin"
+	const src = "contracts/build/METFaucet.bin"
 
 	data, err := ioutil.ReadFile(src)
 	if nil != err {
@@ -36,7 +37,7 @@ func main() {
 	}
 
 	const (
-		nonce    = 24
+		nonce    = 26
 		gasLimit = 2000000
 	)
 
@@ -47,17 +48,21 @@ func main() {
 	}
 	//fmt.Printf("%s\n", bytecodes)
 
-	// TODO: compare with NewTransaction
-	tx := types.NewContractCreation(nonce, eth.ToWei(0), gasLimit,
-		gasPrice, bytecodes)
-
 	store, accounts, err := eth.UnlockAccounts(eth.DefaultKeyDir(),
 		eth.DefaultPassphrase())
 	if nil != err {
 		panic(err)
 	}
-
 	account := accounts[0]
+
+	METokenAddress := common.HexToAddress("0x13b3D3e67a963Ef5Ad94d9C47dEbd503Ff04dfE6")
+
+	data := append(bytecodes, common.LeftPadBytes(METokenAddress.Bytes(), 32)...)
+	data = append(data, common.LeftPadBytes(account.Address.Bytes(), 32)...)
+
+	// TODO: compare with NewTransaction
+	tx := types.NewContractCreation(nonce, eth.ToWei(0), gasLimit, gasPrice, data)
+
 	if tx, err = store.SignTx(account, tx, ropstenChainID); nil != err {
 		panic(err)
 	}
