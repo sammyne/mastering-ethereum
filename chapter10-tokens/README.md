@@ -171,11 +171,27 @@ contract ERC20 {
 
 ### Launching Our Own ERC20 Token
 
-- TODO: demo code
+1. Make the directory
+
+   ```bash
+   mkdir METoken
+   ```
+
+2. Install dependencies
+
+   ```bash
+   yarn add openzeppelin-solidity@2.2.0
+   ```
+
+3. Compile the contract by running the [compile.sh](examples/METoken/compile.sh) script
+   > The bytecodes for each component would be produced in the `contracts/build` folder
+4. Deploy the contract with script [deploy.go](examples/METoken/deploy.go)
+5. Once the contract is settled on the blockchain, check it with [deploy_test.go](examples/METoken/deploy_test.go)
 
 #### Interacting with METoken
 
-- TODO: demo code
+1. Transfer some tokens between accounts as [transfer.go](examples/METoken/transfer.go)
+2. Once the transfering is settled, check it by script [transfer_test.go](examples/METoken/transfer_test.go)
 
 #### Sending ERC20 tokens to contract addresses
 
