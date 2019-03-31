@@ -39,3 +39,4 @@ All the utility API is implemented in the `playground/eth` package
 - [ ] Chapter 07. Smart Contracts and Solidity
 - [ ] Chapter 09. Smart Contract Security
 - [ ] Chapter 10. Tokens
+- [ ] Chapter 12. Decentralized Applications (DApps)
