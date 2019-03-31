@@ -195,9 +195,9 @@ contract ERC20 {
 
 #### Sending ERC20 tokens to contract addresses
 
-- TODO: demo code
+- Consequence: The sent tokens are locked forever
 
-> The Faucet contractdoesn't have a function for withdrawing MET, or any other ERC20 token. If we use `withdraw` it will try to send ether, but since Faucet doesn't have a balance of ether yet, it will fail.
+  > The Faucet contract doesn't have a function for withdrawing MET, or any other ERC20 token. If we use `withdraw` it will try to send ether, but since Faucet doesn't have a balance of ether yet, it will fail.
 
 - One of the ways that users of ERC20 tokens can inadvertently lose their tokens in a transfer, is when they attempt to transfer to an exchange or another service
 
