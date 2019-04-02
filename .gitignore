@@ -109,3 +109,6 @@ keystore/
 
 # the solc soft links
 solc
+
+# solidity output
+build/
