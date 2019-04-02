@@ -144,5 +144,6 @@
   - Sample as [EthUsdPriceTicker.sol](examples/contracts/EthUsdPriceTicker.sol)
   - The data request is made using the `oraclize_query` function, which is inherited from the `usingOraclize` contract
   - In order to perform the query, Oraclize requires the payment of a small fee in ether, covering the gas cost for processing the result and transmitting it to the `__callback` function and an accompanying surcharge for the service
+- Financial data provider Thomson Reuters also provides an oracle service for Ethereum, called BlockOne IQ, allowing market and reference data to be requested by smart contracts running on private or permissioned networks
 
 ## Conclusions
