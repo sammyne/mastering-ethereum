@@ -1,6 +1,6 @@
 pragma solidity ^0.5.6;
 
-import "./ERC721/ERC721Token.sol";
+import "./node_modules/openzeppelin-solidity/contracts/token/ERC721/ERC721Full.sol";
 
 /**
  * @title Repository of ERC721 Deeds
@@ -8,7 +8,7 @@ import "./ERC721/ERC721Token.sol";
  * This is a demo to show how tokens (deeds) can be minted and added 
  * to the repository.
  */
-contract DeedRepository is ERC721Token {
+contract DeedRepository is ERC721Full {
 
 
     /**
@@ -16,8 +16,8 @@ contract DeedRepository is ERC721Token {
     * @param _name string represents the name of the repository
     * @param _symbol string represents the symbol of the repository
     */
-    function DeedRepository(string _name, string _symbol) 
-        public ERC721Token(_name, _symbol) {}
+    constructor(string memory _name, string memory _symbol) 
+        public ERC721Full(_name, _symbol) {}
     
     /**
     * @dev Public function to register a new deed
@@ -25,7 +25,7 @@ contract DeedRepository is ERC721Token {
     * @param _tokenId uint256 represents a specific deed
     * @param _uri string containing metadata/uri
     */
-    function registerDeed(uint256 _tokenId, string _uri) public {
+    function registerDeed(uint256 _tokenId, string memory _uri) public {
         _mint(msg.sender, _tokenId);
         addDeedMetadata(_tokenId, _uri);
         emit DeedRegistered(msg.sender, _tokenId);
@@ -37,7 +37,7 @@ contract DeedRepository is ERC721Token {
     * @param _uri text which describes the characteristics of a given deed
     * @return whether the deed metadata was added to the repository
     */
-    function addDeedMetadata(uint256 _tokenId, string _uri) public returns(bool){
+    function addDeedMetadata(uint256 _tokenId, string memory _uri) public returns(bool){
         _setTokenURI(_tokenId, _uri);
         return true;
     }
