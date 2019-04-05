@@ -690,6 +690,11 @@
   resolved "http://registry.npm.taobao.org/@csstools/convert-colors/download/@csstools/convert-colors-1.4.0.tgz#ad495dc41b12e75d588c6db8b9834f08fa131eb7"
   integrity sha1-rUldxBsS511YjG24uYNPCPoTHrc=
 
+"@mdi/font@^3.5.95":
+  version "3.5.95"
+  resolved "http://registry.npm.taobao.org/@mdi/font/download/@mdi/font-3.5.95.tgz#422d1982566b4a0577b457cd0acc2168ee8343c3"
+  integrity sha1-Qi0ZglZrSgV3tFfNCswhaO6DQ8M=
+
 "@nuxt/babel-preset-app@2.6.1":
   version "2.6.1"
   resolved "http://registry.npm.taobao.org/@nuxt/babel-preset-app/download/@nuxt/babel-preset-app-2.6.1.tgz#f220e9b77bfd8e0ea2b8efb7419c00cf7a8a9c1d"
