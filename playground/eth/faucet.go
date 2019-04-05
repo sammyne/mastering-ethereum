@@ -3,7 +3,6 @@ package eth
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -27,8 +26,6 @@ func Fund(address common.Address) (string, error) {
 	if err := json.NewDecoder(resp.Body).Decode(&response); nil != err {
 		return "", err
 	}
-
-	fmt.Println(response)
 
 	return response["txhash"].(string), nil
 }

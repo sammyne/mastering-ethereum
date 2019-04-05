@@ -1,5 +1,9 @@
 # Mastering Ethereum
 
+## Prerequisites 
+- Go-1.12.1 
+- A global callable Solidity compiler
+
 ## Ethereum Client
 
 - The Geth client in use is the official docker container [ethereum/client-go](https://hub.docker.com/r/ethereum/client-go) tagged at `alltools-v1.8.23`

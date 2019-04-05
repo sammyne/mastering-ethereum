@@ -9,10 +9,6 @@ import (
 var defaultDataDir string
 
 func init() {
-	//home, ok := os.LookupEnv("HOME")
-	//if !ok {
-	//	panic("missing $HOME env")
-	//}
 	home, err := os.UserHomeDir()
 	if nil != err {
 		panic(err)
