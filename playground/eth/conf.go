@@ -1,16 +1,21 @@
 package eth
 
 import (
-	"os"
 	"path/filepath"
+
+	"os"
 )
 
 var defaultDataDir string
 
 func init() {
-	home, ok := os.LookupEnv("HOME")
-	if !ok {
-		panic("missing $HOME env")
+	//home, ok := os.LookupEnv("HOME")
+	//if !ok {
+	//	panic("missing $HOME env")
+	//}
+	home, err := os.UserHomeDir()
+	if nil != err {
+		panic(err)
 	}
 
 	defaultDataDir = filepath.Join(home, ".mastering-ethereum")
