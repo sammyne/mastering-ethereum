@@ -22,8 +22,8 @@ func Test_deploy(t *testing.T) {
 	names := []string{"AuctionRepository", "DeedRepository"}
 
 	txHashes := []common.Hash{
-		common.HexToHash("0x4a9cac1fe13793b30f7ce269cf4c78c20d0ca96e8d93de89e50b3d2bbc3b3429"),
-		common.HexToHash("0x71e99b07a0512c76252ece765c5fc05c8de95c2b70b0153f8836b5cab2b98433"),
+		common.HexToHash("0xb0a8c365a55163874d9237f8862aa3142086c1f829682d7dbd401c7fe31c1e5d"),
+		common.HexToHash("0x4c6bc5621b0c82507531bc4180b1fb5d2f784e12ea2e2af32dcbe41650c9fad6"),
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*16)
