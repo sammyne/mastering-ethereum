@@ -112,3 +112,5 @@ solc
 
 # solidity output
 build/
+
+.DS_Store

@@ -7,17 +7,17 @@
 - Ethereum is the system, ether is the currency
 - Ether denominations and unit names as
 
-| Value (in `wei`) | Common Name | SI Name               |
-| ---------------- | ----------- | --------------------- |
-| 1                | `wei`       | Wei                   |
-| 10<sup>3</sup>   | `Babbage`   | Kilowei or femtoether |
-| 10<sup>6</sup>   | `Lovelace`  | Megawei of picoether  |
-| 10<sup>9</sup>   | `Shannon`   | Gigawei or nanoether  |
-| 10<sup>12</sup>  | `Szabo`     | Micoether or mico     |
-| 10<sup>15</sup>  | `Finney`    | Milliether or milli   |
-| 10<sup>18</sup>  | `Ether`     | Ether                 |
-| 10<sup>21</sup>  | `Grand`     | Kiloether             |
-| 10<sup>24</sup>  |             | Megaether             |
+  | Value (in `wei`) | Common Name | SI Name               |
+  | ---------------- | ----------- | --------------------- |
+  | 1                | `wei`       | Wei                   |
+  | 10<sup>3</sup>   | `Babbage`   | Kilowei or femtoether |
+  | 10<sup>6</sup>   | `Lovelace`  | Megawei of picoether  |
+  | 10<sup>9</sup>   | `Shannon`   | Gigawei or nanoether  |
+  | 10<sup>12</sup>  | `Szabo`     | Micoether or mico     |
+  | 10<sup>15</sup>  | `Finney`    | Milliether or milli   |
+  | 10<sup>18</sup>  | `Ether`     | Ether                 |
+  | 10<sup>21</sup>  | `Grand`     | Kiloether             |
+  | 10<sup>24</sup>  |             | Megaether             |
 
 ## Choosing an Ethereum Wallet
 
@@ -74,21 +74,21 @@
 > The MetaMask shown below is tagged with version 6.2.2
 
 1. See the welcome page and click the **GETTING STARTED** button  
-   ![Welcome](images/meta-mask/1-welcome.png)
+   ![Welcome](./images/meta-mask/create-wallet/01-getting-started.png)
 2. Advance by clicking the **CREATE A WALLET** button  
-   ![New to MetaMask](images/meta-mask/2-new.png)
+   ![New to MetaMask](./images/meta-mask/create-wallet/02-new-to-metamask.png)
 3. **I AGREE** the _Help Us Improve MetaMask_ statements  
-   ![Help Us Improve MetaMask](images/meta-mask/3-statements.png)
+   ![Help Us Improve MetaMask](./images/meta-mask/create-wallet/03-help-us-improve-metamask.png)
 4. Create Password  
-   ![Create Password](images/meta-mask/4-create-password.png)
+   ![Create Password](./images/meta-mask/create-wallet/04-create-password.png)
 5. Backup secret phrase, which would ask us to unlock the secret words with the password set in the previous step  
-   ![Secret Backup Phrase](images/meta-mask/5-secret-backup-phrase.png)
+   ![Secret Backup Phrase](./images/meta-mask/create-wallet/05-secret-backup-phrase.png)
 6. Confirm your Secret Backup Phrase  
-   ![Confirm your Secret Backup Phrase](images/meta-mask/6-confirm-your-secret-backup-phrase.png)
+   ![Confirm your Secret Backup Phrase](./images/meta-mask/create-wallet/06-confirm-secret-backup-phrase.png)
 7. Awarded with congratulations page  
-   ![Congratulations](images/meta-mask/7-congratulations.png)
+   ![Congratulations](images/meta-mask/create-wallet/07-all-done.png)
 8. Finally, enter the main panel  
-   ![Account](images/meta-mask/8-account.png)
+   ![Account](images/meta-mask/create-wallet/08-main-panel.png)
 
 ### Switching Networks
 
@@ -101,21 +101,24 @@
 
 ### Getting Some Test Ether
 
-1. Switch MetaMask to the **Ropsten Test Network**
-2. Click **Deposit**  
-   ![Deposit](images/meta-mask-deposit-ether.png)
-3. Pick the **GET ETHER** option to navigate to the faucet app, which would ask MetaMask for wallet address to send test ether to  
-   ![MetaMask Ether Faucet](images/metamask-ether-faucet.png)
-4. Click the green "request 1 ether from faucet" button, which will create a tx with ID similar to `0x95355c2261bb0c32ee24d116c079b6066bbb5717969446be8b72a370e40965a6`
-5. In a few seconds, the new tx be mined by the Ropsten miners and your MetaMask wallet will show a balance of 1 ETH
+1. Switch MetaMask to the **Ropsten Test Network**, and click **Buy**
+   ![Deposit](./images/meta-mask/getting-some-test-ether/01-get-some-test-ether.png)
+2. Pick the **GET ETHER** option to navigate to the faucet app, which would ask MetaMask for wallet address to send test ether to  
+   ![Deposit Ether](./images/meta-mask/getting-some-test-ether/02-get-ether.png)
+3. Click the green "request 1 ether from faucet" button, which will request account connection
+  ![MetaMask Ether Faucet](./images/meta-mask/getting-some-test-ether/03-metamask-ether-faucet.png)
+  ![Connect with MetaMask](./images/meta-mask/getting-some-test-ether/04-connect-with-metamask.png)
+  ![Connect](./images/meta-mask/getting-some-test-ether/05-connect.png)
+4. In a few seconds, the new tx (indexed by ID `0x02d45c7c4b9a797b52505b79326f56c37a71548f608445d6d596f93d8dd322f8` below) be mined by the Ropsten miners and your MetaMask wallet will show a balance of 1 ETH
+  ![Mined tx](./images/meta-mask/getting-some-test-ether/06-mined-tx.png)
 6. Click on the **transaction ID** (in the faucet app panel) and your browser will take you to a block explorer
-   ![A sample tx](images/meta-mask-sample-tx.png)
+   ![A sample tx](./images/meta-mask/getting-some-test-ether/07-tx-details.png)
 
 ### Sending Ether from MetaMask
 
 - The option to "donate" 1 ETH to the faucet is available for returning the remainder of your test ether, so that someone else can use it next
 
-  ![Return the remainder of test ether](images/meta-mask-return-the-remaining-ether.png)
+  ![Return the remainder of test ether](./images/meta-mask/sending-ether-from-metamask.png)
 
 - Every Ethereum transaction requires payment of a fee, which is collected by the miners to validate the transaction
   > Fees are required on the test networks too. Without fees, a test network would behave differently from the main network, making it an inadequate testing platform. Fees also protect the test networks from DoS attacks and poorly constructed contracts (e.g., infinite loops), much like they protect the main network.
@@ -125,11 +128,11 @@
 - Tool: The ropsten.etherscan.io block explorer
 - **HOW**
   1. Click the **Details** button under the account name  
-     ![Go to details](images/meta-mask-profile.png)
+     ![Go to details](./images/meta-mask/exploring-tx-history-of-an-address/01-account-details.png)
   2. Pick the **VIEW ACCOUNT ON ETHERSCAN** on the popup dialog  
-     ![View account on etherscan](images/meta-mask-view-account-on-etherscan.png)
+     ![View account on etherscan](./images/meta-mask/exploring-tx-history-of-an-address/02-view-on-etherscan.png)
   3. A sample page goes as
-     ![A sample tx](images/meta-mask-sample-tx.png)
+     ![A sample tx](./images/meta-mask/exploring-tx-history-of-an-address/03-tx-history-on-etherscan.png)
 
 ## Introducing the World Computer
 
@@ -143,7 +146,7 @@
 - A contract account
   - Has smart contract code, which a simple EOA can't have
   - A contract account does not have a private key
-  - It is owned (and controlled) by the logic of its smart contract code: the software program recorded on the Ethereum blockchain at the contract account’s creation and executed by the EVM
+  - It is owned (and controlled) by the logic of its smart contract code: the software program recorded on the Ethereum blockchain at the contract account's creation and executed by the EVM
 - Contracts have addresses, just like EOAs, equipping them to send and receive ether
 - A tx destined for a contract address can call functions within the contract with tx's data, causing that contract to run in the EVM
 - A contract account cannot initiate a tx due to a lack of private keys
@@ -169,13 +172,13 @@
 - The `msg` object is one of the inputs that all contracts can access. It represents the transaction that triggered the execution of this contract
 - The attribute `msg.sender` is the sender address of the transaction
 - The function `transfer` is a built-in function that transfers ether from the current contract to the address of the sender
-- **Fallback**/**Default** function
-  - Called if the transaction that triggered the contract didn't name any of the declared functions in the contract, or any function at all, or didn't contain data
+- `receive`: **Fallback**/**Default** function
+  - Called if the transaction that triggered the contract didn't name any of the declared functions in the contract, or didn't contain data
   - Contracts can have one such default function (without a name) and it is usually the one that receives ether
 
 ## Compiling the Faucet Contract
 
-- Tool: `solc` installed with `yarn global add solc@v0.5.6`, which would produce an executable named `solcjs` accessible across the OS
+- Tool: `solc` installed with `yarn global add solc@v0.7.0`, which would produce an executable named `solcjs` accessible across the OS
 - Compiling command goes as
   ```bash
   solcjs --bin Faucet.sol
@@ -184,44 +187,58 @@
 ## Creating the Contract on the Blockchain
 
 - Registering a contract on the blockchain involves creating a special transaction whose destination is the **zero address** `0x0000000000000000000000000000000000000000` (40 zeros)
-- Deploy with help of [Remix](https://remix.ethereum.org/#optimize=false&version=soljson-v0.5.6+commit.b259423e.js)
-  1. Navigate to the Remix IDE through MetaMask
+- Deploy with help of [Remix][remix]
+  1. Navigate to the Remix IDE by clicking [remix]
+    ![Remix home page](./images/creating-the-contract-on-the-blockchain/01-remix-home.png)
   2. Add a new tab by clicking on the circular plus sign in the top-left toolbar to create a new file named `Faucet.sol`
+    ![new file](./images/creating-the-contract-on-the-blockchain/02-new-faucet-sol.png)
   3. Copy and paste the code of local example `Faucet.sol` into the the new created `Faucet.sol`
+    ![Faucet code](images/creating-the-contract-on-the-blockchain/03-faucet-code.png)
   4. Click the **Start to compile** button under the `compile` tab to compile the contract into bytecodes
-     ![The Remix compiler](images/remix-compiler.png)
+     ![The Remix compiler](./images/creating-the-contract-on-the-blockchain/04-compile.png)
   5. Switch to `Run` tab and select `Injected Web3` in the Environment drop-down selection box, which will connect the Remix IDE to the MetaMask wallet, and through MetaMask to the Ropsten test network
-     ![Prepare for deployment](images/remix-runner.png)
+     ![Prepare for deployment](./images/creating-the-contract-on-the-blockchain/05-inject-web3.png)
   6. Confirm the contract focused is `Faucet` and click `Deploy` button to trigger the deployment
-     ![Confirm the contract delpoyment](images/meta-mask-deployment-notification.png)
-
+     ![Confirm the contract delpoyment](./images/creating-the-contract-on-the-blockchain/06-deploy.png)
+  7. Confirm the deployment in MetaMask
+     ![Confirm the contract delpoyment](./images/creating-the-contract-on-the-blockchain/07-metamask-notification.png)
 ## Interacting with the Contract
 
 ### Viewing the Contract Address in a Block Explorer
 
 1. Copy the contract address
-   ![Copy address](images/remix-runner-deployed-contract.png)
+   ![Copy address](./images/view-contract-on-etherscan/01-copy-contract-address.png)
 2. Parse the copied address into the Etherscan explorer and enter, you should see
-   ![Viewing the Contract Address in a Block Explorer](images/etherscan-deployed-contract-tx.png)
+   ![Viewing the Contract Address in a Block Explorer](./images/view-contract-on-etherscan/02-contract-on-etherscan.png)
 
 ### Funding the Contract
 
 - **HOW**
   1. Parse the contract address into the **Send ETH** panel of MetaMask
-  2. Fill in some ether you want
-  3. Confirm by clicking the **NEXT** button
+    ![Send ETH](./images/funding-the-contract/01-click-send.png)
+  2. Fill in some ether you want, and click the **NEXT** button
+    ![NEXT](./images/funding-the-contract/02-fill-ether-and-click-next.png)
+  3. Confirm the sending by click **Confirm** button
+    ![Confirm](./images/funding-the-contract/03-confirm.png)
+  4. Wait for a while, we should see the balance of the contract is changed to 0.1 Ether
+    ![Done](./images/funding-the-contract/04-contract-balance-change.png)
 
 ### Withdrawing from Our Contract
 
 - **HOW**: In the `Run` tab of Remix IDE
 
-  1. Fill in amount to withdraw in the textfield to the right of the `withdraw` button
-  2. Click the `withdraw` button
-  3. Confirm the action in the popup MetaMask modal
+  1. Fill in amount (`10000000000000000` wei, i.e. 0.01 ether in our case) to withdraw in the textfield to the right of the `withdraw` button
+    ![Fill in amount](./images/withdraw-from-contract/01-fill-in-amount.png)
+  2. Confirm the action in the popup MetaMask modal
+    ![Click the withdraw button](./images/withdraw-from-contract/02-confirm-in-metamask.png)
 
   > Due to a limitation in JavaScript, a number as large as 10<sup>17</sup> cannot be processed by Remix. Instead, we enclose it in double quotes, to allow Remix to receive it as a string and manipulate it as a `BigNumber`
 
-- The withdraw transfer originated from the contract code is an **internal transaction** (a.k.a., **message**)
-  ![Internal transaction triggered by withdraw](images/etherscan-internal-txns.png)
+- Navigate to the contract page in [etherscan](https://ropsten.etherscan.io/address/0x164da5623141c0ec2b4ef9ec7b937ea923cb0493#internaltx), we should see
+  - Contract's balance has changed to 0.09 Ether
+  - The withdraw transfer originated from the contract code is an **internal transaction** (a.k.a., **message**)
+  ![Internal transaction triggered by withdraw and contract's balance is changed to 0.09 Ether](./images/withdraw-from-contract/03-internal-tx.png)
 
 ## Conclusions
+
+[remix]: https://remix.ethereum.org/#optimize=false&evmVersion=null&version=soljson-v0.7.0+commit.9e61f92b.js

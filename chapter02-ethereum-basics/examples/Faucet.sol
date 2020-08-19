@@ -1,17 +1,17 @@
-pragma solidity ^0.5.6;
+// Version of Solidity compiler this program was written for
+pragma solidity ^0.7.0;
 
+// Our first contract is a faucet!
 contract Faucet {
+    // Accept any incoming amount
+    receive() external payable {}
 
-  // Give out ether to anyone who asks
-  function withdraw(uint withdraw_amount) public {
-    // Limit withdrawal amount
-    require(withdraw_amount <= 100000000000000000);
+    // Give out ether to anyone who asks
+    function withdraw(uint256 withdraw_amount) public {
+        // Limit withdrawal amount
+        require(withdraw_amount <= 100000000000000000);
 
-    // Send the amount to the address that requested it
-    msg.sender.transfer(withdraw_amount);
-  }
-
-
-  // Accept any incoming amount
-  function () external payable {}
+        // Send the amount to the address that requested it
+        msg.sender.transfer(withdraw_amount);
+    }
 }
