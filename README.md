@@ -32,7 +32,7 @@ All the utility API is implemented in the `playground/eth` package
 - [x] Chapter 02. Ethereum Basics
 - [x] Chapter 03. Ethereum Clients
 - [ ] Chapter 04. Cryptography
-  - Missing the ICAP demo
+  - [ ] the ICAP demo
 - [x] Chapter 05. Wallets
 - [x] Chapter 06. Transactions
   - Maybe js version for demo later
