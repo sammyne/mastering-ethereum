@@ -6,30 +6,42 @@
     - Managing keys and addresses
     - Tracking the balance
     - Creating and signing transactions
-- From a programmer's perspective, the word wallet refers to the system used to store and manage a user's keys
+- From a programmer's perspective, the word wallet refers to the system used to store and manage a
+  user's keys
 
 ## Wallet Technology Overview
 
-- One key consideration in designing wallets is balancing convenience and privacy
-- Reusing private keys or addresses suffering from the vulnerability that anyone can easily track and correlate all your transactions
+- One key consideration in designing wallets is balancing **convenience** and **privacy**
+- Reusing private keys or addresses suffering from the vulnerability that anyone can easily track
+  and correlate all your transactions
 - Users control the tokens on the network by signing transactions with the keys in their wallets
 - **An Ethereum wallet is a keychain**
 
-> **Ethereum wallets contain keys, not ether or tokens**. Wallets are like keychains containing pairs of private and public keys. Users sign transactions with the private keys, thereby proving they own the ether. The ether is stored on the blockchain
+  > **Ethereum wallets contain keys, not ether or tokens**. Wallets are like keychains containing
+  > pairs of private and public keys. Users sign transactions with the private keys, thereby
+  > proving they own the ether. The ether is stored on the blockchain
 
 - 2 types of wallets
-  - **Nondeterministic wallet**: Each key is independently generated from a different random number, a.k.a., JBOK ("Just a Bunch of Keys") wallet
-  - **Deterministic wallet**: All the keys are derived from a single master key, known as the **seed**
+  - **Nondeterministic wallet**: Each key is independently generated from a different random number,
+    a.k.a., JBOK ("Just a Bunch of Keys") wallet
+  - **Deterministic wallet**: All the keys are derived from a single master key, known as the
+    **seed**
 - Mnemonic code words
-  - **WHY**: To make deterministic wallets slightly more secure against data-loss accidents, such as having your phone stolen or dropping it in the toilet
-  - **WHAT**: a list of words (in English or another language) encoding the seed for you to write down and use in the event of an accident
+  - **WHY**: To make deterministic wallets slightly more secure against data-loss accidents, such as
+    having your phone stolen or dropping it in the toilet
+  - **WHAT**: a list of words (in English or another language) encoding the seed for you to write
+    down and use in the event of an accident
 
 ### Nondeterministic (Random) Wallets
 
 - **Such walles are being replaced with the deterministic ones**
-- **GOOD PRACTICE**: Avoid address reuse to maximize users's privacy by employing a new address for every receiveing fund
-- Many Ethereum clients (including `geth`) use a **keystore** file, which is a JSON-encoded file that contains a single (randomly generated) private key, encrypted by a passphrase for extra security
-- The keystore format uses a **key derivation function** (KDF) (a.k.a., password stretching algorithm), which protects against brute-force, dictionary, and rainbow table attacks
+- **GOOD PRACTICE**: Avoid address reuse to maximize users's privacy by employing a new address for
+  every receiveing fund
+- Many Ethereum clients (including `geth`) use a **keystore** file, which is a JSON-encoded file
+  that contains a single (randomly generated) private key, encrypted by a passphrase for extra
+  security
+- The keystore format uses a **key derivation function** (KDF) (a.k.a., password stretching
+  algorithm), which protects against brute-force, dictionary, and rainbow table attacks
 - Keystore encoding library: [keythereum](https://github.com/ethereumjs/keythereum)
 
 ### Deterministic (Seeded) Wallets
@@ -46,11 +58,13 @@
 
 - Advantages
   - The tree structure can be used to express additional organizational meaning
-  - Users can create a sequence of public keys without having access to the corresponding private keys
+  - Users can create a sequence of public keys without having access to the corresponding private
+    keys
 
 ### Seeds and Mnemonic Codes (BIP-39)
 
-- The use of a mnemonic word list to encode the seed for an HD wallet makes for the easiest way to safely
+- The use of a mnemonic word list to encode the seed for an HD wallet makes for the easiest way to
+  safely
   - Export
   - Transcribe
   - Record on paper
@@ -80,8 +94,10 @@
 
 ### Mnemonic Code Words (BIP-39)
 
-- **WHAT**: Word sequences that encode a random number used as a seed to derive a deterministic wallet
-  > The primary difference is that a brainwallet consists of words chosen by the user, whereas mnemonic words are created randomly by the wallet and presented to the user
+- **WHAT**: Word sequences that encode a random number used as a seed to derive a deterministic
+  wallet
+  > The primary difference is that a brainwallet consists of words chosen by the user, whereas
+  > mnemonic words are created randomly by the wallet and presented to the user
 
 #### Generating mnemonic words
 
@@ -107,18 +123,24 @@
 - The salt serves for 2 purposes
 
   - Make it difficult to build a lookup table enabling a brute-force attack
-  - Allow the introduction of a passphrase that serves as an additional security factor protecting the seed
+  - Allow the introduction of a passphrase that serves as an additional security factor protecting
+    the seed
 
 - [Examples](examples/mnemonic_to_seed_test.go)
 
 #### Optional passphrase in BIP-39
 
 - **WHY**
-  - **A second factor** (something memorized) that makes a mnemonic useless on its own, protecting mnemonic backups from compromise by a thief
-  - **A form of plausible deniability** or "duress wallet," where a chosen passphrase leads to a wallet with a small amount of funds, used to distract an attacker from the "real" wallet that contains the majority of funds
+  - **A second factor** (something memorized) that makes a mnemonic useless on its own, protecting
+    mnemonic backups from compromise by a thief
+  - **A form of plausible deniability** or "duress wallet," where a chosen passphrase leads to a
+    wallet with a small amount of funds, used to distract an attacker from the "real" wallet that
+    contains the majority of funds
 - Risks
-  - If the wallet owner is incapacitated or dead and no one else knows the passphrase, the seed is useless and all the funds stored in the wallet are lost forever
-  - Conversely, if the owner backs up the passphrase in the same place as the seed, it defeats the purpose of a second factor
+  - If the wallet owner is incapacitated or dead and no one else knows the passphrase, the seed is
+    useless and all the funds stored in the wallet are lost forever
+  - Conversely, if the owner backs up the passphrase in the same place as the seed, it defeats the
+    purpose of a second factor
 
 #### Working with mnemonic codes
 
@@ -136,29 +158,37 @@
 
 #### Extended public and private keys
 
-- A very useful characteristic of HD wallets is the ability to derive child public keys from parent public keys, without having the private keys
-  - An extended public key can be used to derive all of the public keys (and only the public keys) in that branch of the HD wallet structure
+- A very useful characteristic of HD wallets is the ability to derive child public keys from parent
+  public keys, without having the private keys
+  - An extended public key can be used to derive all of the public keys (and only the public keys)
+    in that branch of the HD wallet structure
 - Application
-  - Public key–only deployments, where a server or application has a copy of an extended public key, but no private keys
+  - Public key–only deployments, where a server or application has a copy of an extended public key,
+    but no private keys
   - Cold-storage or hardware wallets: private keys on hardware wallets, public keys online
 
 #### Hardened child key derivation
 
 - **WHY**
-  - Since the `xpub` contains the chain code, a known/leaked child private key can be used with the chain code to derive
+  - Since the `xpub` contains the chain code, a known/leaked child private key can be used with the
+    chain code to derive
     - All the other child private keys
     - Deduce the parent private key
-- The hardened derivation function uses the parent private key to derive the child chain code, instead of the parent public key
-- Best practice is to have the level-1 children of the master keys always derived by hardened derivation, to prevent compromise of the master keys
+- The hardened derivation function uses the parent private key to derive the child chain code,
+  instead of the parent public key
+- Best practice is to have the level-1 children of the master keys always derived by hardened
+  derivation, to prevent compromise of the master keys
 
 #### Index numbers for normal and hardened derivation
 
-- Each index number, when combined with a parent key using the special child derivation function, gives a different child key
+- Each index number, when combined with a parent key using the special child derivation function,
+  gives a different child key
 - Index range for derivation
   - Normal: [0, 2<sup>31</sup>–1] (0x0 to 0x7FFFFFFF)
   - Hardended: [2<sup>31</sup>, 2<sup>32</sup>–1] (0x80000000 to 0xFFFFFFFF)
 
-> To make the index numbers easier to read and display, the index numbers for hardened children are displayed starting from zero, but with a prime symbol
+> To make the index numbers easier to read and display, the index numbers for hardened children
+> are displayed starting from zero, but with a prime symbol
 
 #### HD wallet key identifier (path)
 
@@ -176,7 +206,8 @@
 
 #### Navigating the HD wallet tree structure
 
-- BIP-43 proposes the use of the first hardened child index as a special identifier that signifies the **"purpose"** of the tree structure
+- BIP-43 proposes the use of the first hardened child index as a special identifier that signifies
+  the **"purpose"** of the tree structure
 - BIP-44 proposes a multiaccount structure as **"purpose" number 44'** under BIP-43
 - BIP-44 specifies the structure as consisting of five predefined tree levels:
 

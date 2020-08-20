@@ -1,5 +1,7 @@
 module github.com/sammyne/mastering-ethereum
 
+go 1.14
+
 require (
 	github.com/ethereum/go-ethereum v1.8.23
 	github.com/mitchellh/go-homedir v1.1.0
