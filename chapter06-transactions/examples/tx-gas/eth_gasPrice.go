@@ -2,13 +2,20 @@ package main
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/ethereum/go-ethereum/rpc"
-	ethereum "github.com/sammyne/mastering-ethereum"
 )
 
 func main() {
-	c, err := rpc.Dial(ethereum.INFURA)
+	ganacheURL := "http://127.0.0.1:7545"
+	if len(os.Args) > 2 {
+		ganacheURL = os.Args[1]
+	}
+
+	fmt.Printf("Ganache at %s is used\n", ganacheURL)
+
+	c, err := rpc.Dial(ganacheURL)
 	if nil != err {
 		panic(err)
 	}
