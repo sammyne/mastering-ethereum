@@ -2,7 +2,7 @@
 
 - Transactions are signed messages
   - originated by an externally owned account
-  - transmitted by the Ethereum network, and
+  - transmitted by the Ethereum network
   - recorded on the Ethereum blockchain
 - Ethereum is a global singleton state machine, and transactions are what make that state machine "tick," changing its state
 
@@ -28,7 +28,7 @@
 ## The Transaction Nonce
 
 - **WHAT**: A scalar value equal to the number of transactions sent from this address or, in the case of accounts with associated code, the number of contract-creations made by this account
-- ??The nonce is an attribute of the originating address; that is, it only has meaning in the context of the sending address
+- The nonce is an attribute of the originating address; that is, it only has meaning in the context of the sending address
 - Nonce is calculated dynamically, by counting the number of **confirmed** transactions that have originated from an address.
 - 2 scenarios
   - The usability feature of transactions being included in the order of creation
@@ -41,26 +41,46 @@
 - The nonce is an up-to-date zero-based count of the number of **confirmed** (i.e., on-chain) transactions that have originated from an account
 - When you create a new transaction, you assign the next nonce in the sequence. But until it is confirmed, it will not count toward the `getTransactionCount` total
 
-- DEMO of `getTransactionCount`
+- DEMO of `getTransactionCount` (assume familiar with [Ganache])
 
-  1.  Sign up in [INFURA](https://infura.io/) to get a developer account
-  2.  Login and create a project named "mastering-ethereum", copy and provided `ENDPOINT`
-      ![Get a endpoint for developing](images/infura.png)
-  3.  Create an account as [new_account.go](examples/keep-track-of-nonces/new_account.go), which produces an address as `0x9CbE8d7e7690674CD29E83Bc21fd457397cb85ee` in our case
-  4.  With the address, request some ethers from one of the following faucets
+  1. Start the Ganache, and create a quickstart workspace
+    ![quickstart workspace](../images/ganache/quickstart-workspace.png)
+  2. Grab an account from the account lists by click the "Show keys" button
+    ![show keys](../images/ganache/show-keys.png)
 
-      - [Ropsten Ethereum Faucet](https://faucet.ropsten.be/)
-      - [Throttled Testnet Faucet](https://ipfs.io/ipfs/QmVAwVKys271P5EQyEfVSxm7BJDKWt42A2gHvNmxLjZMps/)
-      - [B9lab](http://ipfs.b9lab.com:8080/ipfs/QmVAwVKys271P5EQyEfVSxm7BJDKWt42A2gHvNmxLjZMps/)
-        ```bash
-        curl -X POST -H "Content-Type: application/json" -d '{"toWhom":"0x9CbE8d7e7690674CD29E83Bc21fd457397cb85ee"}' https://ropsten.faucet.b9lab.com/tap
-        ```
+     - The detail of key generation goes as [new_account.go](examples/keep-track-of-nonces/new_account.go)
+  4.  Play with `sendRawTransaction` as [transfer.go](examples/keep-track-of-nonces/transfer.go), which transfers totally 14 ethers (one 8 ether, and three 2 ethers) from account `0xf50577fDcEe002f4E0f253821D0DDCe1EEd71b9e` to account `0x58644DcEdF94EC71205FA6e4B64759EEE5ca93D0` made by Ganache
 
-  5.  Check the balance in [Etherscan](https://ropsten.etherscan.io/address/0x9CbE8d7e7690674CD29E83Bc21fd457397cb85ee)
-  6.  Play with `sendRawTransaction` as [transfer.go](examples/keep-track-of-nonces/transfer.go)
+    ```bash
+    go run transfer.go -k a678185d8a67fc340e09112f93e0d8f3a2726cef29bc73ed4eec09f2359af4f8 --to 0x58644DcEdF94EC71205FA6e4B64759EEE5ca93D0
+    ```
+
+    Output should be something like 
+
+    ```bash
+    ---
+    > one sending
+    from 0xf50577fDcEe002f4E0f253821D0DDCe1EEd71b9e
+    hash 0xc6becb0bc1a0138583126c65ff82fca952ea081e3cb66b3adba20d139c0afc9b
+    #(tx) = 0x1
+    ---
+    > batch sending
+    hash 0xff1c606d2a7f36492192435d56a9e639b4d3e176ea316ad46ca590cc1ac31f1e
+    #(tx) = 0x2
+    hash 0x2437782a0af5d9c7c24b75fdc4138eddc2823829925433ecf346ca572a4df19b
+    #(tx) = 0x3
+    hash 0xcc0f4a6ad59209c1ec813c1c76e97c16b0731e7d6b4e53e1aa6dcdd6ecc58663
+    #(tx) = 0x4
+    ```
+
+    Ganache panel should be renewed as 
+
+    ![Transfer 8eth from account 1 to account 2](./images/keep-track-of-nonces/transfer.png)
 
 - Only when the pending and confirmed counts are equal (all outstanding transactions are confirmed) can you trust the output of `getTransactionCount` to start your nonce counter
 - Parity's JSON RPC interface offers the `parity_nextNonce` function, which returns the next nonce that should be used in a transaction
+
+[Ganache]: https://www.trufflesuite.com/ganache
 
 ### Gaps in Nonces, Duplicate Nonces, and Confirmation
 
@@ -90,7 +110,7 @@
 - **Gas is not ether** -- it's a separate virtual currency with its own exchange rate against ether
 - **WHY**: The open-ended (Turing-complete) computation model requires some form of metering in order to avoid denial-of-service attacks or inadvertently resource-devouring transactions
 - The `gasPrice` field in a transaction allows the transaction originator to set the price they are willing to pay in exchange for gas
-  > [ETH Gas Station](https://ethgasstation.info/) provides information on the cur‐ rent prices of gas and other relevant gas metrics for the Ethereum main network
+  > [ETH Gas Station](https://ethgasstation.info/) provides information on the current prices of gas and other relevant gas metrics for the Ethereum main network
 - The higher the `gasPrice`, the faster the transaction is likely to be confirmed
 - `gasPrice=0` means a fee-free transaction
 
@@ -104,7 +124,7 @@
 - Ethereum does no further validation of the `to` field. Any 20-byte value is deemed valid
 - Address validation is assumed to happen at the user interface level based on EIP-55
 - A number of valid reasons for burning ether .
-  - An example is as a disincentive to cheating in payment channels and other smart contracts —- and since the amount of ether is finite, burning ether effectively distributes the value burned to all ether holders (in proportion to the amount of ether they hold).
+  - An example is as a disincentive to cheating in payment channels and other smart contracts - and since the amount of ether is finite, burning ether effectively distributes the value burned to all ether holders (in proportion to the amount of ether they hold).
 
 ## Transaction Value and Data
 
@@ -178,7 +198,7 @@
      ./solc.sh --bin --optimze Faucet.sol
      ```
 
-     where [solc.sh](../solc.sh) is a script invoking the docker-based solidity compiler. If ok, we should get similar output as (whre the hex string under `Binary:` is the bytecodes)
+     where [solc.sh](../solc.sh) is a script invoking the docker-based solidity compiler. If ok, we should get similar output as (where the hex string under `Binary:` is the bytecodes)
 
      ```bash
      ======= Faucet.sol:Faucet =======

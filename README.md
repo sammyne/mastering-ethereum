@@ -1,5 +1,19 @@
 # Mastering Ethereum
 
+## Environment 
+- macOS 10.15.4
+- ethereum network: [Ganache@v2.4.0]
+
+[Ganache@v2.4.0]: https://github.com/trufflesuite/ganache/tree/v2.4.0
+
+### Ganache basics
+1. Open the Ganache app
+  ![welcome](./images/ganache/welcome.png)
+2. Click 'QUICKSTART' to enter the main panel
+  ![Quickstart Workspace](./images/ganache/quickstart-workspace.png)
+3. Show keys to use in Go code examples later
+  ![Show keys](./images/ganache/show-keys.png)
+
 ## Ethereum Client
 
 - The Geth client in use is the official docker container [ethereum/client-go](https://hub.docker.com/r/ethereum/client-go) tagged at `alltools-v1.9.19`
