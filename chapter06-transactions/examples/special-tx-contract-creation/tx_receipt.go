@@ -9,18 +9,23 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/ethclient"
-	ethereum "github.com/sammyne/mastering-ethereum"
+	flag "github.com/spf13/pflag"
+)
+
+var (
+	chainID    int64
+	ganacheURL string
+	txHash     string
 )
 
 func main() {
-	eth, err := ethclient.Dial(ethereum.INFURA)
+	flag.Parse()
+
+	eth, err := ethclient.Dial(ganacheURL)
 	if nil != err {
 		panic(err)
 	}
 	defer eth.Close()
-
-	// adapt to your own case
-	const txHash = `0x0d546865e2ca26e4442491b854dd75d61f2fa6ce0a9c4db94027b007ff78f838`
 
 	receipt, err := eth.TransactionReceipt(context.TODO(), common.HexToHash(txHash))
 	if nil != err {
@@ -32,4 +37,10 @@ func main() {
 		panic(err)
 	}
 	fmt.Printf("%s\n", receiptJSON)
+}
+
+func init() {
+	flag.Int64VarP(&chainID, "chain", "c", 5777, "ID of chain bootstraped by Ganache")
+	flag.StringVarP(&ganacheURL, "ganache-url", "g", "http://127.0.0.1:7545", "receiver's address")
+	flag.StringVar(&txHash, "txhash", "", "tx hash")
 }

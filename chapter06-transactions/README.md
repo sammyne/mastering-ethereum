@@ -197,8 +197,7 @@
 - It is good practice to always specify a to parameter, even in the case of zero-address contract creation, because the cost of accidentally sending your ether to `0x0` and losing it forever is too great
 - A manual contract creation tx goes as
 
-  1. Create a new account and tap some ether from the [B9lab](http://ipfs.b9lab.com:8080/ipfs/QmVAwVKys271P5EQyEfVSxm7BJDKWt42A2gHvNmxLjZMps/) faucet, by running the [new_account.go](examples/contract-creation/new_account.go) script
-  2. Compile the contract source file and get the bytecodes
+  1. Compile the contract source file and get the bytecodes
 
      ```bash
      ./solc.sh --bin --optimze Faucet.sol
@@ -209,17 +208,73 @@
      ```bash
      ======= Faucet.sol:Faucet =======
      Binary:
-     608060405234801561001057600080fd5b5060b08061001f6000396000f3fe608060405260043610601c5760003560e01c80632e1a7d4d14601e575b005b348015602957600080fd5b50601c60048036036020811015603e57600080fd5b503567016345785d8a0000811115605457600080fd5b604051339082156108fc029083906000818181858888f193505050501580156080573d6000803e3d6000fd5b505056fea165627a7a72305820d77165d5b972de3b3604c31e2dfd8cf2dd0c901b623521d1444453fbb12d52160029
+     608060405234801561001057600080fd5b5060cc8061001f6000396000f3fe608060405260043610601f5760003560e01c80632e1a7d4d14602a576025565b36602557005b600080fd5b348015603557600080fd5b50605060048036036020811015604a57600080fd5b50356052565b005b67016345785d8a0000811115606657600080fd5b604051339082156108fc029083906000818181858888f193505050501580156092573d6000803e3d6000fd5b505056fea2646970667358221220e61ab153361b198b141e914f883bfd3fad37fb3d4ee2c526845f1530700da08e64736f6c63430007000033
      ```
 
-  3. Deploy the contract by running the [create.go](examples/contract-creation/create.go)
-  4. Fetch the tx hash from [Etherscan](https://ropsten.etherscan.io/tx/0x0d546865e2ca26e4442491b854dd75d61f2fa6ce0a9c4db94027b007ff78f838), which is in my case
-     ```bash
-     0x0d546865e2ca26e4442491b854dd75d61f2fa6ce0a9c4db94027b007ff78f838
-     ```
-  5. Check the contract by its receipt (indexed by tx hash) on the mined block by running the [tx_receipt.go](examples/contract-creation/tx_receipt.go)
-  6. Fund the contract with 0.1 ether by running script [funding.go](examples/contract-creation/funding.go)
-  7. Withdraw 0.01 ether from the contract by running script [withdraw.go](examples/contract-creation/withdraw.go)
+  2. Deploy the contract by running the [create.go](examples/special-tx-contract-creation/create.go)
+
+      ```bash
+      # please replace '-k' with the of your ganache 
+      # and adjust nonce accordingly
+      go run create.go -k a678185d8a67fc340e09112f93e0d8f3a2726cef29bc73ed4eec09f2359af4f8 --nonce 6
+
+      # output
+      gasPrice = 20000000000
+      tx hash: 0x13e24fe3b552f93552c1acdfd4f44e0a32838ff01f5007fa931d367eb3db6708
+      ```
+
+  3. Tracing the tx in Ganache shows us
+    ![Contract creation tx](./images/special-tx-contract-creation/contract-creation.png)
+
+  4. Check the contract by its receipt (indexed by tx hash) on the mined block by running the [tx_receipt.go](examples/special-tx-contract-creation/tx_receipt.go)
+
+      ```bash
+      # replace '--txhash' with yours
+      go run tx_receipt.go --txhash 0x13e24fe3b552f93552c1acdfd4f44e0a32838ff01f5007fa931d367eb3db6708
+      ```
+
+      Output as
+
+      ```json
+      {
+        "root": "0x",
+        "status": "0x1",
+        "cumulativeGasUsed": "0xcf08",
+        "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+        "logs": [],
+        "transactionHash": "0x13e24fe3b552f93552c1acdfd4f44e0a32838ff01f5007fa931d367eb3db6708",
+        "contractAddress": "0x8ffeb5d82f070a6c2c8e511e87b5581f8aacbb88",
+        "gasUsed": "0xcf08",
+        "blockHash": "0x7ed5a3006db4027ad3884b90b1f85516e72cede565067ba513c5096f51e0ec24",
+        "blockNumber": "0x7",
+        "transactionIndex": "0x0"
+      }
+      ```
+  5. Fund the contract with 0.1 ether by running script [funding.go](examples/special-tx-contract-creation/funding.go)
+      ```bash
+      go run funding.go -k a678185d8a67fc340e09112f93e0d8f3a2726cef29bc73ed4eec09f2359af4f8 --faucet 0x8ffEb5D82f070A6C2C8E511E87b5581f8AacbB88 --nonce 7
+
+      # output
+      gasPrice = 20000000000
+      tx hash: 0x07bb08decad84fc8cd59ccf185a78793cad07daff6ca583356501b71a5a8c308
+      ```
+
+      Tx shown in Ganache as  
+      ![Funding tx](./images/special-tx-contract-creation/funding-tx.png)
+
+  7. Withdraw 0.01 ether from the contract by running script [withdraw.go](examples/special-tx-contract-creation/withdraw.go)
+
+      ```bash
+      go run withdraw.go -k a678185d8a67fc340e09112f93e0d8f3a2726cef29bc73ed4eec09f2359af4f8 --faucet 0x8ffEb5D82f070A6C2C8E511E87b5581f8AacbB88 --nonce 8 
+
+      # output
+      gasPrice = 20000000000
+      tx hash: 0xdca14f17ce58c8c10722794eeb5c90d4e16205330e681a749326dbe67ca838c7
+      ```
+
+      Tx in Ganache goes as 
+
+      ![withdraw tx](./images/special-tx-contract-creation/withdraw.png)
 
 ## Digital Signatures
 
