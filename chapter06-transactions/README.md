@@ -381,7 +381,7 @@ Do
 
 ### Raw Transaction Creation and Signing
 
-- Demo as [tx_raw.go](examples/raw_tx.go)
+- Demo as [raw_tx.go](examples/raw-tx-creation-and-signing/raw_tx.go)
 
 ### Raw Transaction Creation with EIP-155
 

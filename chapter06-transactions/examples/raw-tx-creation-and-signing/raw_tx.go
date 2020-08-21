@@ -4,31 +4,21 @@ package main
 
 import (
 	"crypto/ecdsa"
+	"encoding/hex"
 	"fmt"
 	"math/big"
 
-	"github.com/ethereum/go-ethereum/rlp"
-
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto/secp256k1"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/rlp"
 )
 
 func recoverPrivKey() *ecdsa.PrivateKey {
-	D, _ := new(big.Int).SetString("91c8360c4cb4b5fac45513a7213f31d4e4a7bfcb4630e9fbf074f42a203ac0b9", 16)
+	d, _ := hex.DecodeString("91c8360c4cb4b5fac45513a7213f31d4e4a7bfcb4630e9fbf074f42a203ac0b9")
+	priv, _ := crypto.ToECDSA(d)
 
-	curve := secp256k1.S256()
-
-	X, Y := curve.ScalarBaseMult(D.Bytes())
-
-	return &ecdsa.PrivateKey{
-		D: D,
-		PublicKey: ecdsa.PublicKey{
-			Curve: curve,
-			X:     X,
-			Y:     Y,
-		},
-	}
+	return priv
 }
 
 func main() {
@@ -45,18 +35,6 @@ func main() {
 	mainnetChainID := big.NewInt(1)
 
 	priv := recoverPrivKey()
-
-	/*
-		msg := sha256.Sum256([]byte("hello world"))
-		r, s, err := ecdsa.Sign(rand.Reader, priv, msg[:])
-		if nil != err {
-			panic(err)
-		}
-
-		if !ecdsa.Verify(&priv.PublicKey, msg[:], r, s) {
-			fmt.Println("failed to verify")
-		}
-	*/
 
 	tx, err := types.SignTx(tx, types.NewEIP155Signer(mainnetChainID), priv)
 	if nil != err {
