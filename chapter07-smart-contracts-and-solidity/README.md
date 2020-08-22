@@ -300,7 +300,7 @@ And various value literals as
 - The constructor function is optional
 - Constructors must be defined using the `constructor` keyword as
 
-  ```
+  ```solidity
   pragma ^0.4.22
 
   contract MEContract {
@@ -316,7 +316,7 @@ And various value literals as
   - Finally, contract can be destructed
 - Contracts are destroyed by a special EVM opcode called `SELFDESTRUCT` exposed as a high-level built-in function as
 
-  ```
+  ```solidity
   // recipient is the address to receive any remaining ether balance
   selfdestruct(address recipient)
   ```
@@ -327,28 +327,68 @@ And various value literals as
 
 - Use case: Record the EOA as the creator of contract as `owner` in constructor, and enforce that only `owner` can invoke `selfdestruct`
 - Demo goes as follows
+  1. Open a quickstart workspace in Ganache
+  2. Deploy contract [Faucet][Faucet03] to Ganache
+      ```bash
+      cd examples/constructor-and-selfdestruct
 
-  1. Create a account (`account new` command of the daemon in the `playground` package)
-  2. Tap some ethers from some faucet (`faucet tap` command of the daemon implemented in the `playground` package)
-  3. Compile [Faucet3.sol](examples/contracts/Faucet3.sol)
+      # the key is picked from Ganache
+      go run deploy.go -k 80921f75685414f80062edec828b9cd86bc1efbd568c6ea4c06da1a5098e89a4
 
-     ```bash
-     ./solc.sh --bin --optimize Faucet3.sol
-     ```
+      # Output
+      gasPrice = 20000000000
+       account = 0xCC6fDe13F6f662a8B752AE36f967759ECaCC82f1
+        txHash = 0xf200658a9936a09cb3a9ab8b9385d008ac2170a1583a14bd916737f7c65e9de9
+      ```
 
-  4. Copy and paste the output bytecodes in the value field of `faucetCode` of [deploy.go](examples/construct-selfdestruct/deploy.go), and trigger the deployment as
-     ```bash
-     go run deploy.go
-     ```
-     Wait until the tx has been confirmed
-  5. Check the status of the deployed contract with [ping_code_test.go](examples/construct-selfdestruct/ping_code_test.go)
-  6. Create one more account and fund it with some ether
-  7. Delete the contract by calling `destroy()` of the contract
+      The corresponding tx in Ganache goes as 
 
-     - By owner is fine
+      ![](images/constructor-and-selfdestruct/deploy-tx.png)
+
+  3. Delete the contract by calling `destroy()` of the contract
+
      - By nonowner would trigger error
+        ```bash
+        cd examples/constructor-and-selfdestruct
 
-  8. After successful deletion, run the [ping_code_test.go](examples/construct-selfdestruct/ping_code_test.go) should failed
+        # -k: non-owner key picked from Ganache
+        # -tx: tx hash generated in the previous step
+        go run destruct.go -k 6540cc8e3afc60da9615f8ec0338194dc2288712efb1a6944a00a5c5f8d8ec1b --tx 0xf200658a9936a09cb3a9ab8b9385d008ac2170a1583a14bd916737f7c65e9de9
+
+        # Output
+        panic: VM Exception while processing transaction: revert
+
+        ...
+        ```
+     - By owner is fine
+        ```bash
+        cd examples/constructor-and-selfdestruct
+
+        # -k: owner key picked from Ganache
+        # -tx: tx hash generated in the previous step
+        go run destruct.go -k 5dd169f61ecdb7ac3c0b6c59e17a033f6f5c747a65a1ca83c18de108b9e5ff72 --tx 0xf200658a9936a09cb3a9ab8b9385d008ac2170a1583a14bd916737f7c65e9de9 --nonce 1
+
+        # Output
+        gasPrice = 20000000000
+         account = 0xCC6fDe13F6f662a8B752AE36f967759ECaCC82f1
+          txHash = 0x6ee1d726c74ce9a4a363329c9c1da75cf97b637071868ba169b7b69e2e59fe0c
+        ```
+
+        Tx in Ganache looks like 
+        ![destruct tx ok](./images/constructor-and-selfdestruct/destruct-tx-ok.png)
+
+  4. After successful deletion, fetch the storage of the contract should produce `0x0` meaning contract has been deleted
+
+      ```bash
+      cd examples/constructor-and-selfdestruct
+
+      go run ping.go --tx 0xf200658a9936a09cb3a9ab8b9385d008ac2170a1583a14bd916737f7c65e9de9
+
+      # Output
+      result: 0x0
+      ```
+
+[Faucet03]: examples/constructor-and-selfdestruct/contracts/Faucet03.sol
 
   > The run-once-only constructor renders the `owner` field constant once set
 
@@ -436,7 +476,7 @@ And various value literals as
      go run deploy.go
      ```
      Wait until the tx has been confirmed through [Ethersan.io](https://ropsten.etherscan.io)
-  3. Check the status of the deployed contract with [ping_code_test.go](examples/construct-selfdestruct/ping_code_test.go)
+  3. Check the status of the deployed contract with [ping_code_test.go](examples/constructor-and-selfdestruct/ping_code_test.go)
   4. Deposit some amount into the contract to trigger the event in the fallback functions by [deposit.go](examples/events/deposit.go)
   5. Check the `Deposit` event as [deposit_logging_test.go](examples/events/deposit_logging_test.go)
   6. Withdraw some amount out of the contract to trigger the `Withdrawal` event in the `withdraw()` as [withdraw.go](examples/events/withdraw.go)
