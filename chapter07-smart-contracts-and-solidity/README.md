@@ -408,7 +408,7 @@ And various value literals as
 - More than one modifier can be applied to a function; they are applied in the sequence they are declared, as a comma-separated list
 - They are most often used for access control, but they are quite versatile and can be used for a variety of other purposes
 - Inside a modifier, you can access all the values (variables and arguments) visible to the modified function, but not vice verse
-- The code sample goes as [Faucet4.sol](examples/contracts/Faucet4.sol)
+- The code sample goes as [Faucet04.sol](examples/contracts/Faucet04.sol)
 
 ### Contract Inheritance
 
