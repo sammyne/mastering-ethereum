@@ -683,16 +683,23 @@ And various value literals as
 
 ### Estimating Gas Cost
 
-1. Compile the [Faucet01.sol](examples/contracts/Faucet01.sol)
+1. Deploy the contract by running the [deploy.go](examples/gas-estimation/deploy.go) script
+    ```bash
+    go run deploy.go -k 5dd169f61ecdb7ac3c0b6c59e17a033f6f5c747a65a1ca83c18de108b9e5ff72 --nonce 14
 
-```bash
-./solc --bin --optimize Faucet01.sol
-```
+    # Output
+    gasPrice = 20000000000
+     account = 0xCC6fDe13F6f662a8B752AE36f967759ECaCC82f1
+      txHash = 0xf83c95251e95b5ec0c65a59030eeaf67d0e0196da1ce23c1b8aff8b9ba7cb0e9
+    ```
+2. After the tx is settled, run the [estimate_withdrawal.go](examples/gas-estimation/estimate_withdrawal.go) script should produce us some tips about gas
 
-2. Populate the `code` field in [deploy.go](examples/gas-estimation/deploy.go)
-3. Deploy the contract by running the deploy.go script
-4. After the tx is settled, populate the `txHash` field in [estimate_withdrawal.go](examples/gas-estimation/estimate_withdrawal.go) with the above deployment tx
-5. Run the estimate_withdrawal.go script should produce us some tips about gas
+    ```bash
+    go run estimate_withdrawal.go -k 5dd169f61ecdb7ac3c0b6c59e17a033f6f5c747a65a1ca83c18de108b9e5ff72 --nonce 16 --tx 0xf83c95251e95b5ec0c65a59030eeaf67d0e0196da1ce23c1b8aff8b9ba7cb0e9
+    Gas price is 20000000000  wei
+    Gas estimation = 31188  units
+    Gas cost estimation = 623760000000000  wei
+    ```
 
 - Recommendation: Evaluate the gas cost of functions as part of your development workflow, to avoid any surprises when deploying contracts to the mainnet
 
