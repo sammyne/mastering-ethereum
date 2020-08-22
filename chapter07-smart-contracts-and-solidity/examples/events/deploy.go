@@ -4,54 +4,145 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"io/ioutil"
 	"math/big"
+	"os"
+	"os/exec"
+	"strings"
 
+	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/sammyne/mastering-ethereum/playground/eth"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/ethclient"
+	flag "github.com/spf13/pflag"
+)
+
+var (
+	chainID    int64
+	privKey    []byte
+	ganacheURL string
+	nonce      uint64
 )
 
 func main() {
-	c, err := eth.Dial()
+	flag.Parse()
+
+	faucetCode, err := generateBinaryABI("Faucet08.sol")
+	if err != nil {
+		panic(err)
+	}
+	//fmt.Printf("faucet code: %x\n", faucetCode)
+
+	eth, err := ethclient.Dial(ganacheURL)
 	if nil != err {
 		panic(err)
 	}
-	defer c.Close()
+	defer eth.Close()
 
-	gasPrice, err := c.SuggestGasPrice(context.TODO())
+	gasPrice, err := eth.SuggestGasPrice(context.TODO())
 	if nil != err {
 		panic(err)
 	}
 
-	const (
-		nonce    = 3
-		gasLimit = 2000000
-	)
+	chainID := big.NewInt(chainID)
+	const gasLimit = 2000000
 
-	var (
-		ropstenChainID = big.NewInt(3)
-		faucetCode, _  = hex.DecodeString(`6080604052600080546001600160a01b0319163317905561023c806100256000396000f3fe6080604052600436106100295760003560e01c80632e1a7d4d1461006157806383197ef01461008d575b60408051348152905133917fe1fffcc4923d04b559f4d29a8bfc6cda04eb5b0d3c460751c2402c5c5cc9109c919081900360200190a2005b34801561006d57600080fd5b5061008b6004803603602081101561008457600080fd5b50356100a2565b005b34801561009957600080fd5b5061008b610153565b67016345785d8a00008111156100ec57604051600160e51b62461bcd0281526004018080602001828103825260358152602001806101dc6035913960400191505060405180910390fd5b604051339082156108fc029083906000818181858888f19350505050158015610119573d6000803e3d6000fd5b5060408051828152905133917f7fcf532c15f0a6db0bd6d0e038bea71d30d808c7d98cb3bf7268a95bf5081b65919081900360200190a250565b6000546001600160a01b0316331461019f57604051600160e51b62461bcd02815260040180806020018281038252602e8152602001806101ae602e913960400191505060405180910390fd5b6000546001600160a01b0316fffe4f6e6c792074686520636f6e7472616374206f776e65722063616e2063616c6c20746869732066756e6374696f6e496e73756666696369656e742062616c616e636520696e2066617563657420666f72207769746864726177616c2072657175657374a165627a7a72305820abaf16ce06faf1ff11d2bc61d3728f94655eca1972e696bb29a69a97cf5850cc0029`)
-	)
+	workingDir, err := ioutil.TempDir("", "mastering-eth-*")
+	if err != nil {
+		panic(err)
+	}
+	defer os.RemoveAll(workingDir)
+
+	store, err := newKeyStore(privKey, workingDir)
+	if err != nil {
+		panic(fmt.Sprintf("fail to new key store: %v", err))
+	}
+	sender := store.Accounts()[0]
 
 	// TODO: compare with NewTransaction
-	tx := types.NewContractCreation(nonce, eth.ToWei(0), gasLimit,
-		gasPrice, faucetCode)
-
-	store, accounts, err := eth.UnlockAccounts(eth.DefaultKeyDir(),
-		eth.DefaultPassphrase())
-	if nil != err {
+	tx := types.NewContractCreation(nonce, toWei(0), gasLimit, gasPrice, faucetCode)
+	if tx, err = store.SignTx(sender, tx, chainID); nil != err {
 		panic(err)
 	}
 
-	account := accounts[0]
-	if tx, err = store.SignTx(account, tx, ropstenChainID); nil != err {
-		panic(err)
-	}
-
-	if err := c.SendTransaction(context.TODO(), tx); nil != err {
+	if err := eth.SendTransaction(context.TODO(), tx); nil != err {
 		panic(err)
 	}
 
 	fmt.Println("gasPrice =", gasPrice)
-	fmt.Println(" account =", account.Address.Hex())
+	fmt.Println(" account =", sender.Address.Hex())
 	fmt.Println("  txHash =", tx.Hash().Hex())
+}
+
+func generateBinaryABI(contract string) ([]byte, error) {
+	workingDir, err := os.Getwd()
+	if err != nil {
+		return nil, fmt.Errorf("fail to get current working dir: %w", err)
+	}
+
+	cmdLine := fmt.Sprintf("docker run --rm -v %s/contracts:/contracts --workdir /contracts ethereum/solc:0.7.0 --bin --optimize %s", workingDir, contract)
+
+	cmdAndArgs := strings.Split(cmdLine, " ")
+	cmd := exec.Command(cmdAndArgs[0], cmdAndArgs[1:]...)
+
+	var stdout strings.Builder
+	cmd.Stdout, cmd.Stderr = &stdout, os.Stderr
+	if err := cmd.Run(); err != nil {
+		return nil, fmt.Errorf("fail to run cmd: %w", err)
+	}
+
+	// output should be like
+	//
+	// ======= Faucet03.sol:Faucet =======
+	// Binary:
+	// [the actual abi binary code]
+	//
+	raw := strings.Split(strings.TrimSpace(stdout.String()), "\n")
+	//fmt.Println(raw[2])
+	out, err := hex.DecodeString(raw[2])
+	if err != nil {
+		return nil, fmt.Errorf("fail to decode ABI code: %w", err)
+	}
+
+	return out, nil
+}
+
+func init() {
+	flag.Int64VarP(&chainID, "chain", "c", 5777, "ID of chain bootstraped by Ganache")
+	flag.StringVarP(&ganacheURL, "ganache-url", "g", "http://127.0.0.1:7545", "receiver's address")
+	flag.BytesHexVarP(&privKey, "key", "k", nil, "sender's key")
+	flag.Uint64Var(&nonce, "nonce", 0, "nonce of tx")
+}
+
+func newKeyStore(key []byte, dir string) (*keystore.KeyStore, error) {
+	const passphrase = "hello-world"
+
+	privKey, err := crypto.ToECDSA(key)
+	if err != nil {
+		return nil, fmt.Errorf("fail to unmarshal private key: %w", err)
+	}
+
+	store := keystore.NewKeyStore(dir, keystore.StandardScryptN, keystore.StandardScryptP)
+	account, err := store.ImportECDSA(privKey, passphrase)
+	if err != nil {
+		return nil, fmt.Errorf("fail to import private key: %w", err)
+	}
+
+	if err := store.Unlock(account, passphrase); err != nil {
+		return nil, fmt.Errorf("fail to unlock account: %w", err)
+	}
+
+	return store, nil
+}
+
+func toWei(ethers float64) *big.Int {
+	// 1 ether = 10^18 wei
+	orders, _ := new(big.Float).SetString("1000000000000000000")
+
+	x := big.NewFloat(ethers)
+	x.Mul(x, orders)
+
+	wei, _ := x.Int(nil)
+
+	return wei
 }

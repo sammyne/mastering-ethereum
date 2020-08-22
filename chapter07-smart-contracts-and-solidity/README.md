@@ -464,23 +464,59 @@ And various value literals as
 
 - Events are a very useful mechanism, not only for intra-contract communication, but also for debugging during development
 - Demo goes as follows
-
-  1. Compile the [Faucet8.sol](examples/contracts/Faucet8.sol)
-
+  1. Start a Ganache network
+  2. Deploy [Faucet][examples/events/contracts/Faucet08.sol] to Ganache
      ```bash
-     ./solc.sh --bin --optimize Faucet8.sol
-     ```
+     cd exmaples/events
 
-  2. Copy and paste the output bytecodes in the value field of `faucetCode` of [deploy.go](examples/events/deploy.go), and trigger the deployment as
-     ```bash
-     go run deploy.go
+     # key is fetch from the Ganache account list
+     go run deploy.go -k 5dd169f61ecdb7ac3c0b6c59e17a033f6f5c747a65a1ca83c18de108b9e5ff72 --nonce 4
+
+     # Output
+     gasPrice = 20000000000
+      account = 0xCC6fDe13F6f662a8B752AE36f967759ECaCC82f1
+       txHash = 0x61555903d0a6911ae0917eecee46fd0b343ed15cfdb72caba96983ea2a718f55
      ```
-     Wait until the tx has been confirmed through [Ethersan.io](https://ropsten.etherscan.io)
-  3. Check the status of the deployed contract with [ping_code_test.go](examples/constructor-and-selfdestruct/ping_code_test.go)
-  4. Deposit some amount into the contract to trigger the event in the fallback functions by [deposit.go](examples/events/deposit.go)
-  5. Check the `Deposit` event as [deposit_logging_test.go](examples/events/deposit_logging_test.go)
+  3. Once the tx is confirmed, deposit some amount into the contract to trigger the event in the fallback functions by [deposit.go](examples/events/deposit.go)
+
+      ```bash
+      cd exmaples/events
+
+      go run deposit.go -k 5dd169f61ecdb7ac3c0b6c59e17a033f6f5c747a65a1ca83c18de108b9e5ff72 --nonce 5 --tx 0x61555903d0a6911ae0917eecee46fd0b343ed15cfdb72caba96983ea2a718f55
+
+      # Output
+      gasPrice = 20000000000
+      account = 0xCC6fDe13F6f662a8B752AE36f967759ECaCC82f1
+        txHash = 0xde0cf822f4521ffe82d8b9c16ff4c2e4a638cd2324ea1842a4f0dbc409f8b235
+      ```
+  4. Check the `Deposit` event as [deposit_logging.go](examples/events/deposit_logging.go)
+
+      ```bash
+      cd exmaples/events
+
+      go run deposit_logging.go --tx 0xde0cf822f4521ffe82d8b9c16ff4c2e4a638cd2324ea1842a4f0dbc409f8b235 -a 0xCC6fDe13F6f662a8B752AE36f967759ECaCC82f1
+      ```
+
+      No output means good.
+
   6. Withdraw some amount out of the contract to trigger the `Withdrawal` event in the `withdraw()` as [withdraw.go](examples/events/withdraw.go)
-  7. Check the `Withdrawal` event as [withdrawal_logging_test](examples/events/withdrawal_logging_test.go)
+      ```bash
+      cd exmaples/events
+
+      go run withdraw.go -k 5dd169f61ecdb7ac3c0b6c59e17a033f6f5c747a65a1ca83c18de108b9e5ff72 --nonce 9 --tx 0x61555903d0a6911ae0917eecee46fd0b343ed15cfdb72caba96983ea2a718f55
+
+      # Output
+      gasPrice = 20000000000
+       account = 0xCC6fDe13F6f662a8B752AE36f967759ECaCC82f1
+        txHash = 0xf01d63493822311093c8f5472bd5f6f210f521d62cad378f7aa88ab01c4ed57c
+      ```
+  7. Check the `Withdrawal` event as [withdrawal_logging.go](examples/events/withdrawal_logging.go), where no output means good
+
+      ```bash
+      cd exmaples/events
+
+      go run withdrawal_logging.go --tx 0xf01d63493822311093c8f5472bd5f6f210f521d62cad378f7aa88ab01c4ed57c -a 0xCC6fDe13F6f662a8B752AE36f967759ECaCC82f1
+      ```
 
 ### Calling Other Contracts (`send`, `call`, `callcode`, `delegatecall`)
 
