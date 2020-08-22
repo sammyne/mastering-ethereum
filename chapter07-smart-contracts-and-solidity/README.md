@@ -152,12 +152,15 @@
   - They are only used by the compiler to check compatibility
   - If missing, a warning will be reported
 
-    - Tested with [Faucet2.sol](examples/contracts/Faucet2.sol) commenting out the `pragma` directive
+    - Tested with [Faucet2.sol](examples/contracts/Faucet02.sol) commenting out the `pragma` directive
 
       ```bash
-      Faucet2.sol:6:1: Warning: Source file does not specify required compiler version! Consider adding "pragma solidity ^0.5.6;"
-      contract Faucet {
-      ^ (Relevant source part starts here and spans across multiple lines).
+      docker run --rm -v ${PWD}/contracts:/contracts --workdir /contracts ethereum/solc:0.7.0 --abi Faucet02.sol 
+
+      # Output
+      Warning: Source file does not specify required compiler version! Consider adding "pragma solidity ^0.7.0;"
+      --> Faucet02.sol
+      ...
       ```
 
 - Adding a version pragma is a best practice, as it avoids problems with mismatched compiler and language versions
