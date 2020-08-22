@@ -128,13 +128,16 @@
   - Function descriptions as `(type, name, inputs, outputs, constant, payable)`
   - Events as `(type, name, inputs, anonymous)`
 - ABI produced by `solc` with `--abi` option
+  ```bash
+  cd examples
 
-  - Sample output for our `Faucet` contract goes as
-    ```bash
-    ======= Faucet01.sol:Faucet =======
-    Contract JSON ABI
-    [{"constant":false,"inputs":[{"name":"amount","type":"uint256"}],"name":"withdraw","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"payable":true,"stateMutability":"payable","type":"fallback"}]
-    ```
+  docker run --rm -v ${PWD}/contracts:/contracts --workdir /contracts ethereum/solc:0.7.0 --abi Faucet01.sol 
+
+  # Output
+  ======= Faucet01.sol:Faucet =======
+  Contract JSON ABI
+  [{"inputs":[{"internalType":"uint256","name":"amount","type":"uint256"}],"name":"withdraw","outputs":[],"stateMutability":"nonpayable","type":"function"},{"stateMutability":"payable","type":"receive"}]
+  ```
 
 - Interaction with a contract requires only
   - An ABI
