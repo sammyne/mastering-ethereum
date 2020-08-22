@@ -1,16 +1,22 @@
 # Chapter 07. Smart Contracts and Solidity
 
-- EOAs are controlled by users, often via software such as a wallet application that is external to the Ethereum platform
-- Contract accounts are controlled by program code (also commonly referred to as "smart contracts") that is executed by the Ethereum Virtual Machine
+- EOAs are controlled by users, often via software such as a wallet application that is external to
+  the Ethereum platform
+- Contract accounts are controlled by program code (also commonly referred to as 
+  "smart contracts") that is executed by the Ethereum Virtual Machine
 
 ## What Is a Smart Contract?
 
-- **WHAT**: Immutable computer programs that run deterministically in the context of an Ethereum Virtual Machine as part of the Ethereum network protocol, i.e., on the decentralized Ethereum world computer
+- **WHAT**: Immutable computer programs that run deterministically in the context of an Ethereum
+  Virtual Machine as part of the Ethereum network protocol, i.e., on the decentralized Ethereum
+  world computer
   - **Computer programs**: Smart contracts are simply computer program
   - **Immutable**: Once deployed, the code of a smart contract cannot change
   - **Deterministic**: Always the same output given the same tx and blockchain state
-  - **EVM context**: Smart contracts can access their own state, the context of the transaction that called them, and some information about the most recent blocks
-  - **Decentralized world computer**: All instances of the EVM operate on the same initial state and produce the same final state, the system as a whole operates as a single "world computer"
+  - **EVM context**: Smart contracts can access their own state, the context of the transaction
+    that called them, and some information about the most recent blocks
+  - **Decentralized world computer**: All instances of the EVM operate on the same initial state
+    and produce the same final state, the system as a whole operates as a single "world computer"
 
 ## Life Cycle of a Smart Contract
 
@@ -18,8 +24,10 @@
   - Written in a high-level language, such as Solidity
   - Compiled to the low-level bytecode that runs in the EVM
   - Deployed on the Ethereum platform using a special contract creation transaction
-- Each contract is identified by an Ethereum address, which is derived from the contract creation transaction as a function of the originating account and nonce
-- A contract address as a recipient is for receiving funds or calling one of the contract's functions
+- Each contract is identified by an Ethereum address, which is derived from the contract creation
+  transaction as a function of the originating account and nonce
+- A contract address as a recipient is for receiving funds or calling one of the contract's
+  functions
 - **Contracts only run if they are called by a transaction**
 - Transactions are **atomic**
   - On success, any changes in the global state (contracts, accounts, etc.) is recorded only
@@ -27,8 +35,10 @@
 - Contract deletion
   - A contract can be deleted with the EVM opcode called `SELFDESTRUCT`
   - Any txs sent to the deleted contract account address will result in no code execution
-  - `SELFDESTRUCT` costs "negative gas," a gas refund, thereby incentivizing the release of network client resources from the deletion of stored state
-  - The `SELFDESTRUCT` capability will only be available if the contract author programmed the smart contract to have that functionality
+  - `SELFDESTRUCT` costs "negative gas," a gas refund, thereby incentivizing the release of
+    network client resources from the deletion of stored state
+  - The `SELFDESTRUCT` capability will only be available if the contract author programmed the
+    smart contract to have that functionality
 
 ## Introduction to Ethereum High-Level Languages
 
@@ -39,12 +49,14 @@
 - Two broad programming paradigms
 
   - Declarative (a.k.a, functional), including Haskell and SQL
-    - Makes it easier to understand how a program will behave: since it has no side effects, any part of a program can be understood in isolation
+    - Makes it easier to understand how a program will behave: since it has no side effects, any
+      part of a program can be understood in isolation
   - Imperative (a.k.a. procedural), including C++ and Java
 
     - More commonly used by programmers
     - It can be very difficult to write programs that execute exactly as expected
-    - The ability of any part of the program to change the state of any other makes it difficult to reason about a program's execution and introduces many opportunities for bugs
+    - The ability of any part of the program to change the state of any other makes it difficult
+      to reason about a program's execution and introduces many opportunities for bugs
 
     > The hybrid ones include Lisp, JavaScript and Python
 
@@ -63,22 +75,30 @@
 
 ## Building a Smart Contract with Solidity
 
-- Solidity is now developed and maintained as an independent project ([ethereum/solidity](https://github.com/ethereum/solidity)) on Github
-- The main "product" of the Solidity project is the Solidity compiler, `solc`, which converts programs written in the Solidity language to EVM bytecode
-- The project also manages the important **application binary interface** (ABI) standard for Ethereum smart contracts
-- Each version of the Solidity compiler corresponds to and compiles a specific version of the Solidity language
+- Solidity is now developed and maintained as an independent project 
+  ([ethereum/solidity](https://github.com/ethereum/solidity)) on Github
+- The main "product" of the Solidity project is the Solidity compiler, `solc`, which converts
+  programs written in the Solidity language to EVM bytecode
+- The project also manages the important **application binary interface** (ABI) standard for
+  Ethereum smart contracts
+- Each version of the Solidity compiler corresponds to and compiles a specific version of the
+  Solidity language
 
 ### Selecting a Version of Solidity
 
-- Solidity follows [semantic versioning](https://semver.org/), which specifies version numbers structured as three numbers separated by dots: `MAJOR.MINOR.PATCH`
+- Solidity follows [semantic versioning](https://semver.org/), which specifies version numbers
+  structured as three numbers separated by dots: `MAJOR.MINOR.PATCH`
 
   - The "major" number is incremented for major and backward-incompatible changes
-  - The "minor" number is incremented as backward-compatible features are added in between major releases
+  - The "minor" number is incremented as backward-compatible features are added in between major
+    releases
   - The "patch" number is incremented for backward-compatible bug fixes
 
-  > In practice, Solidity treats the "minor" number as if it were the major version and the "patch" number as if it were the minor version.
+  > In practice, Solidity treats the "minor" number as if it were the major version and the
+  > "patch" number as if it were the minor version.
 
-- Solidity programs can contain a pragma directive that specifies the minimum and maximum versions of Solidity that it is compatible with, and can be used to compile your contract
+- Solidity programs can contain a pragma directive that specifies the minimum and maximum versions
+  of Solidity that it is compatible with, and can be used to compile your contract
 
 ### Download and Install
 
@@ -95,7 +115,8 @@
 - Web-based text editors
   - [Remix IDE](https://remix.ethereum.org/#optimize=false&version=soljson-v0.5.1+commit.c8a2cb62.js)
   - [EthFiddle](https://ethfiddle.com/)
-- Simply save your program source code with a `.sol` extension and it will be recognized by the Solidity compiler as a Solidity program
+- Simply save your program source code with a `.sol` extension and it will be recognized by the
+  solidity compiler as a Solidity program
 
 ### Writing a Simple Solidity Program
 
@@ -103,7 +124,8 @@
 
 ### Compiling with the Solidity Compiler (solc)
 
-- Use the `--bin` and `--optimize` arguments of solc to produce an optimized binary of our example contract
+- Use the `--bin` and `--optimize` arguments of solc to produce an optimized binary of our example
+  contract
 
   ```bash
   cd examples
@@ -118,9 +140,11 @@
 
 ## The Ethereum Contract ABI
 
-- In computer software, an **application binary interface** is an interface between two program modules; often, between the **operating system** and **user programs**
+- In computer software, an **application binary interface** is an interface between two program
+  modules; often, between the **operating system** and **user programs**
 - An ABI defines how data structures and functions are accessed in **machine code**
-- In Ethereum, the ABI is used to encode contract calls for the EVM and to read data out of transactions
+- In Ethereum, the ABI is used to encode contract calls for the EVM and to read data out of
+  transactions
 - The purpose of an ABI is to
   - Define the functions in the contract that can be invoked
   - Describe how each function will accept arguments and return its result
@@ -145,8 +169,10 @@
 
 ### Selecting a Solidity Compiler and Language Version
 
-- **Problem**: A contract written in a specific version of Solidity is given to different version of Solidity compilers
-- **Solution**: Solidity offers a `compiler directive` known as a `version pragma` that instructs the compiler that the program expects a specific compiler (and language) version
+- **Problem**: A contract written in a specific version of Solidity is given to different version
+  of Solidity compilers
+- **Solution**: Solidity offers a `compiler directive` known as a `version pragma` that instructs
+  the compiler that the program expects a specific compiler (and language) version
 - **Pragma directives are not compiled into EVM bytecode**
 
   - They are only used by the compiler to check compatibility
@@ -163,7 +189,8 @@
       ...
       ```
 
-- Adding a version pragma is a best practice, as it avoids problems with mismatched compiler and language versions
+- Adding a version pragma is a best practice, as it avoids problems with mismatched compiler and
+  language versions
 
 ## Programming with Solidity
 
@@ -189,7 +216,8 @@ And various value literals as
 |  Time units | The units `seconds`, `minutes`, `hours`, and `days` can be used as suffixes, converting to multiples of the base unit `seconds` |
 | Ether units | The units `wei`, `szabo`, `finney`, and `ether` can be used as suffixes, converting to multiples of the base unit `wei`         |
 
-> Improve our code by using the unit multiplier ether, to express the value in `ether` instead of `wei`
+> Improve our code by using the unit multiplier ether, to express the value in `ether` instead of
+> `wei`
 
 ### Predefined Global Variables and Functions
 
@@ -201,7 +229,8 @@ And various value literals as
 
 #### Transaction/message call context
 
-- The `msg` object is the transaction call (EOA originated) or message call (contract originated) that launched this contract execution
+- The `msg` object is the transaction call (EOA originated) or message call (contract originated)
+  that launched this contract execution
 - It contains a number of useful attributes
 
   | Attribute | Description                                                                                                                                                      |
@@ -212,8 +241,8 @@ And various value literals as
   |    `data` | The data payload of this call into our contract                                                                                                                  |
   |     `sig` | The first four bytes of the data payload, which is the function selector                                                                                         |
 
-> Whenever a contract calls another contract, the values of all the attributes of `msg` change to reflect the new caller's information.
-> The only exception to this is the `delegatecall` function
+> Whenever a contract calls another contract, the values of all the attributes of `msg` change to
+> reflect the new caller's information. The only exception to this is the `delegatecall` function
 
 #### Transaction context
 
@@ -264,9 +293,11 @@ And various value literals as
 
 - Signaled by the `contract` keyword
 - 2 other similar objects are
-  - `interface` is structured exactly like a `contract`, except none of the functions are defined, they are only declared
+  - `interface` is structured exactly like a `contract`, except none of the functions are defined,
+    they are only declared
     > This type of declaration is often called a `stub`
-  - `library` is meant to be deployed only once and used by other contracts, using the `delegatecall` method
+  - `library` is meant to be deployed only once and used by other contracts, using the
+    `delegatecall` method
 
 ### Functions
 
@@ -277,26 +308,36 @@ And various value literals as
   ```
 
   - `FunctionName`
-    - Defines the name of the function, which is used to call the function in a transaction (from an EOA), from another contract, or even from within the same contract.
-    - Especially, the so-called `fallback` function is defined without a name, which is called when no other function is called. The `fallback` function cannot have any arguments or return anything
+    - Defines the name of the function, which is used to call the function in a transaction (from
+      an EOA), from another contract, or even from within the same contract.
+    - Especially, the so-called `fallback` function is defined without a name, which is called
+      when no other function is called. The `fallback` function cannot have any arguments or
+      return anything
   - `parameters`
     - The arguments that must be passed to the function, with their **names** and **types**
   - `public`/`private`/`internal`/`external` specify the function's visibility
-    - `public` is the default; such functions can be called by other contracts or EOA transactions, or from within the contract
-    - `external` is like `public`, except the decorated functions cannot be called from within the contract unless explicitly prefixed with the keyword `this`
-    - `internal` make functions only accessible from within the contract -- they cannot be called by another contract or EOA transaction. They can be called by derived contracts (those that inherit this one)
-    - `private` is like `internal`, except the decorated functions cannot be called by derived contracts
+    - `public` is the default; such functions can be called by other contracts or EOA
+      transactions, or from within the contract
+    - `external` is like `public`, except the decorated functions cannot be called from within the
+      contract unless explicitly prefixed with the keyword `this`
+    - `internal` make functions only accessible from within the contract -- they cannot be called
+      by another contract or EOA transaction. They can be called by derived contracts (those that
+      inherit this one)
+    - `private` is like `internal`, except the decorated functions cannot be called by derived
+      contracts
   - `pure`/`view`/`payable` affects behaviors of the functions
     - `view` marks a function promising not to modify any state
     - `pure` marks functions neither reading nor writing any variables in storage
     - `payable` marks the only functions for accepting incoming payments
-      > (TODO: EXPLAIN WHY) 2 exceptions are coinbase payments and `SELFDESTRUCT` inheritance will be paid even if the fallback function is not declared as `payable`
+      > (TODO: EXPLAIN WHY) 2 exceptions are coinbase payments and `SELFDESTRUCT` inheritance will
+      > be paid even if the fallback function is not declared as `payable`
 
 > As of v0.5.0, `constant` aliasing `view` is disallowed
 
 ### Contract Constructor and `selfdestruct`
 
-- When a contract is created, it also runs the `constructor` function if one exists, to initialize the state of the contract
+- When a contract is created, it also runs the `constructor` function if one exists, to initialize
+  the state of the contract
 - The constructor function is optional
 - Constructors must be defined using the `constructor` keyword as
 
@@ -312,9 +353,11 @@ And various value literals as
 
 - To summarize, a contract's life cycle
   - Starts with a creation transaction from an EOA or contract account
-  - If there is a constructor, it is executed as part of contract creation, to initialize the state of the contract as it is being created, and is then discarded.
+  - If there is a constructor, it is executed as part of contract creation, to initialize the
+    state of the contract as it is being created, and is then discarded.
   - Finally, contract can be destructed
-- Contracts are destroyed by a special EVM opcode called `SELFDESTRUCT` exposed as a high-level built-in function as
+- Contracts are destroyed by a special EVM opcode called `SELFDESTRUCT` exposed as a high-level
+  built-in function as
 
   ```solidity
   // recipient is the address to receive any remaining ether balance
@@ -325,7 +368,8 @@ And various value literals as
 
 ### Adding a `Constructor` and `selfdestruct` to Our Faucet Example
 
-- Use case: Record the EOA as the creator of contract as `owner` in constructor, and enforce that only `owner` can invoke `selfdestruct`
+- Use case: Record the EOA as the creator of contract as `owner` in constructor, and enforce that
+  only `owner` can invoke `selfdestruct`
 - Demo goes as follows
   1. Open a quickstart workspace in Ganache
   2. Deploy contract [Faucet][Faucet03] to Ganache
@@ -377,7 +421,8 @@ And various value literals as
         Tx in Ganache looks like 
         ![destruct tx ok](./images/constructor-and-selfdestruct/destruct-tx-ok.png)
 
-  4. After successful deletion, fetch the storage of the contract should produce `0x0` meaning contract has been deleted
+  4. After successful deletion, fetch the storage of the contract should produce `0x0` meaning
+    contract has been deleted
 
       ```bash
       cd examples/constructor-and-selfdestruct
@@ -404,10 +449,14 @@ And various value literals as
   }
   ```
 
-- The modifier is "wrapped around" the modified function, placing its code in the location identified by the underscore `_` placeholder
-- More than one modifier can be applied to a function; they are applied in the sequence they are declared, as a comma-separated list
-- They are most often used for access control, but they are quite versatile and can be used for a variety of other purposes
-- Inside a modifier, you can access all the values (variables and arguments) visible to the modified function, but not vice verse
+- The modifier is "wrapped around" the modified function, placing its code in the location
+  identified by the underscore `_` placeholder
+- More than one modifier can be applied to a function; they are applied in the sequence they are
+  declared, as a comma-separated list
+- They are most often used for access control, but they are quite versatile and can be used for a
+  variety of other purposes
+- Inside a modifier, you can access all the values (variables and arguments) visible to the
+  modified function, but not vice verse
 - The code sample goes as [Faucet04.sol](examples/contracts/Faucet04.sol)
 
 ### Contract Inheritance
@@ -432,12 +481,15 @@ And various value literals as
 
 - **WHY**: Write our contracts to achieve modularity, extensibility, and reuse
 - Sample code goes as [Faucet05.sol](examples/contracts/Faucet05.sol)
-  - A `owned` contract with the constructor and destructor, together with access control for an owner, assigned on construction
+  - A `owned` contract with the constructor and destructor, together with access control for an
+    owner, assigned on construction
   - `Faucet` contract rebased on `mortal` which is inherited from `owned`
 
 ### Error Handling (assert, require, revert)
 
-- **Atomicity** of contract execution: When a contract terminates with an error, all the state changes (changes to variables, balances, etc.) are reverted, all the way up the chain of contract calls if more than one contract was called
+- **Atomicity** of contract execution: When a contract terminates with an error, all the state
+  changes (changes to variables, balances, etc.) are reverted, all the way up the chain of
+  contract calls if more than one contract was called
 - 3 keywords (as of v0.5.6)
 
 |                 Keyword | Description                                                                                                           |
@@ -447,22 +499,29 @@ And various value literals as
 |           `revert(msg)` | Used to flag an error and revert the current call                                                                     |
 
 - Certain conditions in a contract will generate errors regardless of explicit check
-- It might be better to check explicitly and provide a clear error message on the system-generated errors
+- It might be better to check explicitly and provide a clear error message on the system-generated
+  errors
 
 - Code sample goes as [Faucet06.sol](examples/contracts/Faucet06.sol)
 
 ### Events
 
-- The tx receipt contains _log_ entries providing information about the actions that occurred during the execution of the transaction
+- The tx receipt contains _log_ entries providing information about the actions that occurred
+  during the execution of the transaction
 - Events are the Solidity high-level objects that are used to construct these logs
-- Events are especially useful for light clients and DApp services, which can "watch" for specific events and report them to the user interface, or make a change in the state of the application to reflect an event in an underlying contract.
-- Event objects take arguments that are serialized and recorded in the transaction logs, in the blockchain
-- Supplying the keyword `indexed` before an argument of type `event` makes the value part of an indexed table (hash table) that can be searched or filtered by an application
+- Events are especially useful for light clients and DApp services, which can "watch" for specific
+  events and report them to the user interface, or make a change in the state of the application
+  to reflect an event in an underlying contract.
+- Event objects take arguments that are serialized and recorded in the transaction logs, in the
+  blockchain
+- Supplying the keyword `indexed` before an argument of type `event` makes the value part of an
+  indexed table (hash table) that can be searched or filtered by an application
 - Event are triggered with the `emit` keyword
 
 #### Catching events
 
-- Events are a very useful mechanism, not only for intra-contract communication, but also for debugging during development
+- Events are a very useful mechanism, not only for intra-contract communication, but also for
+  debugging during development
 - Demo goes as follows
   1. Start a Ganache network
   2. Deploy [Faucet][examples/events/contracts/Faucet08.sol] to Ganache
@@ -477,7 +536,8 @@ And various value literals as
       account = 0xCC6fDe13F6f662a8B752AE36f967759ECaCC82f1
        txHash = 0x61555903d0a6911ae0917eecee46fd0b343ed15cfdb72caba96983ea2a718f55
      ```
-  3. Once the tx is confirmed, deposit some amount into the contract to trigger the event in the fallback functions by [deposit.go](examples/events/deposit.go)
+  3. Once the tx is confirmed, deposit some amount into the contract to trigger the event in the
+    fallback functions by [deposit.go](examples/events/deposit.go)
 
       ```bash
       cd exmaples/events
@@ -499,7 +559,8 @@ And various value literals as
 
       No output means good.
 
-  6. Withdraw some amount out of the contract to trigger the `Withdrawal` event in the `withdraw()` as [withdraw.go](examples/events/withdraw.go)
+  5. Withdraw some amount out of the contract to trigger the `Withdrawal` event in the `withdraw()`
+    as [withdraw.go](examples/events/withdraw.go)
       ```bash
       cd exmaples/events
 
@@ -510,7 +571,8 @@ And various value literals as
        account = 0xCC6fDe13F6f662a8B752AE36f967759ECaCC82f1
         txHash = 0xf01d63493822311093c8f5472bd5f6f210f521d62cad378f7aa88ab01c4ed57c
       ```
-  7. Check the `Withdrawal` event as [withdrawal_logging.go](examples/events/withdrawal_logging.go), where no output means good
+  6. Check the `Withdrawal` event as [withdrawal_logging.go](examples/events/withdrawal_logging.go),
+    where no output means good
 
       ```bash
       cd exmaples/events
@@ -520,8 +582,10 @@ And various value literals as
 
 ### Calling Other Contracts (`send`, `call`, `callcode`, `delegatecall`)
 
-- Calling other contracts from within your contract is a very useful but potentially dangerous operation
-- The risks arise from the fact that you may not know much about a contract you are calling into or that is calling into your contract
+- Calling other contracts from within your contract is a very useful but potentially dangerous
+  operation
+- The risks arise from the fact that you may not know much about a contract you are calling into
+  or that is calling into your contract
 
 #### Creating a new instance
 
@@ -564,7 +628,8 @@ And various value literals as
   }
   ```
 
-- **Caveat**: Using addresses passed as input and casting them into specific objects is therefore much more dangerous than creating the contract yourself
+- **Caveat**: Using addresses passed as input and casting them into specific objects is therefore
+  much more dangerous than creating the contract yourself
 
 #### Raw `call`, `delegatecall`
 
@@ -579,7 +644,8 @@ And various value literals as
   }
   ```
 
-- The `call` function will return `false` if there is a problem, so you can evaluate the return value for error handling
+- The `call` function will return `false` if there is a problem, so you can evaluate the return
+  value for error handling
 
   ```solidity
   contract Token is mortal {
@@ -591,7 +657,8 @@ And various value literals as
   }
   ```
 
-- `delegatecall` runs the code of another contract **inside the context of the execution of the current contract**
+- `delegatecall` runs the code of another contract
+  **inside the context of the execution of the current contract**
 
   - It is most often used to invoke code from a library
   - The effects of `delegatecall` to non-library contract isn't promised
@@ -629,16 +696,16 @@ And various value literals as
        account = 0xCC6fDe13F6f662a8B752AE36f967759ECaCC82f1
         txHash = 0x8cdf761039c7951adcd18fc03c563aad72fc041e1a868422f0f2523edc41d135
       ```
-  4. Find out the address (let's say it's `Lib`) of the deployed `calledLibrary` above
-  5. Link the deployed library to the `caller` contract
+  3. Find out the address (let's say it's `Lib`) of the deployed `calledLibrary` above
+  4. Link the deployed library to the `caller` contract
      ```bash
      ./solc.sh --libraries calledLibrary:<Lib> --bin --optimize CallExamples.sol
      ```
      Replace `<Lib>` with your actual address of `calledLibrary`
      (TODO: more funny details later)
      > The `__$xxxxxx$__` in the `caller` part should disappear now
-  6. Wait until all 3 contracts have been deployed on-chain successfully
-  7. Call `makeCalls` by an tx with [make_calls.go](examples/call-delegatecall/make_calls.go)
+  5. Wait until all 3 contracts have been deployed on-chain successfully
+  6. Call `makeCalls` by an tx with [make_calls.go](examples/call-delegatecall/make_calls.go)
       ```bash
       cd examples/call-delegatecall
 
@@ -651,7 +718,8 @@ And various value literals as
               txHash = 0xdf7493b9c2a1fedf8e29087a7ada583e274a08e854f02caf8301e22a3b35a326
       ```
      > NOTE: The address must be padded to 32 bytes as the ABI specification
-  8. After the tx above settled, checking the logging as [logging.go](examples/call-delegatecall/logging.go), where no panicking means ok
+  7. After the tx above settled, checking the logging as
+    [logging.go](examples/call-delegatecall/logging.go), where no panicking means ok
 
       ```bash
       go run logging.go -k 5dd169f61ecdb7ac3c0b6c59e17a033f6f5c747a65a1ca83c18de108b9e5ff72 --callee-tx 0x3dcfcef5f6d48635e61b79b1f895a3b8a6f336f3eaa3453c5a3eef3fa1eb5586 --caller-tx 0x8cdf761039c7951adcd18fc03c563aad72fc041e1a868422f0f2523edc41d135 --make-calls-tx 0xdf7493b9c2a1fedf8e29087a7ada583e274a08e854f02caf8301e22a3b35a326
@@ -666,7 +734,8 @@ And various value literals as
 
 ## Gas Considerations
 
-- Gas is a resource constraining the maximum amount of computation that Ethereum will allow a transaction to consume
+- Gas is a resource constraining the maximum amount of computation that Ethereum will allow a
+  transaction to consume
 - In case of exceeded gas limit
   - An "out of gas" exception is thrown
   - The state of the contract prior to execution is restored (reverted)
@@ -692,7 +761,9 @@ And various value literals as
      account = 0xCC6fDe13F6f662a8B752AE36f967759ECaCC82f1
       txHash = 0xf83c95251e95b5ec0c65a59030eeaf67d0e0196da1ce23c1b8aff8b9ba7cb0e9
     ```
-2. After the tx is settled, run the [estimate_withdrawal.go](examples/gas-estimation/estimate_withdrawal.go) script should produce us some tips about gas
+2. After the tx is settled, run the
+  [estimate_withdrawal.go](examples/gas-estimation/estimate_withdrawal.go) script should produce
+  us some tips about gas
 
     ```bash
     go run estimate_withdrawal.go -k 5dd169f61ecdb7ac3c0b6c59e17a033f6f5c747a65a1ca83c18de108b9e5ff72 --nonce 16 --tx 0xf83c95251e95b5ec0c65a59030eeaf67d0e0196da1ce23c1b8aff8b9ba7cb0e9
@@ -701,6 +772,7 @@ And various value literals as
     Gas cost estimation = 623760000000000  wei
     ```
 
-- Recommendation: Evaluate the gas cost of functions as part of your development workflow, to avoid any surprises when deploying contracts to the mainnet
+- Recommendation: Evaluate the gas cost of functions as part of your development workflow, to
+  avoid any surprises when deploying contracts to the mainnet
 
 ## Conclusions
