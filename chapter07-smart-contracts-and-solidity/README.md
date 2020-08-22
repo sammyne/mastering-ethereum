@@ -5,7 +5,7 @@
 
 ## What Is a Smart Contract?
 
-- **WHAT**: Immutable computer programs that run deterministically in the context of an Ethereum Virtual Machine as part of the Ethereum network protocol -- i.e., on the decentralized Ethereum world computer
+- **WHAT**: Immutable computer programs that run deterministically in the context of an Ethereum Virtual Machine as part of the Ethereum network protocol, i.e., on the decentralized Ethereum world computer
   - **Computer programs**: Smart contracts are simply computer program
   - **Immutable**: Once deployed, the code of a smart contract cannot change
   - **Deterministic**: Always the same output given the same tx and blockchain state
@@ -53,13 +53,13 @@
   - But imperative ones are favored by programmers
 - Supported high-level languages are
 
-| Language | Style       | Description                                                                                                                                                                                 |
-| -------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| LLL      | Declarative | Lisp-like syntax                                                                                                                                                                            |
-| Serpent  | Imperative  | Python-like syntax. Can also be used to write functional (declarative) code, though it is not entirely free of side effects                                                                 |
-| Solidity | Imperative  | JS/C++/Java-like syntax. **The most popular and frequently used language for Ethereum smart contracts**                                                                                     |
-| Vyper    | Declarative | Similar to Serpent and again with Python-like syntax. Intended to get closer to a pure-functional Python-like language than Serpent, but not to replace Serpent                             |
-| Bamboo   | N/A         | Influenced by Erlang, with explicit state transitions and without iterative flows (loops). Intended to reduce side effects and increase auditability. Very new and yet to be widely adopted |
+  | Language | Style       | Description                                                                                                                                                                                 |
+  | -------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  | LLL      | Declarative | Lisp-like syntax                                                                                                                                                                            |
+  | Serpent  | Imperative  | Python-like syntax. Can also be used to write functional (declarative) code, though it is not entirely free of side effects                                                                 |
+  | Solidity | Imperative  | JS/C++/Java-like syntax. **The most popular and frequently used language for Ethereum smart contracts**                                                                                     |
+  | Vyper    | Declarative | Similar to Serpent and again with Python-like syntax. Intended to get closer to a pure-functional Python-like language than Serpent, but not to replace Serpent                             |
+  | Bamboo   | N/A         | Influenced by Erlang, with explicit state transitions and without iterative flows (loops). Intended to reduce side effects and increase auditability. Very new and yet to be widely adopted |
 
 ## Building a Smart Contract with Solidity
 
@@ -82,7 +82,7 @@
 
 ### Download and Install
 
-- Detailed in [the Solidity documentation](https://solidity.readthedocs.io/en/v0.5.6/installing-solidity.html)
+- Detailed in [the Solidity documentation](https://solidity.readthedocs.io/en/latest/installing-solidity.html)
 - In my case, I would use the docker-based version encapsulated as the [solc.sh](../solc.sh) script
   - Contracts to compile MUST be placed in the `contracts` directory
 
@@ -106,9 +106,14 @@
 - Use the `--bin` and `--optimize` arguments of solc to produce an optimized binary of our example contract
 
   ```bash
+  cd examples
+
+  docker run --rm -v ${PWD}/contracts:/contracts --workdir /contracts ethereum/solc:0.7.0 --bin --optimize Faucet01.sol
+
+  # Output
   ======= Faucet01.sol:Faucet =======
   Binary:
-  608060405234801561001057600080fd5b5060b18061001f6000396000f3fe608060405260043610601c5760003560e01c80632e1a7d4d14601e575b005b348015602957600080fd5b50601c60048036036020811015603e57600080fd5b503568056bc75e2d63100000811115605557600080fd5b604051339082156108fc029083906000818181858888f193505050501580156081573d6000803e3d6000fd5b505056fea165627a7a723058203e0fd3e2dd356cca16234c9694818592b25230f09763db6796dd47babac46aa20029
+  608060405234801561001057600080fd5b5060cd8061001f6000396000f3fe608060405260043610601f5760003560e01c80632e1a7d4d14602a576025565b36602557005b600080fd5b348015603557600080fd5b50605060048036036020811015604a57600080fd5b50356052565b005b68056bc75e2d63100000811115606757600080fd5b604051339082156108fc029083906000818181858888f193505050501580156093573d6000803e3d6000fd5b505056fea264697066735822122038a17e21e07b9341fad71fcf3b53f21d72441ad65e764de5c92191b57804681964736f6c63430007000033
   ```
 
 ## The Ethereum Contract ABI
@@ -138,7 +143,7 @@
 ### Selecting a Solidity Compiler and Language Version
 
 - **Problem**: A contract written in a specific version of Solidity is given to different version of Solidity compilers
-- **Solution**: Solidity offers a `compiler directive` known as a `version pragma` that instructs the compiler that the program expects a specific compiler (and lan‐ guage) version
+- **Solution**: Solidity offers a `compiler directive` known as a `version pragma` that instructs the compiler that the program expects a specific compiler (and language) version
 - **Pragma directives are not compiled into EVM bytecode**
 
   - They are only used by the compiler to check compatibility
@@ -160,7 +165,7 @@
 
 |                           Type | Description                                                                                                                                                                   |
 | -----------------------------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|               Boolean (`bool`) | `true`/`false`, with logical operators `!`(not), `&&`(add), `||`(or), `==`(equal), `!=`(not equal)                                                                            |
+|               Boolean (`bool`) | `true`/`false`, with logical operators `!`(not), `&&`(add), `\|\|`(or), `==`(equal), `!=`(not equal)                                                                          |
 |         Integer (`int`,`uint`) | Signed (int) and unsigned (uint) integers, declared in increments of 8 bits from `int8` to `uint256`. `int`/`uint` aliases `int256`/`uint256`                                 |
 | Fixed point (`fixed`/`ufixed`) | Fixed-point numbers, declared with `(u)fixedMxN` where `M` is the size in bits (increments of `8` up to `256`) and `N` is the number of decimals after the point (up to `18`) |
 |            Address (`address`) | A 20-byte Ethereum address with many helpful member functions, the main ones being `balance` (returns the account balance) and `transfer`                                     |
@@ -193,13 +198,13 @@ And various value literals as
 - The `msg` object is the transaction call (EOA originated) or message call (contract originated) that launched this contract execution
 - It contains a number of useful attributes
 
-| Attribute | Description                                                                                                                                                      |
-| --------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-|  `sender` | It represents the `address` that initiated this contract call, not necessarily the originating EOA that sent the transaction (contract address is also possible) |
-|   `value` | The value of ether sent with this call (in `wei`)                                                                                                                |
-|     `gas` | The amount of gas left in the gas supply of this execution environment. This was deprecated in Solidity **v0.4.21** and replaced by the `gasleft` function       |
-|    `data` | The data payload of this call into our contract                                                                                                                  |
-|     `sig` | The first four bytes of the data payload, which is the function selector                                                                                         |
+  | Attribute | Description                                                                                                                                                      |
+  | --------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+  |  `sender` | It represents the `address` that initiated this contract call, not necessarily the originating EOA that sent the transaction (contract address is also possible) |
+  |   `value` | The value of ether sent with this call (in `wei`)                                                                                                                |
+  |     `gas` | The amount of gas left in the gas supply of this execution environment. This was deprecated in Solidity **v0.4.21** and replaced by the `gasleft` function       |
+  |    `data` | The data payload of this call into our contract                                                                                                                  |
+  |     `sig` | The first four bytes of the data payload, which is the function selector                                                                                         |
 
 > Whenever a contract calls another contract, the values of all the attributes of `msg` change to reflect the new caller's information.
 > The only exception to this is the `delegatecall` function
@@ -208,22 +213,22 @@ And various value literals as
 
 - Expressed as the `tx` object with information
 
-|  Attribute | Description                                                                   |
-| ---------: | :---------------------------------------------------------------------------- |
-| `gasprice` | The gas price in the calling transaction                                      |
-|   `origin` | The address of the originating EOA for this transaction. **WARNING: unsafe!** |
+  |  Attribute | Description                                                                   |
+  | ---------: | :---------------------------------------------------------------------------- |
+  | `gasprice` | The gas price in the calling transaction                                      |
+  |   `origin` | The address of the originating EOA for this transaction. **WARNING: unsafe!** |
 
 #### Block context
 
 - Expressed as the `block` object containing information
 
-|    Attribute | Description                                                                                       |
-| -----------: | :------------------------------------------------------------------------------------------------ |
-|   `coinbase` | The **address** of the recipient of the current block's fees and block reward                     |
-| `difficulty` | The difficulty (proof of work) of the current block                                               |
-|   `gaslimit` | The maximum amount of gas that can be spent across all transactions included in the current block |
-|     `number` | The current block number (blockchain height)                                                      |
-|  `timestamp` | The timestamp placed in the current block by the miner (number of seconds since the Unix epoch)   |
+  |    Attribute | Description                                                                                       |
+  | -----------: | :------------------------------------------------------------------------------------------------ |
+  |   `coinbase` | The **address** of the recipient of the current block's fees and block reward                     |
+  | `difficulty` | The difficulty (proof of work) of the current block                                               |
+  |   `gaslimit` | The maximum amount of gas that can be spent across all transactions included in the current block |
+  |     `number` | The current block number (blockchain height)                                                      |
+  |  `timestamp` | The timestamp placed in the current block by the miner (number of seconds since the Unix epoch)   |
 
 > The block hash of the specified block number, up to 256 blocks in the past can be queried by the global `blockhash(blockNumber)`
 
@@ -246,7 +251,7 @@ And various value literals as
 |                          `addmod`,`mulmod` | For modulo addition and multiplication                                                            |
 | `keccak256`, `sha256`, `sha3`, `ripemd160` | Functions to calculate hashes with various standard hash algorithms                               |
 |                                `ecrecover` | Recovers the address used to sign a message from the signature                                    |
-|         `selfdestrunct(recipient_address)` | Deletes the current contract, sending any remaining ether in the account to the recipient address |
+|          `selfdestruct(recipient_address)` | Deletes the current contract, sending any remaining ether in the account to the recipient address |
 |                                     `this` | The address of the currently executing contract account                                           |
 
 ### Contract Definition
