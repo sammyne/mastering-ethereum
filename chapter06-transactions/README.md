@@ -4,7 +4,8 @@
   - originated by an externally owned account
   - transmitted by the Ethereum network
   - recorded on the Ethereum blockchain
-- Ethereum is a global singleton state machine, and transactions are what make that state machine "tick," changing its state
+- Ethereum is a global singleton state machine, and transactions are what make that state machine
+  "tick," changing its state
 
 ## The Structure of a Transaction
 
@@ -20,26 +21,34 @@
   |      Data | The variable-length binary data payload                                          |
   |   `v,r,s` | The three components of an ECDSA digital signature of the originating EOA        |
 
-- The transaction message's structure is serialized using the **Recursive Length Prefix** (RLP) encoding scheme
-- All numbers in Ethereum are encoded as big-endian integers, of lengths that are multiples of 8 bits
+- The transaction message's structure is serialized using the **Recursive Length Prefix** (RLP)
+  encoding scheme
+- All numbers in Ethereum are encoded as big-endian integers, of lengths that are multiples of 
+  8 bits
 - RLP does not contain any field delimiters or labels
 - Since the address can be recovered from `v,r,s`, no address of the payer is included
 
 ## The Transaction Nonce
 
-- **WHAT**: A scalar value equal to the number of transactions sent from this address or, in the case of accounts with associated code, the number of contract-creations made by this account
-- The nonce is an attribute of the originating address; that is, it only has meaning in the context of the sending address
-- Nonce is calculated dynamically, by counting the number of **confirmed** transactions that have originated from an address.
+- **WHAT**: A scalar value equal to the number of transactions sent from this address or, in the
+  case of accounts with associated code, the number of contract-creations made by this account
+- The nonce is an attribute of the originating address; that is, it only has meaning in the context
+  of the sending address
+- Nonce is calculated dynamically, by counting the number of **confirmed** transactions that have
+  originated from an address.
 - 2 scenarios
   - The usability feature of transactions being included in the order of creation
     - Tx with larger nonces will be processed after those with smaller nonces
   - The vital feature of transaction duplication protection
-    - By having the incrementing nonce as part of the transaction, it is simply impossible for anyone to "duplicate" a payment you have made
+    - By having the incrementing nonce as part of the transaction, it is simply impossible for
+      anyone to "duplicate" a payment you have made
 
 ### Keeping Track of Nonces
 
-- The nonce is an up-to-date zero-based count of the number of **confirmed** (i.e., on-chain) transactions that have originated from an account
-- When you create a new transaction, you assign the next nonce in the sequence. But until it is confirmed, it will not count toward the `getTransactionCount` total
+- The nonce is an up-to-date zero-based count of the number of **confirmed** (i.e., on-chain)
+  transactions that have originated from an account
+- When you create a new transaction, you assign the next nonce in the sequence. But until it is
+  confirmed, it will not count toward the `getTransactionCount` total
 
 - DEMO of `getTransactionCount` (assume familiar with [Ganache])
 
@@ -49,45 +58,51 @@
     ![show keys](../images/ganache/show-keys.png)
 
      - The detail of key generation goes as [new_account.go](examples/keep-track-of-nonces/new_account.go)
-  4.  Play with `sendRawTransaction` as [transfer.go](examples/keep-track-of-nonces/transfer.go), which transfers totally 14 ethers (one 8 ether, and three 2 ethers) from account `0xf50577fDcEe002f4E0f253821D0DDCe1EEd71b9e` to account `0x58644DcEdF94EC71205FA6e4B64759EEE5ca93D0` made by Ganache
+  3. Play with `sendRawTransaction` as [transfer.go](examples/keep-track-of-nonces/transfer.go), 
+    which transfers totally 14 ethers (one 8 ether, and three 2 ethers) from account `0xf50577fDcEe002f4E0f253821D0DDCe1EEd71b9e` to account `0x58644DcEdF94EC71205FA6e4B64759EEE5ca93D0` made by Ganache
 
-    ```bash
-    go run transfer.go -k a678185d8a67fc340e09112f93e0d8f3a2726cef29bc73ed4eec09f2359af4f8 --to 0x58644DcEdF94EC71205FA6e4B64759EEE5ca93D0
-    ```
+      ```bash
+      go run transfer.go -k a678185d8a67fc340e09112f93e0d8f3a2726cef29bc73ed4eec09f2359af4f8 --to 0x58644DcEdF94EC71205FA6e4B64759EEE5ca93D0
+      ```
 
-    Output should be something like 
+      Output should be something like 
 
-    ```bash
-    ---
-    > one sending
-    from 0xf50577fDcEe002f4E0f253821D0DDCe1EEd71b9e
-    hash 0xc6becb0bc1a0138583126c65ff82fca952ea081e3cb66b3adba20d139c0afc9b
-    #(tx) = 0x1
-    ---
-    > batch sending
-    hash 0xff1c606d2a7f36492192435d56a9e639b4d3e176ea316ad46ca590cc1ac31f1e
-    #(tx) = 0x2
-    hash 0x2437782a0af5d9c7c24b75fdc4138eddc2823829925433ecf346ca572a4df19b
-    #(tx) = 0x3
-    hash 0xcc0f4a6ad59209c1ec813c1c76e97c16b0731e7d6b4e53e1aa6dcdd6ecc58663
-    #(tx) = 0x4
-    ```
+      ```bash
+      ---
+      > one sending
+      from 0xf50577fDcEe002f4E0f253821D0DDCe1EEd71b9e
+      hash 0xc6becb0bc1a0138583126c65ff82fca952ea081e3cb66b3adba20d139c0afc9b
+      #(tx) = 0x1
+      ---
+      > batch sending
+      hash 0xff1c606d2a7f36492192435d56a9e639b4d3e176ea316ad46ca590cc1ac31f1e
+      #(tx) = 0x2
+      hash 0x2437782a0af5d9c7c24b75fdc4138eddc2823829925433ecf346ca572a4df19b
+      #(tx) = 0x3
+      hash 0xcc0f4a6ad59209c1ec813c1c76e97c16b0731e7d6b4e53e1aa6dcdd6ecc58663
+      #(tx) = 0x4
+      ```
 
-    Ganache panel should be renewed as 
+      Ganache panel should be renewed as 
 
-    ![Transfer 8eth from account 1 to account 2](./images/keep-track-of-nonces/transfer.png)
+      ![Transfer 8eth from account 1 to account 2](./images/keep-track-of-nonces/transfer.png)
 
-- Only when the pending and confirmed counts are equal (all outstanding transactions are confirmed) can you trust the output of `getTransactionCount` to start your nonce counter
-- Parity's JSON RPC interface offers the `parity_nextNonce` function, which returns the next nonce that should be used in a transaction
+- Only when the pending and confirmed counts are equal (all outstanding transactions are confirmed)
+  can you trust the output of `getTransactionCount` to start your nonce counter
+- Parity's JSON RPC interface offers the `parity_nextNonce` function, which returns the next nonce
+  that should be used in a transaction
 
 [Ganache]: https://www.trufflesuite.com/ganache
 
 ### Gaps in Nonces, Duplicate Nonces, and Confirmation
 
 - The Ethereum network processes transactions sequentially, based on the nonce
-  - The txs of larger nonces will always remain pending until those of smaller nonces have been confirmed
-- Invalid tx or out-of-gas tx will induce gaps in nonces, making all the subsequent transactions "stuck" in waiting for the missing nonce
-- Once the gaps of nonces is validated by the network, all the broadcast transactions with subsequent nonces will incrementally become valid; it is not possible to "recall" a transaction
+  - The txs of larger nonces will always remain pending until those of smaller nonces have been
+    confirmed
+- Invalid tx or out-of-gas tx will induce gaps in nonces, making all the subsequent transactions
+  "stuck" in waiting for the missing nonce
+- Once the gaps of nonces is validated by the network, all the broadcast transactions with
+  subsequent nonces will incrementally become valid; it is not possible to "recall" a transaction
 
 ### Concurrency, Transaction Origination, and Nonces
 
@@ -95,40 +110,49 @@
   - Multithreading in the same program
   - Multiprocessing on the same CPU
   - Distributed systems on different computers
-- How do multiple computers generating, signing, and broadcasting transactions from the same hot wallet account coordinate?
-  - A single computer assigns nonces on a first-come first-served basis, to computers signing transactions. However, this computer is now a single point of failure
+- How do multiple computers generating, signing, and broadcasting transactions from the same hot
+  wallet account coordinate?
+  - A single computer assigns nonces on a first-come first-served basis, to computers signing
+    transactions. However, this computer is now a single point of failure
   - Forward generated transactions (leaving out nonces) to a single node which
     - Keeps track of nonces
     - Assign the nonce and sign the txs
     - is likely to become congested under load
-- The difficulties of synchronizing nonces forces most implementations toward avoiding concurrency and creating bottlenecks such as
+- The difficulties of synchronizing nonces forces most implementations toward avoiding concurrency
+  and creating bottlenecks such as
   - a single process handling all withdrawal transactions in an exchange
   - setting up multiple hot wallets that can work completely independently for withdrawals and only need to be intermittently rebalanced
 
 ## Transaction Gas
 
 - **Gas is not ether** -- it's a separate virtual currency with its own exchange rate against ether
-- **WHY**: The open-ended (Turing-complete) computation model requires some form of metering in order to avoid denial-of-service attacks or inadvertently resource-devouring transactions
-- The `gasPrice` field in a transaction allows the transaction originator to set the price they are willing to pay in exchange for gas
-  > [ETH Gas Station](https://ethgasstation.info/) provides information on the current prices of gas and other relevant gas metrics for the Ethereum main network
+- **WHY**: The open-ended (Turing-complete) computation model requires some form of metering in
+  order to avoid denial-of-service attacks or inadvertently resource-devouring transactions
+- The `gasPrice` field in a transaction allows the transaction originator to set the price they
+  are willing to pay in exchange for gas
+  > [ETH Gas Station](https://ethgasstation.info/) provides information on the current prices of
+  > gas and other relevant gas metrics for the Ethereum main network
 - The higher the `gasPrice`, the faster the transaction is likely to be confirmed
 - `gasPrice=0` means a fee-free transaction
-
 - A query of gas price goes as [eth_gasPrice.go](examples/tx-gas/eth_gasPrice.go)
 
   ```bash
   go run eth_gasPrice.go
   ```
 
-- If your transaction's destination address is a contract, then the amount of gas needed can be estimated but cannot be determined with accuracy. That's because a contract can evaluate different conditions that lead to different execution paths, with different total gas costs
+- If your transaction's destination address is a contract, then the amount of gas needed can be
+  estimated but cannot be determined with accuracy. That's because a contract can evaluate different
+  conditions that lead to different execution paths, with different total gas costs
 
 ## Transaction Recipient
 
 - The recipient is specified in the `to` field as an EOA address or a contract address
 - Ethereum does no further validation of the `to` field. Any 20-byte value is deemed valid
 - Address validation is assumed to happen at the user interface level based on EIP-55
-- A number of valid reasons for burning ether .
-  - An example is as a disincentive to cheating in payment channels and other smart contracts - and since the amount of ether is finite, burning ether effectively distributes the value burned to all ether holders (in proportion to the amount of ether they hold).
+- A number of valid reasons for burning ether
+  - An example is as a disincentive to cheating in payment channels and other smart contracts - and
+    since the amount of ether is finite, burning ether effectively distributes the value burned to
+    all ether holders (in proportion to the amount of ether they hold)
 
 ## Transaction Value and Data
 
@@ -140,26 +164,35 @@
 
 ### Transmitting Value to EOAs and Contracts
 
-- When you construct an Ethereum transaction that contains a value, it is the equivalent of a payment
+- When you construct an Ethereum transaction that contains a value, it is the equivalent of a
+  payment
 - For recipient as an EOA address or any non-contract address
   - Ethereum will record a state change, adding the value you sent to the balance of the address
-  - If the address has not been seen before, it will be added to the client's internal representation of the state and its balance initialized to the value of your payment
+  - If the address has not been seen before, it will be added to the client's internal
+    representation of the state and its balance initialized to the value of your payment
 - For recipient as a contract address
-  - The EVM will execute the contract and will attempt to call the function named in the data payload of your transaction
-  - If there is no data in your transaction, the EVM will call a **fallback function** and, if that function is payable, will execute it to determine what to do next
-  - If there is no fallback function, then the effect of the transaction will be to increase the balance of the contract, exactly like a payment to a wallet
+  - The EVM will execute the contract and will attempt to call the function named in the data
+    payload of your transaction
+  - If there is no data in your transaction, the EVM will call a **fallback function** and, if that
+    function is payable, will execute it to determine what to do next
+  - If there is no fallback function, then the effect of the transaction will be to increase the
+    balance of the contract, exactly like a payment to a wallet
 
 ### Transmitting a Data Payload to an EOA or Contract
 
 - When your transaction contains data, it is most **likely** addressed to a contract address
-- Sending a data payload to an EOA is completely valid in the Ethereum protocol. However, the interpretation of the data is up to the wallet you use to access the EOA
+- Sending a data payload to an EOA is completely valid in the Ethereum protocol. However, the
+  interpretation of the data is up to the wallet you use to access the EOA
   - Any interpretation of the data payload by an EOA is not subject to Ethereum's consensus rules
 - Assume your transaction is delivering data to a contract address
   - The data will be interpreted by the EVM as a _contract invocation_
-  - Most contracts use this data more specifically as a **function invocation**, calling the named function and passing any encoded arguments to the function
+  - Most contracts use this data more specifically as a **function invocation**, calling the named
+    function and passing any encoded arguments to the function
 - The data payload sent to an ABI-compatible contract
-  - **A function selector**: The first 4 bytes of the Keccak-256 hash of the function's prototype. This allows the contract to unambiguously identify which function you wish to invoke
-  - **The function arguments**: The function's arguments, encoded according to the rules for the various elementary types defined in the ABI specification
+  - **A function selector**: The first 4 bytes of the Keccak-256 hash of the function's prototype.
+    This allows the contract to unambiguously identify which function you wish to invoke
+  - **The function arguments**: The function's arguments, encoded according to the rules for the
+    various elementary types defined in the ABI specification
 - The **prototype** of a function is defined as
 
   - The string containing the **name of the function**, followed by
@@ -187,14 +220,20 @@
 
 ## Special Transaction: Contract Creation
 
-- Contract creation transactions are sent to a special destination address called the **zero address**; the `to` field in a contract registration transaction contains the address `0x0`
+- Contract creation transactions are sent to a special destination address called the
+  **zero address**; the `to` field in a contract registration transaction contains the address `0x0`
 - 2 applications of zero addresses
   - Accidental payment resulting in the loss of ether
-  - An intentional **ether burn** (deliberately destroying ether by sending it to an address from which it can never be spent)
-    - Intentional **ether burn** is recommended sent to address `0x000000000000000000000000000000000000dEaD`
-- A contract creation transaction need only contain a data payload that contains the **compiled bytecode** which will create the contract
+  - An intentional **ether burn** (deliberately destroying ether by sending it to an address from
+    which it can never be spent)
+    - Intentional **ether burn** is recommended sent to address
+      `0x000000000000000000000000000000000000dEaD`
+- A contract creation transaction need only contain a data payload that contains the
+  **compiled bytecode** which will create the contract
   - Optional ether amount in the `value` field will set the new contract up with a starting balance
-- It is good practice to always specify a to parameter, even in the case of zero-address contract creation, because the cost of accidentally sending your ether to `0x0` and losing it forever is too great
+- It is good practice to always specify a to parameter, even in the case of zero-address contract
+  creation, because the cost of accidentally sending your ether to `0x0` and losing it forever is
+  too great
 - A manual contract creation tx goes as
 
   1. Compile the contract source file and get the bytecodes
@@ -203,7 +242,8 @@
      ./solc.sh --bin --optimze Faucet.sol
      ```
 
-     where [solc.sh](../solc.sh) is a script invoking the docker-based solidity compiler. If ok, we should get similar output as (where the hex string under `Binary:` is the bytecodes)
+     where [solc.sh](../solc.sh) is a script invoking the docker-based solidity compiler. If ok, we
+     should get similar output as (where the hex string under `Binary:` is the bytecodes)
 
      ```bash
      ======= Faucet.sol:Faucet =======
@@ -226,7 +266,8 @@
   3. Tracing the tx in Ganache shows us
     ![Contract creation tx](./images/special-tx-contract-creation/contract-creation.png)
 
-  4. Check the contract by its receipt (indexed by tx hash) on the mined block by running the [tx_receipt.go](examples/special-tx-contract-creation/tx_receipt.go)
+  4. Check the contract by its receipt (indexed by tx hash) on the mined block by running the
+    [tx_receipt.go](examples/special-tx-contract-creation/tx_receipt.go)
 
       ```bash
       # replace '--txhash' with yours
@@ -250,7 +291,8 @@
         "transactionIndex": "0x0"
       }
       ```
-  5. Fund the contract with 0.1 ether by running script [funding.go](examples/special-tx-contract-creation/funding.go)
+  5. Fund the contract with 0.1 ether by running script
+    [funding.go](examples/special-tx-contract-creation/funding.go)
       ```bash
       go run funding.go -k a678185d8a67fc340e09112f93e0d8f3a2726cef29bc73ed4eec09f2359af4f8 --faucet 0x8ffEb5D82f070A6C2C8E511E87b5581f8AacbB88 --nonce 7
 
@@ -262,7 +304,8 @@
       Tx shown in Ganache as  
       ![Funding tx](./images/special-tx-contract-creation/funding-tx.png)
 
-  7. Withdraw 0.01 ether from the contract by running script [withdraw.go](examples/special-tx-contract-creation/withdraw.go)
+  6. Withdraw 0.01 ether from the contract by running script 
+    [withdraw.go](examples/special-tx-contract-creation/withdraw.go)
 
       ```bash
       go run withdraw.go -k a678185d8a67fc340e09112f93e0d8f3a2726cef29bc73ed4eec09f2359af4f8 --faucet 0x8ffEb5D82f070A6C2C8E511E87b5581f8AacbB88 --nonce 8 
@@ -291,7 +334,8 @@
 ### How Digital Signatures Work
 
 - 2 parts
-  - Signing using a private key (the signing key), from a message (which in our case is the transaction)
+  - Signing using a private key (the signing key), from a message (which in our case is the
+    transaction)
   - Verification only using the message and a public key
 
 #### Creating a digital signature
@@ -375,9 +419,12 @@ Do
   3. Compute the Keccak-256 hash of this serialized message.
   4. Compute the ECDSA signature, signing the hash with the originating EOA's private key.
   5. Append the ECDSA signature's computed `v`, `r`, and `s` values to the transaction.
-     > `v` indicates two things: the chain ID and the recovery identifier to help the `ECDSArecover` function check the signature. It is calculated as either one of 27 or 28, or as the chain ID doubled plus 35 or 36
+     > `v` indicates two things: the chain ID and the recovery identifier to help the `ECDSArecover`
+     > function check the signature. It is calculated as either one of 27 or 28, or as the chain ID
+     > doubled plus 35 or 36
 
-> At block #2,675,000 Ethereum implemented the "Spurious Dragon" hard fork (detailed in EIP-155) to address the tx replay attack
+> At block #2,675,000 Ethereum implemented the "Spurious Dragon" hard fork (detailed in EIP-155) to
+> address the tx replay attack
 
 ### Raw Transaction Creation and Signing
 
@@ -385,10 +432,13 @@ Do
 
 ### Raw Transaction Creation with EIP-155
 
-- The EIP-155 "Simple Replay Attack Protection" standard specifies a replay-attack-protected transaction encoding
+- The EIP-155 "Simple Replay Attack Protection" standard specifies a replay-attack-protected
+  transaction encoding
   - Includes a **chain identifier** inside the transaction data, prior to signing
-  - This ensures that transactions created for one blockchain (e.g., the Ethereum main network) are invalid on another blockchain (e.g., Ethereum Classic or the Ropsten test network)
-- EIP-155 adds three fields to the main six fields of the transaction data structure, namely the chain identifier, `0`, and `0`
+  - This ensures that transactions created for one blockchain (e.g., the Ethereum main network) are
+    invalid on another blockchain (e.g., Ethereum Classic or the Ropsten test network)
+- EIP-155 adds three fields to the main six fields of the transaction data structure, namely the
+  chain identifier, `0`, and `0`
 - Chain identifiers
 
   |                      Chain | ID   |
@@ -406,10 +456,12 @@ Do
 
 ## The Signature Prefix Value (`v`) and Public Key Recovery
 
-- The transaction message doesn't include a "from" field. That's because the originator's public key can be computed directly from the ECDSA signature by means of **public key recovery**
+- The transaction message doesn't include a "from" field. That's because the originator's public key
+  can be computed directly from the ECDSA signature by means of **public key recovery**
 - Public key recovery goes as (given `r` and `s`)
 
-  1. Compute two elliptic curve points, `R` and `R'`, from the `x` coordinate `r` value that is in the signature
+  1. Compute two elliptic curve points, `R` and `R'`, from the `x` coordinate `r` value that is in
+    the signature
   2. Calculate `r^{-1}`
   3. Calculate `z=Keccak256(m) (mod p)`
   4. Estimate the 2 candidate public keys as
@@ -434,41 +486,58 @@ Do
 
 ## Separating Signing and Transmission (Offline Signing)
 
-- The three steps of creating, signing, and broadcasting a transaction normally happen as a single operation, for example using `web3.eth.sendTransaction`
+- The three steps of creating, signing, and broadcasting a transaction normally happen as a single
+  operation, for example using `web3.eth.sendTransaction`
 - **WHY** offline Signing: **security**
   - The computer signing a transaction must have unlocked private keys loaded in memory
   - The computer transmitting the tx must be online
-  - If these two functions are on one computer, then you have private keys on an online system, which is quite dangerous
+  - If these two functions are on one computer, then you have private keys on an online system,
+    which is quite dangerous
 - **HOW**
 
-  1. Create an unsigned transaction on the online computer where the current state of the account, notably the current nonce and funds available, can be retrieved.
-  2. Transfer the unsigned transaction to an "air-gapped" offline device for transaction signing, e.g., via a QR code or USB flash drive
-  3. Transmit the signed transaction (back) to an online device for broadcast on the Ethereum blockchain, e.g., via QR code or USB flash drive
+  1. Create an unsigned transaction on the online computer where the current state of the account,
+    notably the current nonce and funds available, can be retrieved.
+  2. Transfer the unsigned transaction to an "air-gapped" offline device for transaction signing,
+    e.g., via a QR code or USB flash drive
+  3. Transmit the signed transaction (back) to an online device for broadcast on the Ethereum
+    blockchain, e.g., via QR code or USB flash drive
 
   ![Offline signing](images/offline_signing.png)
 
 - Manual transfering tx by means of data storage media or a webcam and QR code doesn't scale
-- While not many environments can utilize a fully air-gapped system, even a small degree of isolation has significant security benefits. An application of ZeroMQ serves for this
+- While not many environments can utilize a fully air-gapped system, even a small degree of
+  isolation has significant security benefits. An application of ZeroMQ serves for this
 
 ## Transaction Propagation
 
 - **HOW**: "flood routing" protocol
-  - Each Ethereum client acts as a node in a peer-to-peer (P2P) network, which (ideally) forms a mesh network
-- On average, each Ethereum node maintains connections to at least 13 other nodes, called its **neighbors**
-- Each neighbor node validates the transaction as soon as they receive it. If they agree that it is valid, they store a copy and propagate it to all their neighbors (except the one it came from)
-- As a result, the transaction ripples outwards from the originating node, flooding across the network, until all nodes in the network have a copy of the transaction
+  - Each Ethereum client acts as a node in a peer-to-peer (P2P) network, which (ideally) forms a
+    mesh network
+- On average, each Ethereum node maintains connections to at least 13 other nodes, called its
+  **neighbors**
+- Each neighbor node validates the transaction as soon as they receive it. If they agree that it is
+  valid, they store a copy and propagate it to all their neighbors (except the one it came from)
+- As a result, the transaction ripples outwards from the originating node, flooding across the
+  network, until all nodes in the network have a copy of the transaction
 
 ## Recording on the Blockchain
 
-- **WHO**: miners feeding transactions and blocks to mining farms, which are computers with high-performance graphics processing units (GPUs)
-- **HOW**: The mining computers add transactions to a candidate block and attempt to find a proof of work that makes the candidate block valid
-- Valid transactions will eventually be included in a block of transactions and, thus, recorded in the Ethereum blockchain
+- **WHO**: miners feeding transactions and blocks to mining farms, which are computers with
+  high-performance graphics processing units (GPUs)
+- **HOW**: The mining computers add transactions to a candidate block and attempt to find a proof of
+  work that makes the candidate block valid
+- Valid transactions will eventually be included in a block of transactions and, thus, recorded in
+  the Ethereum blockchain
 
 ## Multiple-Signature (Multisig) Transactions
 
 - Ethereum's basic EOA value transactions have no provisions for multiple signatures
-- Arbitrary signing restrictions can be enforced by smart contracts with any conditions you can think of, to handle the transfer of ether and tokens alike
-- The ability to implement multisignature transactions as a smart contract demonstrates the flexiblity of Ethereum, at the expense of potential bugs that undermine the security of multisignature schemes
-- There are, in fact, a number of proposals to create a multisignature command in the EVM that removes the need for smart contracts, at least for the simple M-of-N multisignature schemes
+- Arbitrary signing restrictions can be enforced by smart contracts with any conditions you can
+  think of, to handle the transfer of ether and tokens alike
+- The ability to implement multisignature transactions as a smart contract demonstrates the
+  flexiblity of Ethereum, at the expense of potential bugs that undermine the security of
+  multisignature schemes
+- There are, in fact, a number of proposals to create a multisignature command in the EVM that
+  removes the need for smart contracts, at least for the simple M-of-N multisignature schemes
 
 ## Conclusions
