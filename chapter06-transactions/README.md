@@ -175,8 +175,9 @@
     payload of your transaction
   - If there is no data in your transaction, the EVM will call a **fallback function** and, if that
     function is payable, will execute it to determine what to do next
-  - If there is no fallback function, then the effect of the transaction will be to increase the
+  - If there is no code in fallback function, then the effect of the transaction will be to increase the
     balance of the contract, exactly like a payment to a wallet
+  - If there is no fallback function or non-payable fallback function, then transaction will be reverted
 
 ### Transmitting a Data Payload to an EOA or Contract
 
