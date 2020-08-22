@@ -5,78 +5,137 @@ package main
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"math/big"
+	"os"
 
-	"github.com/ethereum/go-ethereum/ethclient"
-
+	"github.com/ethereum/go-ethereum/accounts/keystore"
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/sammyne/mastering-ethereum/playground/eth"
+	"github.com/ethereum/go-ethereum/ethclient"
+	flag "github.com/spf13/pflag"
 )
 
-func loadContractAddress(c *ethclient.Client,
-	txHash common.Hash) common.Address {
-	// fetch the receipt to decode the contract address
-	receipt, err := c.TransactionReceipt(context.TODO(), txHash)
-	if nil != err {
-		panic(err)
-	}
-
-	return receipt.ContractAddress
-}
+var (
+	chainID      int64
+	privKey      []byte
+	ganacheURL   string
+	nonce        uint64
+	calleeTxHash string
+	callerTxHash string
+)
 
 func main() {
-	txHash := common.HexToHash("0x0dfbd9d7992f433fff03f3e6326b8f6b72e8e29e6ba258d1fd7ae0e1813e3956")
+	flag.Parse()
 
-	c, err := eth.Dial()
+	eth, err := ethclient.Dial(ganacheURL)
 	if nil != err {
 		panic(err)
 	}
-	defer c.Close()
+	defer eth.Close()
 
 	/* construct the tx meta data */
-	const nonce = 22 // this should adapt to the specified account
-	to := loadContractAddress(c, txHash)
-	amount := eth.ToWei(0)
+	to, err := readContractAddress(eth, common.HexToHash(callerTxHash))
+	if err != nil {
+		panic(fmt.Sprintf("fail to read caller contract address: %v", err))
+	}
+	amount := toWei(0)
 	const gasLimit = 2000000
 
-	gasPrice, err := c.SuggestGasPrice(context.TODO())
+	gasPrice, err := eth.SuggestGasPrice(context.TODO())
 	if nil != err {
 		panic(err)
 	}
 
-	// destroy() is method sig
-	//methodID := crypto.Keccak256([]byte("makeCalls(address)"))[:4]
-	methodID := crypto.Keccak256([]byte("makeCalls(address)"))[:4]
+	methodSig := crypto.Keccak256([]byte("makeCalls(address)"))[:4]
 	//fmt.Printf("%x\n", methodID)
 
-	deployCalledContractTxHash := common.HexToHash("0x6ea482e07a361bc21cf4081b9e2bb232f5b18be156dd9f587e27b0e57641c722")
+	calleeAddress, err := readContractAddress(eth, common.HexToHash(calleeTxHash))
+	if err != nil {
+		panic(fmt.Sprintf("fail to read callee contract address: %v", err))
+	}
 	// the left padding is a MUST
-	calledContract := common.LeftPadBytes(
-		loadContractAddress(c, deployCalledContractTxHash).Bytes(), 32)
-	methodID = append(methodID, calledContract...)
+	methodSig = append(methodSig, common.LeftPadBytes(calleeAddress.Bytes(), 32)...)
 	/* end construct the tx meta data */
-	tx := types.NewTransaction(nonce, to, amount, gasLimit, gasPrice, methodID)
+	tx := types.NewTransaction(nonce, to, amount, gasLimit, gasPrice, methodSig)
 
-	store, accounts, err := eth.UnlockAccounts(eth.DefaultKeyDir(),
-		eth.DefaultPassphrase())
-	if nil != err {
+	chainID := big.NewInt(chainID)
+
+	workingDir, err := ioutil.TempDir("", "mastering-eth-*")
+	if err != nil {
+		panic(err)
+	}
+	defer os.RemoveAll(workingDir)
+
+	store, err := newKeyStore(privKey, workingDir)
+	if err != nil {
+		panic(fmt.Sprintf("fail to new key store: %v", err))
+	}
+	sender := store.Accounts()[0]
+
+	if tx, err = store.SignTx(sender, tx, chainID); nil != err {
 		panic(err)
 	}
 
-	account := accounts[0]
-	ropstenChainID := big.NewInt(3)
-	if tx, err = store.SignTx(account, tx, ropstenChainID); nil != err {
-		panic(err)
-	}
-
-	if err := c.SendTransaction(context.TODO(), tx); nil != err {
+	if err := eth.SendTransaction(context.TODO(), tx); nil != err {
 		panic(err)
 	}
 
 	fmt.Println("      gasPrice =", gasPrice)
-	fmt.Println("       account =", account.Address.Hex())
-	//fmt.Println("calledContract =", calledContract.Hex())
+	fmt.Println("       account =", sender.Address.Hex())
+	fmt.Println("calledContract =", calleeAddress.Hex())
 	fmt.Println("        txHash =", tx.Hash().Hex())
+}
+
+func init() {
+	flag.Int64VarP(&chainID, "chain", "c", 5777, "ID of chain bootstraped by Ganache")
+	flag.StringVarP(&ganacheURL, "ganache-url", "g", "http://127.0.0.1:7545", "receiver's address")
+	flag.BytesHexVarP(&privKey, "key", "k", nil, "sender's key")
+	flag.Uint64Var(&nonce, "nonce", 0, "nonce of tx")
+	flag.StringVar(&calleeTxHash, "callee-tx", "", "hash of tx deploying the calledContract")
+	flag.StringVar(&callerTxHash, "caller-tx", "", "hash of tx deploying the caller contract")
+}
+
+func newKeyStore(key []byte, dir string) (*keystore.KeyStore, error) {
+	const passphrase = "hello-world"
+
+	privKey, err := crypto.ToECDSA(key)
+	if err != nil {
+		return nil, fmt.Errorf("fail to unmarshal private key: %w", err)
+	}
+
+	store := keystore.NewKeyStore(dir, keystore.StandardScryptN, keystore.StandardScryptP)
+	account, err := store.ImportECDSA(privKey, passphrase)
+	if err != nil {
+		return nil, fmt.Errorf("fail to import private key: %w", err)
+	}
+
+	if err := store.Unlock(account, passphrase); err != nil {
+		return nil, fmt.Errorf("fail to unlock account: %w", err)
+	}
+
+	return store, nil
+}
+
+func readContractAddress(c *ethclient.Client, txHash common.Hash) (common.Address, error) {
+	// fetch the receipt to decode the contract address
+	receipt, err := c.TransactionReceipt(context.TODO(), txHash)
+	if nil != err {
+		return common.Address{}, fmt.Errorf("fail to fetch tx receipt: %w", err)
+	}
+
+	return receipt.ContractAddress, nil
+}
+
+func toWei(ethers float64) *big.Int {
+	// 1 ether = 10^18 wei
+	orders, _ := new(big.Float).SetString("1000000000000000000")
+
+	x := big.NewFloat(ethers)
+	x.Mul(x, orders)
+
+	wei, _ := x.Int(nil)
+
+	return wei
 }

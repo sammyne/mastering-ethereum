@@ -6,53 +6,162 @@ import (
 	"context"
 	"encoding/hex"
 	"fmt"
+	"io/ioutil"
 	"math/big"
+	"os"
+	"os/exec"
+	"strings"
 
+	"github.com/ethereum/go-ethereum/accounts/keystore"
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/sammyne/mastering-ethereum/playground/eth"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/ethclient"
+	flag "github.com/spf13/pflag"
+)
+
+var (
+	chainID             int64
+	privKey             []byte
+	ganacheURL          string
+	nonce               uint64
+	calledLibraryTxHash string
 )
 
 func main() {
-	c, err := eth.Dial()
+	flag.Parse()
+
+	eth, err := ethclient.Dial(ganacheURL)
 	if nil != err {
 		panic(err)
 	}
-	defer c.Close()
+	defer eth.Close()
 
-	gasPrice, err := c.SuggestGasPrice(context.TODO())
+	// query the address of calledLibrary
+	// fetch the receipt to decode the contract address
+	receipt, err := eth.TransactionReceipt(context.TODO(), common.HexToHash(calledLibraryTxHash))
+	if nil != err {
+		panic(err)
+	}
+	calledLibraryAddress := receipt.ContractAddress
+	// END query the address of calledLibrary
+
+	// generate the full caller code
+	callerCode, err := generateBinaryABI("CallExamples.sol", calledLibraryAddress.Hex()[2:])
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("caller code: %x\n", callerCode)
+	// END generate the full caller code
+
+	gasPrice, err := eth.SuggestGasPrice(context.TODO())
 	if nil != err {
 		panic(err)
 	}
 
-	const (
-		nonce    = 21
-		gasLimit = 2000000
-	)
+	chainID := big.NewInt(chainID)
+	const gasLimit = 2000000
 
-	var (
-		ropstenChainID = big.NewInt(3)
-		code, _        = hex.DecodeString(`608060405234801561001057600080fd5b5061034e806100206000396000f3fe608060405234801561001057600080fd5b506004361061002b5760003560e01c8063444c35df14610030575b600080fd5b6100566004803603602081101561004657600080fd5b50356001600160a01b0316610058565b005b806001600160a01b0316630d8ea1806040518163ffffffff1660e01b8152600401600060405180830381600087803b15801561009357600080fd5b505af11580156100a7573d6000803e3d6000fd5b5050505073dbd808691caed7420134e4fc645d9f5536b82afc630d8ea1806040518163ffffffff1660e01b815260040160006040518083038186803b1580156100ef57600080fd5b505af4158015610103573d6000803e3d6000fd5b505060408051600481526024810182526020810180516001600160e01b0316600160e71b621b1d430217815291518151919450600093506060926001600160a01b0387169286929182918083835b602083106101705780518252601f199092019160209182019101610151565b6001836020036101000a0380198251168184511680821785525050505050509050019150506000604051808303816000865af19150503d80600081146101d2576040519150601f19603f3d011682016040523d82523d6000602084013e6101d7565b606091505b5091509150816102225760408051600160e51b62461bcd02815260206004820152600b6024820152600160aa1b6a18d85b1b0819985a5b195902604482015290519081900360640190fd5b836001600160a01b0316836040518082805190602001908083835b6020831061025c5780518252601f19909201916020918201910161023d565b6001836020036101000a038019825116818451168082178552505050505050905001915050600060405180830381855af49150503d80600081146102bc576040519150601f19603f3d011682016040523d82523d6000602084013e6102c1565b606091505b5090925090508161031c5760408051600160e51b62461bcd02815260206004820152601360248201527f64656c656761746563616c6c206661696c656400000000000000000000000000604482015290519081900360640190fd5b5050505056fea165627a7a72305820a021eaceb6eb2a86920c0fe7e37e4b3a3b492ee3ac9dd18f2107d9c7695d43d40029`)
-	)
+	workingDir, err := ioutil.TempDir("", "mastering-eth-*")
+	if err != nil {
+		panic(err)
+	}
+	defer os.RemoveAll(workingDir)
+
+	store, err := newKeyStore(privKey, workingDir)
+	if err != nil {
+		panic(fmt.Sprintf("fail to new key store: %v", err))
+	}
+	sender := store.Accounts()[0]
 
 	// TODO: compare with NewTransaction
-	tx := types.NewContractCreation(nonce, eth.ToWei(0), gasLimit, gasPrice, code)
-
-	store, accounts, err := eth.UnlockAccounts(eth.DefaultKeyDir(),
-		eth.DefaultPassphrase())
-	if nil != err {
+	tx := types.NewContractCreation(nonce, toWei(0), gasLimit, gasPrice, callerCode)
+	if tx, err = store.SignTx(sender, tx, chainID); nil != err {
 		panic(err)
 	}
 
-	account := accounts[0]
-	if tx, err = store.SignTx(account, tx, ropstenChainID); nil != err {
-		panic(err)
-	}
-
-	if err := c.SendTransaction(context.TODO(), tx); nil != err {
+	if err := eth.SendTransaction(context.TODO(), tx); nil != err {
 		panic(err)
 	}
 
 	fmt.Println("gasPrice =", gasPrice)
-	fmt.Println(" account =", account.Address.Hex())
+	fmt.Println(" account =", sender.Address.Hex())
 	fmt.Println("  txHash =", tx.Hash().Hex())
+}
+
+func generateBinaryABI(contract, calledLibraryAddress string) ([]byte, error) {
+	workingDir, err := os.Getwd()
+	if err != nil {
+		return nil, fmt.Errorf("fail to get current working dir: %w", err)
+	}
+
+	cmdLine := fmt.Sprintf("docker run --rm -v %s/contracts:/contracts --workdir /contracts ethereum/solc:0.7.0 --libraries calledLibrary:%s --bin --optimize %s",
+		workingDir, calledLibraryAddress, contract)
+
+	cmdAndArgs := strings.Split(cmdLine, " ")
+	cmd := exec.Command(cmdAndArgs[0], cmdAndArgs[1:]...)
+
+	var stdout strings.Builder
+	cmd.Stdout, cmd.Stderr = &stdout, os.Stderr
+	if err := cmd.Run(); err != nil {
+		return nil, fmt.Errorf("fail to run cmd: %w", err)
+	}
+
+	raw := strings.Split(strings.TrimSpace(stdout.String()), "\n")
+
+	var codeHex string
+	for i, v := range raw {
+		if strings.Contains(v, "======= CallExamples.sol:caller =======") {
+			codeHex = raw[i+2]
+			break
+		}
+	}
+	//fmt.Println(raw[2])
+	out, err := hex.DecodeString(codeHex)
+	if err != nil {
+		return nil, fmt.Errorf("fail to decode ABI code: %w", err)
+	}
+
+	return out, nil
+}
+
+func init() {
+	flag.Int64VarP(&chainID, "chain", "c", 5777, "ID of chain bootstraped by Ganache")
+	flag.StringVarP(&ganacheURL, "ganache-url", "g", "http://127.0.0.1:7545", "receiver's address")
+	flag.BytesHexVarP(&privKey, "key", "k", nil, "sender's key")
+	flag.Uint64Var(&nonce, "nonce", 0, "nonce of tx")
+	flag.StringVar(&calledLibraryTxHash, "tx", "", "hash of tx deploying the calledLibrary")
+}
+
+func newKeyStore(key []byte, dir string) (*keystore.KeyStore, error) {
+	const passphrase = "hello-world"
+
+	privKey, err := crypto.ToECDSA(key)
+	if err != nil {
+		return nil, fmt.Errorf("fail to unmarshal private key: %w", err)
+	}
+
+	store := keystore.NewKeyStore(dir, keystore.StandardScryptN, keystore.StandardScryptP)
+	account, err := store.ImportECDSA(privKey, passphrase)
+	if err != nil {
+		return nil, fmt.Errorf("fail to import private key: %w", err)
+	}
+
+	if err := store.Unlock(account, passphrase); err != nil {
+		return nil, fmt.Errorf("fail to unlock account: %w", err)
+	}
+
+	return store, nil
+}
+
+func toWei(ethers float64) *big.Int {
+	// 1 ether = 10^18 wei
+	orders, _ := new(big.Float).SetString("1000000000000000000")
+
+	x := big.NewFloat(ethers)
+	x.Mul(x, orders)
+
+	wei, _ := x.Int(nil)
+
+	return wei
 }

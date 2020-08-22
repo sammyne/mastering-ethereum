@@ -597,20 +597,71 @@ And various value literals as
   - The effects of `delegatecall` to non-library contract isn't promised
 
 - A demo goes follows
-  1. Deploy the dependent contract by [deploy_called_contract.go](examples/call-delegatecall/deploy_called_contract.go)
-  2. Deploy the dependent library by [deploy_called_library.go](examples/call-delegatecall/deploy_called_library.go)
-  3. Find out the address (let's say it's `Lib`) of the deployed `calledLibrary` above
-  4. Link the deployed library to the `caller` contract
+  1. Deploy the dependent contract and library by 
+    [deploy_called_contract_and_library.go](examples/call-delegatecall/deploy_called_contract_and_library.go)
+
+      ```bash
+      cd examples/call-delegatecall
+
+      go run deploy_called_contract_and_library.go -k 5dd169f61ecdb7ac3c0b6c59e17a033f6f5c747a65a1ca83c18de108b9e5ff72 --nonce 10
+
+      # Output
+      deploying called contract...
+      gasPrice = 20000000000
+       account = 0xCC6fDe13F6f662a8B752AE36f967759ECaCC82f1
+        txHash = 0x3dcfcef5f6d48635e61b79b1f895a3b8a6f336f3eaa3453c5a3eef3fa1eb5586
+      done deploying called contract
+      deploying called library...
+      gasPrice = 20000000000
+       account = 0xCC6fDe13F6f662a8B752AE36f967759ECaCC82f1
+        txHash = 0xdddb2cb9e08e5429e322313577c58369192b5b3a0cf451e1ad02892b1057b991
+      done deploying called library
+      ```
+  2. Deploy the caller contract
+      ```bash
+      cd examples/call-delegatecall
+
+      # -tx: specify tx hash deploying the calledLibrary so as to query the calledLibrary's address
+      go run deploy_caller.go -k 5dd169f61ecdb7ac3c0b6c59e17a033f6f5c747a65a1ca83c18de108b9e5ff72 --tx 0xdddb2cb9e08e5429e322313577c58369192b5b3a0cf451e1ad02892b1057b991 --nonce 12
+
+      # Output
+      gasPrice = 20000000000
+       account = 0xCC6fDe13F6f662a8B752AE36f967759ECaCC82f1
+        txHash = 0x8cdf761039c7951adcd18fc03c563aad72fc041e1a868422f0f2523edc41d135
+      ```
+  4. Find out the address (let's say it's `Lib`) of the deployed `calledLibrary` above
+  5. Link the deployed library to the `caller` contract
      ```bash
      ./solc.sh --libraries calledLibrary:<Lib> --bin --optimize CallExamples.sol
      ```
      Replace `<Lib>` with your actual address of `calledLibrary`
      (TODO: more funny details later)
      > The `__$xxxxxx$__` in the `caller` part should disappear now
-  5. Wait until all 3 contracts have been deployed on-chain successfully
-  6. Call `makeCalls` by an tx with [make_calls.go](examples/call-delegatecall/make_calls.go)
+  6. Wait until all 3 contracts have been deployed on-chain successfully
+  7. Call `makeCalls` by an tx with [make_calls.go](examples/call-delegatecall/make_calls.go)
+      ```bash
+      cd examples/call-delegatecall
+
+      go run make_calls.go -k 5dd169f61ecdb7ac3c0b6c59e17a033f6f5c747a65a1ca83c18de108b9e5ff72 --nonce 13 --callee-tx 0x3dcfcef5f6d48635e61b79b1f895a3b8a6f336f3eaa3453c5a3eef3fa1eb5586 --caller-tx 0x8cdf761039c7951adcd18fc03c563aad72fc041e1a868422f0f2523edc41d135
+
+      # Output
+            gasPrice = 20000000000
+            account = 0xCC6fDe13F6f662a8B752AE36f967759ECaCC82f1
+      calledContract = 0x866f540af2999FE66F60bAc5F8B592d0e581AC17
+              txHash = 0xdf7493b9c2a1fedf8e29087a7ada583e274a08e854f02caf8301e22a3b35a326
+      ```
      > NOTE: The address must be padded to 32 bytes as the ABI specification
-  7. After the tx above settled, checking the logging as [logging_test](examples/call-delegatecall/logging_test.go)
+  8. After the tx above settled, checking the logging as [logging.go](examples/call-delegatecall/logging.go), where no panicking means ok
+
+      ```bash
+      go run logging.go -k 5dd169f61ecdb7ac3c0b6c59e17a033f6f5c747a65a1ca83c18de108b9e5ff72 --callee-tx 0x3dcfcef5f6d48635e61b79b1f895a3b8a6f336f3eaa3453c5a3eef3fa1eb5586 --caller-tx 0x8cdf761039c7951adcd18fc03c563aad72fc041e1a868422f0f2523edc41d135 --make-calls-tx 0xdf7493b9c2a1fedf8e29087a7ada583e274a08e854f02caf8301e22a3b35a326
+
+      # Output
+      checking the event emitted by _callContract.calledFunction()
+      checking the event emitted by calledLibrary.calledFunction()
+      check the event emitted by address(_calledContract).call(methodSig)
+      check the event emitted by address(_calledContract).delegatecall(methodSig)
+      ```
 - Library calling always takes form of `delegatecall`
 
 ## Gas Considerations
