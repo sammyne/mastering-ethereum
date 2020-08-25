@@ -1,21 +1,21 @@
-pragma solidity ^0.5.6;
+// SPDX-License-Identifier: ISC
+pragma solidity ^0.7.0;
 
 contract Lotto {
-
     bool public payedOut = false;
     address public winner;
-    uint public winAmount;
+    uint256 public winAmount;
 
     // ... extra functionality here
 
     function sendToWinner() public {
         require(!payedOut);
-        winner.send(winAmount);
+        payable(winner).send(winAmount);
         payedOut = true;
     }
 
     function withdrawLeftOver() public {
         require(payedOut);
-        msg.sender.send(this.balance);
+        msg.sender.send(address(this).balance);
     }
 }
