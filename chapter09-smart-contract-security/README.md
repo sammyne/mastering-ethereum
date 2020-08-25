@@ -457,7 +457,7 @@
   - Entropy for random numbers
   - Locking funds for periods of time
   - Various state-changing conditional statements
-- Related links (TODO: links)
+- Related links
   - The Solidity docs - [Block and Transaction Properties]
   - Joris Bontje's Ethereum Stack Exchange question: [Can a contract safely rely on block.timestamp]
 
