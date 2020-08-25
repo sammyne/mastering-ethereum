@@ -1,4 +1,5 @@
-pragma solidity ^0.5.6;
+// SPDX-License-Identifier: ISC
+pragma solidity ^0.7.0;
 
 import "Rot13Encryption.sol";
 
@@ -12,7 +13,7 @@ contract EncryptionContract {
         encryptionLibrary = _encryptionLibrary;
     }
 
-    function encryptPrivateData(string privateInfo) {
+    function encryptPrivateData(string memory privateInfo) public {
         // potentially do some operations here
         encryptionLibrary.rot13Encrypt(privateInfo);
      }
