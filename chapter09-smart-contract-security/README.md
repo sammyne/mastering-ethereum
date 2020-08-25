@@ -356,7 +356,7 @@
 
 ## Race Conditions/Front Running
 
-- Related links (TODO: links)
+- Related links
   - [Ethereum Wiki]
   - [\#7 on the DASP Top10 of 2018]
   - The Ethereum Smart Contract Best Practices
