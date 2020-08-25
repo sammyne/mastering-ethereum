@@ -52,6 +52,6 @@ All the utility API is implemented in the `playground/eth` package
   - Maybe js version for demo later
 - [ ] Chapter 07. Smart Contracts and Solidity
   - [ ] figure out why the result returned by `ethclient.Client.CodeAt` doesn't match the data field of deployment tx
-- [ ] Chapter 09. Smart Contract Security
+- [x] Chapter 09. Smart Contract Security
 - [x] Chapter 10. Tokens
 - [x] Chapter 11. Oracles
