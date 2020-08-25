@@ -1,11 +1,12 @@
-pragma solidity ^0.5.6;
+// SPDX-License-Identifier: ISC
+pragma solidity ^0.7.0;
 
 // A locked name registrar
 contract NameRegistrar {
+    bool public unlocked = false; // registrar locked, no name updates
 
-    bool public unlocked = false;  // registrar locked, no name updates
-
-    struct NameRecord { // map hashes to addresses
+    struct NameRecord {
+        // map hashes to addresses
         bytes32 name;
         address mappedAddress;
     }
