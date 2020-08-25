@@ -1,20 +1,21 @@
-pragma solidity ^0.5.6;
+// SPDX-License-Identifier: ISC
+pragma solidity ^0.7.0;
 
 contract FunWithNumbers {
-    uint constant public tokensPerEth = 10;
-    uint constant public weiPerEth = 1e18;
-    mapping(address => uint) public balances;
+    uint256 public constant tokensPerEth = 10;
+    uint256 public constant weiPerEth = 1e18;
+    mapping(address => uint256) public balances;
 
     function buyTokens() public payable {
         // convert wei to eth, then multiply by token rate
-        uint tokens = msg.value/weiPerEth*tokensPerEth;
+        uint256 tokens = (msg.value / weiPerEth) * tokensPerEth;
         balances[msg.sender] += tokens;
     }
 
-    function sellTokens(uint tokens) public {
+    function sellTokens(uint256 tokens) public {
         require(balances[msg.sender] >= tokens);
-        uint eth = tokens/tokensPerEth;
+        uint256 eth = tokens / tokensPerEth;
         balances[msg.sender] -= tokens;
-        msg.sender.transfer(eth*weiPerEth);
+        msg.sender.transfer(eth * weiPerEth);
     }
 }
