@@ -42,22 +42,30 @@
 ### Preventative Techniques
 
 - Use the built-in `transfer` function which limit external calls to 2300 gas, rendering them unable to call other contracts
-- Employ the **checks-effects-interactions** pattern (TODO: add the link)
-  - For any code that performs external calls to unknown addresses to be the last opera‐ tion in a localized function or piece of code execution
+- Employ the **[checks-effects-interactions]** pattern
+  - For any code that performs external calls to unknown addresses to be the last operation in a localized function or piece of code execution
 - Use mutex to prevent reentrances
 - A fixed `EtherStore` with all above applied go as [EtherStoreOK.sol](examples/reentrancy/EtherStoreOK.sol)
+
+[checks-effects-interactions]: https://solidity.readthedocs.io/en/latest/security-considerations.html#use-the-checks-effects-interactions-pattern
 
 ### Real-World Example: The DAO
 
 - Consequence: \$150 million loss and a hark fork creating ETC
-- TODO: link
+- Analysis as [analysis-of-the-dao-exploit]
+
+[analysis-of-the-dao-exploit]: https://hackingdistributed.com/2016/06/18/analysis-of-the-dao-exploit
 
 ## Arithmetic Over/Underflows
 
 - Related links (TODO: links)
-  - How to Secure Your Smart Contracts
-  - Ethereum Smart Contract Best Practices
-  - Ethereum, Solidity and integer overflows: programming blockchains like 1970
+  - [How to Secure Your Smart Contracts]
+  - [Ethereum Smart Contract Best Practices]
+  - [Ethereum, Solidity and integer overflows]: programming blockchains like 1970
+
+[How to Secure Your Smart Contracts]: https://medium.com/loom-network/how-to-secure-your-smart-contracts-6-solidity-vulnerabilities-and-how-to-avoid-them-part-1-c33048d4d17d
+[Ethereum Smart Contract Best Practices]: https://consensys.github.io/smart-contract-best-practices/known_attacks/#integer-overflow-and-underflow
+[Ethereum, Solidity and integer overflows]: https://randomoracle.wordpress.com/2018/04/27/ethereum-solidity-and-integer-overflows-programming-blockchains-like-1970/
 
 ### The Vulnerability
 
@@ -72,21 +80,30 @@
 ### Preventative Techniques
 
 - Use or build mathematical libraries that replace the standard math operators addition, subtraction, and multiplication (division is excluded as it does not cause over/underflows and the EVM reverts on division by 0)
-- Recommendation: OpenZeppelin (TODO: link)
-  - The SafeMath (TODO: link) to tackle over/underflows as [OverflowFreeTimeLock.sol](examples/overflow-underflow/OverflowFreeTimeLock.sol)
+- Recommendation: OpenZeppelin
+  - The [SafeMath] to tackle over/underflows as [OverflowFreeTimeLock.sol](examples/overflow-underflow/OverflowFreeTimeLock.sol)
+
+[OpenZeppelin]: https://github.com/OpenZeppelin/openzeppelin-contracts
+[SafeMath]: https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/math/SafeMath.sol
 
 ### Real-World Examples: PoWHC and Batch Transfer Overflow (CVE-2018–10299)
 
 - Proof of Weak Hands Coin (PoWHC), originally devised as a joke of sorts, was a Ponzi scheme written by an internet collective
-- PoWHC suffers from underflow as explained by Eric Banisadr (TODO: link)
-- PeckShield's account (TODO: link) suffers from overflow
+- PoWHC suffers from underflow as [explained][attck on PoWHC] by Eric Banisadr (TODO: link)
+- PeckShield's account suffers from overflow
+
+[attck on PoWHC]: https://medium.com/@ebanisadr/how-800k-evaporated-from-the-powh-coin-ponzi-scheme-overnight-1b025c33b530
+[PeckShield's account]: https://medium.com/@peckshield/alert-new-batchoverflow-bug-in-multiple-erc20-smart-contracts-cve-2018-10299-511067db6536
 
 ## Unexpected Ether
 
 - Contracts that rely on code execution for all ether sent to them can be vulnerable to attacks where ether is forcibly sent
-- Related links (TODO: link)
-  - How to Secure Your Smart Contracts
-  - Solidity Security Patterns - Forcing Ether to a Contract
+- Related links
+  - [How to Secure Your Smart Contracts - Part 2] 
+  - [Solidity Security Patterns - Forcing Ether to a Contract]
+
+[How to Secure Your Smart Contracts - Part 2]: https://medium.com/loom-network/how-to-secure-your-smart-contracts-6-solidity-vulnerabilities-and-how-to-avoid-them-part-2-730db0aa4834
+[Solidity Security Patterns - Forcing Ether to a Contract]: http://danielszego.blogspot.com/2018/03/solidity-security-patterns-forcing.html
 
 ### The Vulnerability
 
@@ -94,17 +111,19 @@
 - **WHY**: Misconception that a contract can only accept or obtain ether via payable functions
   - Example is the use of `this.balance`
 - Contracts can receive ethers without payable functions or executing any code
-  - As receipent of `selfdestruct()` forced by attackers demo as (TODO: link)
+  - As receipent of `selfdestruct()` forced by attackers [demo][attack based on selfdestruct] by Martin Swende
   - As receipent of pre-sent ether before deployment due to the determinstic contract address as
     ```js
     address = sha3(rlp.encode([account_address, transaction_nonce]))
     ```
 - Examples
   - [EtherGame](examples/unexpected-ethers/EtherGame.sol)
-    - **CAUSE**: Line 14 and 32
+    - **CAUSE**: Line 17 and 35
     - **HOW**
       - Fund the contract by `selfdestruct()` to make the `this.balance` be non-multiple of 0.5 ether
       - Lock all ethers by forcibly funding 10 ethers due to missing milestones
+
+[attack based on selfdestruct]: https://swende.se/blog/Ethereum_quirks_and_vulns.html
 
 ### Preventative Techniques
 
@@ -113,15 +132,21 @@
 
 ### Further Examples
 
-- Underhanded Solidity Coding Contest (TODO: link)
+- [Underhanded Solidity Coding Contest]
+
+[Underhanded Solidity Coding Contest]: https://github.com/Arachnid/uscc/tree/master/submissions-2017/
 
 ## DELEGATECALL
 
 - Standard external message calls to contracts are handled by the `CALL` opcode, whereby code is run in the context of the external contract/function
 - The `DELEGATECALL` opcode is almost identical, except that the code executed at the targeted address is run in the context of the calling contract, and `msg.sender` and `msg.value` remain unchanged
 - Related links (TODO: links)
-  - Loi.Luu's Ethereum Stack Exchange question on this topic
-  - The Solidity docs
+  - [Loi.Luu's Ethereum Stack Exchange question on this topic][difference-between-call-callcode-and-delegatecall]
+  - [The Solidity docs][delegatecall-callcode-and-libraries]
+
+[difference-between-call-callcode-and-delegatecall]: https://ethereum.stackexchange.com/questions/3667/difference-between-call-callcode-and-delegatecall
+[delegatecall-callcode-and-libraries]: https://solidity.readthedocs.io/en/latest/introduction-to-smart-contracts.html#delegatecall-callcode-and-libraries
+
 
 ### The Vulnerability
 
@@ -138,16 +163,19 @@
 - Employ `library` keyword for implementing library contracts
   - Forcing libraries to be stateless mitigates the complexities of storage context
   - Stateless libraries also prevent attacks wherein attackers modify the state of the library directly in order to affect the contracts that depend on the library's code
-- As a general rule of thumb, when using `DELEGATECALL` pay careful attention to the possible calling context of both the library contract and the calling contract, and whenever possible build stateless libraries.
+- As a general rule of thumb, when using `DELEGATECALL`, pay careful attention to the possible calling context of both the library contract and the calling contract, and whenever possible, build stateless libraries.
 
 ### Real-World Example: Parity Multisig Wallet (Second Hack)
 
-- Examples (TODO: links)
-  - Parity Multisig Hacked. Again
-  - An In-Depth Look at the Parity Multisig Bug
+- Examples
+  - [Parity Multisig Hacked. Again]
+  - [An In-Depth Look at the Parity Multisig Bug]
 - Example: [WalletLibrary.sol](examples/delegatecall/WalletLibrary.sol) and [Wallet.sol](examples/delegatecall/Wallet.sol)
   - The `WalletLibrary` contract is itself a **contract** and maintains its own state
   - The owner of `WalletLibrary` contract can destruct the `WalletLibrary`, rendering any later payment to the `Wallet` referencing the deleted `WalletLibrary` lost forever
+
+[Parity Multisig Hacked. Again]: https://medium.com/chain-cloud-company-blog/parity-multisig-hack-again-b46771eaa838
+[An In-Depth Look at the Parity Multisig Bug]: https://hackingdistributed.com/2017/07/22/deep-dive-parity-bug/
 
 ## Default Visibilities
 
@@ -163,17 +191,19 @@
 
 ### Real-World Example: Parity Multisig Wallet (First Hack)
 
-- Analysis as Haseeb Qureshi (TODO: link)
+- Analysis as [Haseeb Qureshi][Parity Multisig Wallet (First Hack)]
 - Example: [WalletLibrary.sol](examples/default-visibility/WalletLibrary.sol)
   - The unintended public `initMultiowned` enables an attacker to
     - Call these functions on deployed contracts, resetting the ownership to the attacker's address
     - Then drain the wallets of all their ether
 
+[Parity Multisig Wallet (First Hack)]: https://www.freecodecamp.org/news/a-hacker-stole-31m-of-ether-how-it-happened-and-what-it-means-for-ethereum-9e5dc29e33ce/
+
 ## Entropy Illusion
 
 - Every transaction modifies the global state of the Ethereum ecosystem in a calculable way, with no uncertainty
 - This has the fundamental implication that there is no source of entropy or randomness in Ethereum
-- Achieving decentralized entropy (randomness) is a well-known problem for which many solutions have been proposed, including RANDAO (TODO: link), or using a chain of hashes, as described by Vitalik Buterin in the blog post "Validator Ordering and Randomness in PoS" (TODO: link)
+- Achieving decentralized entropy (randomness) is a well-known problem for which many solutions have been proposed, including [RANDAO], or using a chain of hashes, as described by Vitalik Buterin in the blog post "Validator Ordering and Randomness in PoS" (deprecated)
 
 ### The Vulnerability
 
@@ -182,20 +212,26 @@
 - Option 1: future block variables
   - **Demerit**: Controlled by miners
 - Option 2: past or present variables
-  - Analysis as Martin Swende (TODO: link)
+  - Analysis as [Martin Swende][An Ethereum Roulette]
 - Using solely block variables means that the pseudorandom number will be the same for all transactions in a block, so an attacker can multiply their wins by doing many transactions within a block (should there be a maximum bet)
+
+[An Ethereum Roulette]: https://swende.se/blog/Breaking_the_house.html
 
 ### Preventative Techniques
 
 - The source of entropy (randomness) must be external to the blockchain
-- Options (TODO: links)
-  - Commit–reveal
-  - Changing the trust model to a group of participants (as in RandDAO)
+- Options
+  - [Commit–reveal]
+  - Changing the trust model to a group of participants (as in [RandDAO])
   - A centralized entity that acts as a randomness oracle
+
+[Commit–reveal]: https://ethereum.stackexchange.com/questions/191/how-can-i-securely-generate-a-random-number-in-my-smart-contract
 
 ### Real-World Example: PRNG Contracts
 
-- Analyzed by Arseny Reutov in Feb. 2018 (TODO: link)
+- Analyzed by [Arseny Reutov][Predicting Random Numbers in Ethereum Smart Contracts] in Feb. 2018
+
+[Predicting Random Numbers in Ethereum Smart Contracts]: https://blog.positive.com/predicting-random-numbers-in-ethereum-smart-contracts-e5358c6b8620
 
 ## External Contract Referencing
 
@@ -219,14 +255,20 @@
 - **Honey Pot**: Contracts try to outsmart Ethereum hackers who try to exploit the contracts, but who in turn end up losing ether to the contract they expect to exploit
 - Example: [Log.sol](examples/external-contracts-referencing/Log.sol)
   - Reentrance by exploiting line 29 would trigger OOG thus reverting any tx
-  - Detail as (TODO: link)
+  - Detail as [Reentrancy Honey Pot], but still **DON'T UNDERSTAND :(**
+
+[Reentrancy Honey Pot]: https://www.reddit.com/r/ethdev/comments/7x5rwr/tricked_by_a_honeypot_contract_or_beaten_by/
 
 ## Short Address/Parameter Attack
 
-- Related links (TODO: links)
-  - The ERC20 Short Address Attack Explained
-  - ICO Smart Contract Vulnerability: Short Address Attack
-  - This Reddit post
+- Related links
+  - [The ERC20 Short Address Attack Explained]
+  - [ICO Smart Contract Vulnerability: Short Address Attack]
+  - [This Reddit post]
+
+[The ERC20 Short Address Attack Explained]: https://vessenes.com/the-erc20-short-address-attack-explained/
+[ICO Smart contract Vulnerability: Short Address Attack]: https://medium.com/huzzle/ico-smart-contract-vulnerability-short-address-attack-31ac9177eb6b
+[This Reddit post]: https://www.reddit.com/r/ethereum/comments/6r9nhj/cant_understand_the_erc20_short_address_attack/
 
 ### The Vulnerability
 
@@ -257,7 +299,10 @@
 - A common error is that the developer expects a revert to occur if the external call fails, and does not check the return value
 - Related links (TODO: links)
   - DASP Top 10 of 2018
-  - Scanning Live Ether‐ eum Contracts for the ‘Unchecked-Send' Bug
+  - Scanning Live Ethereum Contracts for the 'Unchecked-Send' Bug
+
+[DASP Top 10 of 2018]: https://www.dasp.co/#item-4
+[Scanning Live Ethereum Contracts for the 'Unchecked-Send' Bug]: https://hackingdistributed.com/2016/06/16/scanning-live-ethereum-contracts-for-bugs/
 
 ### The Vulnerability
 
@@ -275,7 +320,7 @@
 
 ### Real-World Example: Etherpot and King of the Ether
 
-- **WHY**: incorrect use of block hashes as explained by Aakil Fernandes (TODO: link)
+- **WHY**: incorrect use of block hashes as explained by [Aakil Fernandes](http://aakilfernandes.github.io/blockhashes-are-only-good-for-256-blocks)
 - Sample code
 
   ```solidity
@@ -312,9 +357,13 @@
 ## Race Conditions/Front Running
 
 - Related links (TODO: links)
-  - Ethereum Wiki
-  - \#7 on the DASP Top10 of 2018
+  - [Ethereum Wiki]
+  - [\#7 on the DASP Top10 of 2018]
   - The Ethereum Smart Contract Best Practices
+
+[race conditions on Ethereum Wiki]: https://github.com/ethereum/wiki/wiki/Safety#race-conditions
+[#7 on the DASP Top10 of 2018]: https://www.dasp.co/#item-7
+[The Ethereum Smart Contract Best Practices]: https://consensys.github.io/smart-contract-best-practices/known_attacks/#race-conditions
 
 ### The Vulnerability
 
@@ -329,23 +378,30 @@
   - Miners filtering tx
 - To guard only against malicious users
   - Place an upper bound on the `gasPrice` to disable tx ordering by `gasPrice`
-- Another option against both actors: a commit–reveal scheme (TODO: link)
+- Another option against both actors: [a commit–reveal scheme]
   - **HOW**
     - Users send transactions with hidden information (typically a hash)
     - After the transaction has been included in a block, the user sends a transaction revealing the data that was sent (the reveal phase)
   - **Cons**: Cannot conceal the transaction value
-- Related links (TODO: links)
-  - ENS contracts
-  - submarine sends
+- Related links
+  - [ENS contracts][ENS]
+  - [submarine sends]
+
+[a commit–reveal scheme]: https://ethereum.stackexchange.com/questions/191/how-can-i-securely-generate-a-random-number-in-my-smart-contract
+[ENS]: https://ens.domains/
+[submarine sends]: https://hackingdistributed.com/2017/08/28/submarine-sends/
 
 ### Real-World Examples: ERC20 and Bancor
 
-- The ERC20 standard is quite well-known for building tokens on Ethereum. This standard has a potential front-running vulnerability that comes about due to the `approve` function as explained by Mikhail Vladimirov and Dmitry Khovratovich (TODO: link)
+- The ERC20 standard is quite well-known for building tokens on Ethereum. This standard has a potential front-running vulnerability that comes about due to the `approve` function as explained by [Mikhail Vladimirov and Dmitry Khovratovich][ERC20 API: An Attack Vector on Approve/TransferFrom Methods]
   - A approves B 100 tokens
   - B takes them
   - Then A want to reset tokens for B as 50
   - B can take another 50 more tokens
-- Analysis for Bancor is given by Ivan Bogatyy (TODO: links)
+- Analysis for Bancor is given by [Ivan Bogatyy][Implementing Ethereum trading front-runs on the Bancor exchange in Python]
+
+[ERC20 API: An Attack Vector on Approve/TransferFrom Methods]: https://docs.google.com/document/d/1YLPtQxZu1UAvO9cZ1O2RPXBbT0mooh4DYKjA_jp-RLM/edit#heading=h.wqhvh2y0obwt
+[Implementing Ethereum trading front-runs on the Bancor exchange in Python]: https://hackernoon.com/front-running-bancor-in-150-lines-of-python-with-ethereum-api-d5e2bfd0d798
 
 ## Denial of Service (DoS)
 
@@ -391,7 +447,9 @@
 
 ### Real-World Examples: GovernMental
 
-- **HOW**: A Reddit post (TODO: link) by etherik describes how the contract required the deletion of a large mapping in order to withdraw the ether.
+- **HOW**: A [Reddit post][GovernMental's 1100 ETH jackpot payout is stuck because it uses too much gas] by etherik describes how the contract required the deletion of a large mapping in order to withdraw the ether.
+
+[GovernMental's 1100 ETH jackpot payout is stuck because it uses too much gas]: https://www.reddit.com/r/ethereum/comments/4ghzhv/governmentals_1100_eth_jackpot_payout_is_stuck/
 
 ## Block Timestamp Manipulation
 
@@ -400,13 +458,16 @@
   - Locking funds for periods of time
   - Various state-changing conditional statements
 - Related links (TODO: links)
-  - The Solidity docs
-  - Joris Bontje's Ethereum Stack Exchange question
+  - The Solidity docs - [Block and Transaction Properties]
+  - Joris Bontje's Ethereum Stack Exchange question: [Can a contract safely rely on block.timestamp]
+
+[Block and Transaction Properties]: https://solidity.readthedocs.io/en/latest/units-and-global-variables.html#block-and-transaction-properties
+[Can a contract safely rely on block.timestamp]: https://ethereum.stackexchange.com/questions/413/can-a-contract-safely-rely-on-block-timestamp?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
 
 ### The Vulnerability
 
 - Example contract as [Roulette.sol](examples/block-timestamp-manipulation/Roulette.sol)
-  - If enough ether pools in the contract, a miner who solves a block is incentivized to choose a timestamp such that `block.timestamp` or now modulo 15 is 0
+  - If enough ether pools in the contract, a miner who solves a block is incentivized to choose a timestamp such that `block.timestamp` modulo 15 is 0
   - As there is only one person allowed to bet per block, this is also vulnerable to front-running attacks
 - In practice, block timestamps are required to be
   - Monotonically increasing
@@ -417,12 +478,13 @@
 - Block timestamps should not be used for entropy or generating random numbers
   - They should not be the deciding factor (either directly or through some derivation) for winning a game or changing an important state
 - Time-sensitive applications
-  - For unlocking contracts (time- locking), completing an ICO after a few weeks, or enforcing expiry dates
+  - For unlocking contracts (time-locking), completing an ICO after a few weeks, or enforcing expiry dates
   - Are recommended to use `block.number` and an average block time to estimate times
+
 
 ### Real-World Example: GovernMental
 
-- TODO: link
+- Link (deprecated)
 - **HOW**
   - The contract paid out to the player who was the last player to join (for at least one minute) in a round
   - A miner who was a player could adjust the timestamp (to a future time, to make it look like a minute had elapsed) to make it appear that they were the last player to join for over a minute (even though this was not true in reality)
@@ -445,10 +507,13 @@
 
 ## Uninitialized Storage Pointers
 
-- Related links in solidity doc (TODO: links)
+- Related links in solidity doc
 
-  - Data location, layout of state variables in storage
-  - Layout in memory
+  - [Layout of State Variables in Storage]
+  - [Layout in Memory]
+
+[Layout of State Variables in Storage]: https://solidity.readthedocs.io/en/latest/internals/layout_in_storage.html
+[Layout in Memory]: https://solidity.readthedocs.io/en/latest/internals/layout_in_memory.html
 
 ### The Vulnerability
 
@@ -467,14 +532,20 @@
 
 ### Real-World Examples: OpenAddressLottery and CryptoRoulette Honey Pots
 
-- OpenAddressLottery (TODO: link): A honey pot was deployed that used this uninitialized storage variable quirk to collect ether from some would-be hackers as analyzed by the Reddit thread (TODO: link)
-- CryptoRoulette: A honey pot utilizes this trick to try and collect some ether (see "An Analysis of a Couple Ethereum Honeypot Contracts" (TODO: link))
+- [OpenAddressLottery]: A honey pot was deployed that used this uninitialized storage variable quirk to collect ether from some would-be hackers as analyzed by the [Reddit thread][How does this honeypot work? It seems like a private variable gets overwritten by another]
+- CryptoRoulette: A honey pot utilizes this trick to try and collect some ether (see "[An Analysis of a Couple Ethereum Honeypot Contracts]")
+
+[OpenAddressLottery]: https://etherscan.io/address/0x741f1923974464efd0aa70e77800ba5d9ed18902#code
+[How does this honeypot work? It seems like a private variable gets overwritten by another]: https://www.reddit.com/r/ethdev/comments/7wp363/how_does_this_honeypot_work_it_seems_like_a/
+[An Analysis of a Couple Ethereum Honeypot Contracts]: https://medium.com/coinmonks/an-analysis-of-a-couple-ethereum-honeypot-contracts-5c07c95b0a8d
 
 ## Floating Point and Precision
 
 - As of this writing (v0.4.24), Solidity does not support fixed-point and floating-point numbers. This means that floating-point representations must be constructed with integer types in Solidity
-- Related links (TODO: link)
-  - Ethereum Contract Security Techni‐ ques and Tips wiki
+- Related links
+  - [Ethereum Contract Security Techniques and Tips wiki]
+
+[Ethereum Contract Security Techniques and Tips wiki]: https://eth.wiki/en/howto/smart-contract-safety
 
 ### The Vulnerability
 
@@ -496,17 +567,23 @@
 
 ### Real-World Example: Ethstick
 
-- Source of Ethstick (TODO: link)
+- Source of [Ethstick]
 - Have issues of rounding at the wei level of precision
 - Also suffers from the entropy illusion (TODO: link)
-- More see "Ethereum Contracts Are Going to Be Candy for Hackers" (TODO: link)
+- More see "[Ethereum Contracts Are Going to Be Candy for Hackers]"
+
+[Ethstick]: https://etherscan.io/address/0xbA6284cA128d72B25f1353FadD06Aa145D9095Af#code
+[Ethereum Contracts Are Going to Be Candy for Hackers]: https://vessenes.com/ethereum-contracts-are-going-to-be-candy-for-hackers/
 
 ## Tx.Origin Authentication
 
 - `tx.origin` traverses the entire call stack and contains the address of the account that originally sent the call (or transaction)
 - Related links (TODO: link)
-  - "Tx.Origin and Ethereum Oh My!" by Peter Vessenes
+  - "[Tx.Origin and Ethereum Oh My!]" by Peter Vessenes
   - "Solidity: Tx Origin Attacks" by Chris Coverdale
+
+[Tx.Origin and Ethereum Oh My!]: https://vessenes.com/tx-origin-and-ethereum-oh-my/
+[Solidity: Tx Origin Attacks]: https://medium.com/coinmonks/solidity-tx-origin-attacks-58211ad95514
 
 ### The Vulnerability
 
@@ -532,9 +609,9 @@
   - Saves you money and benefits the Ethereum ecosystem by reducing the total number of live contracts in Ethereum
 
 - Reliable sources
-  - The most widely used resource is the OpenZeppelin suite (TODO: link)
+  - The most widely used resource is the [OpenZeppelin suite]
     - The contracts in this repository have been extensively tested and in some cases even function as de facto standard implementations
-  - Zeppelin is ZeppelinOS (TODO: link)
+  - Zeppelin is [ZeppelinOS]
     - An open source platform of services and tools to develop and manage smart contract applications securely
 - `ethpm` is a package management tool for libraries
   - Website: https://www.ethpm.com/
@@ -542,4 +619,9 @@
   - GitHub link: https://github.com/ethpm
   - Documentation: https://www.ethpm.com/docs/integration-guide
 
+[OpenZeppelin suite]: https://openzeppelin.com/contracts/
+[ZeppelinOS]: https://openzeppelin.com/sdk/
+
 ## Conclusions
+
+[RANDAO]: https://github.com/randao/randao

