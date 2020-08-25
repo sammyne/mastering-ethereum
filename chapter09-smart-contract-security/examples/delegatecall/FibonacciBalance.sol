@@ -1,18 +1,18 @@
-pragma solidity ^0.5.6;
+// SPDX-License-Identifier: ISC
+pragma solidity ^0.7.0;
 
 contract FibonacciBalance {
-
     address public fibonacciLibrary;
     // the current Fibonacci number to withdraw
-    uint public calculatedFibNumber;
+    uint256 public calculatedFibNumber;
     // the starting Fibonacci sequence number
-    uint public start = 3;
-    uint public withdrawalCounter;
-    // the Fibonancci function selector
+    uint256 public start = 3;
+    uint256 public withdrawalCounter;
+    // the Fibonacci function selector
     bytes4 constant fibSig = bytes4(keccak256("setFibonacci(uint256)"));
 
     // constructor - loads the contract with ether
-    constructor(address _fibonacciLibrary) public payable {
+    constructor(address _fibonacciLibrary) payable {
         fibonacciLibrary = _fibonacciLibrary;
     }
 
@@ -20,12 +20,16 @@ contract FibonacciBalance {
         withdrawalCounter += 1;
         // calculate the Fibonacci number for the current withdrawal user-
         // this sets calculatedFibNumber
-        require(fibonacciLibrary.delegatecall(fibSig, withdrawalCounter));
+        (bool ok, ) = fibonacciLibrary.delegatecall(
+            abi.encodeWithSelector(fibSig, withdrawalCounter)
+        );
+        require(ok);
         msg.sender.transfer(calculatedFibNumber * 1 ether);
     }
 
     // allow users to call Fibonacci library functions
-    function() public {
-        require(fibonacciLibrary.delegatecall(msg.data));
+    receive() external payable {
+        (bool ok, ) = fibonacciLibrary.delegatecall(msg.data);
+        require(ok);
     }
 }
