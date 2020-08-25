@@ -1,9 +1,10 @@
-pragma solidity ^0.5.6;
+// SPDX-License-Identifier: ISC
+pragma solidity ^0.7.0;
 
 contract DistributeTokens {
     address public owner; // gets set somewhere
     address[] investors; // array of investors
-    uint[] investorTokens; // the amount of tokens each investor gets
+    uint256[] investorTokens; // the amount of tokens each investor gets
 
     // ... extra functionality, including transfertoken()
 
@@ -14,10 +15,10 @@ contract DistributeTokens {
 
     function distribute() public {
         require(msg.sender == owner); // only owner
-        for(uint i = 0; i < investors.length; i++) {
+        for (uint256 i = 0; i < investors.length; i++) {
             // here transferToken(to,amount) transfers "amount" of
             // tokens to the address "to"
-            transferToken(investors[i],investorTokens[i]);
+            transferToken(investors[i], investorTokens[i]);
         }
     }
 }
